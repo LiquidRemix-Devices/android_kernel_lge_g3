@@ -3,9 +3,17 @@
  *
  * Copyright 2004-2005  Andrea Arcangeli <andrea@cpushare.com>
  *
- * This defines a simple but solid secure-computing mode.
+ * Copyright (C) 2012 Google, Inc.
+ * Will Drewry <wad@chromium.org>
+ *
+ * This defines a simple but solid secure-computing facility.
+ *
+ * Mode 1 uses a fixed list of allowed system calls.
+ * Mode 2 allows user-defined system call filters in the form
+ *        of Berkeley Packet Filters/Linux Socket Filters.
  */
 
+#include <linux/atomic.h>
 #include <linux/audit.h>
 #include <linux/seccomp.h>
 #include <linux/sched.h>
@@ -16,9 +24,8 @@
 #ifdef CONFIG_SECCOMP_FILTER
 #include <asm/syscall.h>
 #include <linux/filter.h>
-#include <linux/pid.h>
-#include <linux/ptrace.h>
 #include <linux/security.h>
+#include <linux/slab.h>
 #include <linux/tracehook.h>
 #include <linux/uaccess.h>
 
@@ -52,6 +59,18 @@ struct seccomp_filter {
 
 /* Limit any path through the tree to 256KB worth of instructions. */
 #define MAX_INSNS_PER_PATH ((1 << 18) / sizeof(struct sock_filter))
+
+static void seccomp_filter_log_failure(int syscall)
+{
+	int compat = 0;
+#ifdef CONFIG_COMPAT
+	compat = is_compat_task();
+#endif
+	pr_info("%s[%d]: %ssystem call %d blocked at 0x%lx\n",
+		current->comm, task_pid_nr(current),
+		(compat ? "compat " : ""),
+		syscall, KSTK_EIP(current));
+}
 
 /**
  * get_u32 - returns a u32 offset into data
@@ -191,170 +210,27 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
  */
 static u32 seccomp_run_filters(int syscall)
 {
-	struct seccomp_filter *f = ACCESS_ONCE(current->seccomp.filter);
-	u32 ret = SECCOMP_RET_ALLOW;
-
-	/* Ensure unexpected behavior doesn't result in failing open. */
-	if (unlikely(WARN_ON(f == NULL)))
-		return SECCOMP_RET_KILL;
-
-	/* Make sure cross-thread synced filter points somewhere sane. */
-	smp_read_barrier_depends();
-
+	struct seccomp_filter *f;
+	u32 ret = SECCOMP_RET_KILL;
 	/*
 	 * All filters in the list are evaluated and the lowest BPF return
-	 * value always takes priority (ignoring the DATA).
+	 * value always takes priority.
 	 */
-	for (; f; f = f->prev) {
-		u32 cur_ret = sk_run_filter(NULL, f->insns);
-
-		if ((cur_ret & SECCOMP_RET_ACTION) < (ret & SECCOMP_RET_ACTION))
-			ret = cur_ret;
+	for (f = current->seccomp.filter; f; f = f->prev) {
+		ret = sk_run_filter(NULL, f->insns);
+		if (ret != SECCOMP_RET_ALLOW)
+			break;
 	}
 	return ret;
 }
-#endif /* CONFIG_SECCOMP_FILTER */
-
-static inline bool seccomp_may_assign_mode(unsigned long seccomp_mode)
-{
-	BUG_ON(!spin_is_locked(&current->sighand->siglock));
-
-	if (current->seccomp.mode && current->seccomp.mode != seccomp_mode)
-		return false;
-
-	return true;
-}
-
-static inline void seccomp_assign_mode(struct task_struct *task,
-				       unsigned long seccomp_mode)
-{
-	BUG_ON(!spin_is_locked(&task->sighand->siglock));
-
-	task->seccomp.mode = seccomp_mode;
-	/*
-	 * Make sure TIF_SECCOMP cannot be set before the mode (and
-	 * filter) is set.
-	 */
-	smp_mb();
-	set_tsk_thread_flag(task, TIF_SECCOMP);
-}
-
-#ifdef CONFIG_SECCOMP_FILTER
-/* Returns 1 if the parent is an ancestor of the child. */
-static int is_ancestor(struct seccomp_filter *parent,
-		       struct seccomp_filter *child)
-{
-	/* NULL is the root ancestor. */
-	if (parent == NULL)
-		return 1;
-	for (; child; child = child->prev)
-		if (child == parent)
-			return 1;
-	return 0;
-}
 
 /**
- * seccomp_can_sync_threads: checks if all threads can be synchronized
- *
- * Expects sighand and cred_guard_mutex locks to be held.
- *
- * Returns 0 on success, -ve on error, or the pid of a thread which was
- * either not in the correct seccomp mode or it did not have an ancestral
- * seccomp filter.
- */
-static inline pid_t seccomp_can_sync_threads(void)
-{
-	struct task_struct *thread, *caller;
-
-	BUG_ON(!mutex_is_locked(&current->signal->cred_guard_mutex));
-	BUG_ON(!spin_is_locked(&current->sighand->siglock));
-
-	/* Validate all threads being eligible for synchronization. */
-	caller = current;
-	for_each_thread(caller, thread) {
-		pid_t failed;
-
-		/* Skip current, since it is initiating the sync. */
-		if (thread == caller)
-			continue;
-
-		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED ||
-		    (thread->seccomp.mode == SECCOMP_MODE_FILTER &&
-		     is_ancestor(thread->seccomp.filter,
-				 caller->seccomp.filter)))
-			continue;
-
-		/* Return the first thread that cannot be synchronized. */
-		failed = task_pid_vnr(thread);
-		/* If the pid cannot be resolved, then return -ESRCH */
-		if (unlikely(WARN_ON(failed == 0)))
-			failed = -ESRCH;
-		return failed;
-	}
-
-	return 0;
-}
-
-/**
- * seccomp_sync_threads: sets all threads to use current's filter
- *
- * Expects sighand and cred_guard_mutex locks to be held, and for
- * seccomp_can_sync_threads() to have returned success already
- * without dropping the locks.
- *
- */
-static inline void seccomp_sync_threads(void)
-{
-	struct task_struct *thread, *caller;
-
-	BUG_ON(!mutex_is_locked(&current->signal->cred_guard_mutex));
-	BUG_ON(!spin_is_locked(&current->sighand->siglock));
-
-	/* Synchronize all threads. */
-	caller = current;
-	for_each_thread(caller, thread) {
-		/* Skip current, since it needs no changes. */
-		if (thread == caller)
-			continue;
-
-		/* Get a task reference for the new leaf node. */
-		get_seccomp_filter(caller);
-		/*
-		 * Drop the task reference to the shared ancestor since
-		 * current's path will hold a reference.  (This also
-		 * allows a put before the assignment.)
-		 */
-		put_seccomp_filter(thread);
-		smp_mb();
-		ACCESS_ONCE(thread->seccomp.filter) = caller->seccomp.filter;
-		/*
-		 * Opt the other thread into seccomp if needed.
-		 * As threads are considered to be trust-realm
-		 * equivalent (see ptrace_may_access), it is safe to
-		 * allow one thread to transition the other.
-		 */
-		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED) {
-			/*
-			 * Don't let an unprivileged task work around
-			 * the no_new_privs restriction by creating
-			 * a thread that sets it up, enters seccomp,
-			 * then dies.
-			 */
-			if (task_no_new_privs(caller))
-				task_set_no_new_privs(thread);
-
-			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER);
-		}
-	}
-}
-
-/**
- * seccomp_prepare_filter: Prepares a seccomp filter for use.
+ * seccomp_attach_filter: Attaches a seccomp filter to current.
  * @fprog: BPF program to install
  *
- * Returns filter on success or an ERR_PTR on failure.
+ * Returns 0 on success or an errno on failure.
  */
-static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
+static long seccomp_attach_filter(struct sock_fprog *fprog)
 {
 	struct seccomp_filter *filter;
 	unsigned long fp_size = fprog->len * sizeof(struct sock_filter);
@@ -362,13 +238,12 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
 	long ret;
 
 	if (fprog->len == 0 || fprog->len > BPF_MAXINSNS)
-		return ERR_PTR(-EINVAL);
-	BUG_ON(INT_MAX / fprog->len < sizeof(struct sock_filter));
+		return -EINVAL;
 
 	for (filter = current->seccomp.filter; filter; filter = filter->prev)
 		total_insns += filter->len + 4;  /* include a 4 instr penalty */
 	if (total_insns > MAX_INSNS_PER_PATH)
-		return ERR_PTR(-ENOMEM);
+		return -ENOMEM;
 
 	/*
 	 * Installing a seccomp filter requires that the task have
@@ -376,16 +251,16 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
 	 * This avoids scenarios where unprivileged tasks can affect the
 	 * behavior of privileged children.
 	 */
-	if (!task_no_new_privs(current) &&
-	    security_capable_noaudit(current_cred(), current_user_ns(),
-				     CAP_SYS_ADMIN) != 0)
-		return ERR_PTR(-EACCES);
+	if (!current->no_new_privs &&
+			security_capable_noaudit(current_cred(),
+				current_user_ns(), CAP_SYS_ADMIN) != 0)
+		return -EACCES;
 
 	/* Allocate a new seccomp_filter */
 	filter = kzalloc(sizeof(struct seccomp_filter) + fp_size,
 			 GFP_KERNEL|__GFP_NOWARN);
 	if (!filter)
-		return ERR_PTR(-ENOMEM);
+		return -ENOMEM;
 	atomic_set(&filter->usage, 1);
 	filter->len = fprog->len;
 
@@ -404,23 +279,28 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
 	if (ret)
 		goto fail;
 
-	return filter;
+	/*
+	 * If there is an existing filter, make it the prev and don't drop its
+	 * task reference.
+	 */
+	filter->prev = current->seccomp.filter;
+	current->seccomp.filter = filter;
+	return 0;
 fail:
 	kfree(filter);
-	return ERR_PTR(ret);
+	return ret;
 }
 
 /**
- * seccomp_prepare_user_filter - prepares a user-supplied sock_fprog
+ * seccomp_attach_user_filter - attaches a user-supplied sock_fprog
  * @user_filter: pointer to the user data containing a sock_fprog.
  *
  * Returns 0 on success and non-zero otherwise.
  */
-static struct seccomp_filter *
-seccomp_prepare_user_filter(const char __user *user_filter)
+long seccomp_attach_user_filter(char __user *user_filter)
 {
 	struct sock_fprog fprog;
-	struct seccomp_filter *filter = ERR_PTR(-EFAULT);
+	long ret = -EFAULT;
 
 #ifdef CONFIG_COMPAT
 	if (is_compat_task()) {
@@ -433,56 +313,9 @@ seccomp_prepare_user_filter(const char __user *user_filter)
 #endif
 	if (copy_from_user(&fprog, user_filter, sizeof(fprog)))
 		goto out;
-	filter = seccomp_prepare_filter(&fprog);
+	ret = seccomp_attach_filter(&fprog);
 out:
-	return filter;
-}
-
-/**
- * seccomp_attach_filter: validate and attach filter
- * @flags:  flags to change filter behavior
- * @filter: seccomp filter to add to the current process
- *
- * Caller must be holding current->sighand->siglock lock.
- *
- * Returns 0 on success, -ve on error.
- */
-static long seccomp_attach_filter(unsigned int flags,
-				  struct seccomp_filter *filter)
-{
-	unsigned long total_insns;
-	struct seccomp_filter *walker;
-
-	BUG_ON(!spin_is_locked(&current->sighand->siglock));
-
-	/* Validate resulting filter length. */
-	total_insns = filter->len;
-	for (walker = current->seccomp.filter; walker; walker = walker->prev)
-		total_insns += walker->len + 4;  /* 4 instr penalty */
-	if (total_insns > MAX_INSNS_PER_PATH)
-		return -ENOMEM;
-
-	/* If thread sync has been requested, check that it is possible. */
-	if (flags & SECCOMP_FILTER_FLAG_TSYNC) {
-		int ret;
-
-		ret = seccomp_can_sync_threads();
-		if (ret)
-			return ret;
-	}
-
-	/*
-	 * If there is an existing filter, make it the prev and don't drop its
-	 * task reference.
-	 */
-	filter->prev = current->seccomp.filter;
-	current->seccomp.filter = filter;
-
-	/* Now that the new filter is in place, synchronize to all threads. */
-	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
-		seccomp_sync_threads();
-
-	return 0;
+	return ret;
 }
 
 /* get_seccomp_filter - increments the reference count of the filter on @tsk */
@@ -495,13 +328,6 @@ void get_seccomp_filter(struct task_struct *tsk)
 	atomic_inc(&orig->usage);
 }
 
-static inline void seccomp_filter_free(struct seccomp_filter *filter)
-{
-	if (filter) {
-		kfree(filter);
-	}
-}
-
 /* put_seccomp_filter - decrements the ref count of tsk->seccomp.filter */
 void put_seccomp_filter(struct task_struct *tsk)
 {
@@ -510,28 +336,8 @@ void put_seccomp_filter(struct task_struct *tsk)
 	while (orig && atomic_dec_and_test(&orig->usage)) {
 		struct seccomp_filter *freeme = orig;
 		orig = orig->prev;
-		seccomp_filter_free(freeme);
+		kfree(freeme);
 	}
-}
-
-/**
- * seccomp_send_sigsys - signals the task to allow in-process syscall emulation
- * @syscall: syscall number to send to userland
- * @reason: filter-supplied reason code to send to userland (via si_errno)
- *
- * Forces a SIGSYS with a code of SYS_SECCOMP and related sigsys info.
- */
-static void seccomp_send_sigsys(int syscall, int reason)
-{
-	struct siginfo info;
-	memset(&info, 0, sizeof(info));
-	info.si_signo = SIGSYS;
-	info.si_code = SYS_SECCOMP;
-	info.si_call_addr = (void __user *)KSTK_EIP(current);
-	info.si_errno = reason;
-	info.si_arch = syscall_get_arch(current, task_pt_regs(current));
-	info.si_syscall = syscall;
-	force_sig_info(SIGSYS, &info, current);
 }
 #endif	/* CONFIG_SECCOMP_FILTER */
 
@@ -555,10 +361,11 @@ static int mode1_syscalls_32[] = {
 void __secure_computing(int this_syscall)
 {
 	int mode = current->seccomp.mode;
-	int * syscall;
+	int exit_sig = 0;
+	int *syscall;
 
 	switch (mode) {
-	case 1:
+	case SECCOMP_MODE_STRICT:
 		syscall = mode1_syscalls;
 #ifdef CONFIG_COMPAT
 		if (is_compat_task())
@@ -568,7 +375,16 @@ void __secure_computing(int this_syscall)
 			if (*syscall == this_syscall)
 				return;
 		} while (*++syscall);
+		exit_sig = SIGKILL;
 		break;
+#ifdef CONFIG_SECCOMP_FILTER
+	case SECCOMP_MODE_FILTER:
+		if (seccomp_run_filters(this_syscall) == SECCOMP_RET_ALLOW)
+			return;
+		seccomp_filter_log_failure(this_syscall);
+		exit_sig = SIGSYS;
+		break;
+#endif
 	default:
 		BUG();
 	}
@@ -577,7 +393,7 @@ void __secure_computing(int this_syscall)
 	dump_stack();
 #endif
 	audit_seccomp(this_syscall);
-	do_exit(SIGKILL);
+	do_exit(exit_sig);
 }
 
 long prctl_get_seccomp(void)
@@ -585,25 +401,48 @@ long prctl_get_seccomp(void)
 	return current->seccomp.mode;
 }
 
-long prctl_set_seccomp(unsigned long seccomp_mode)
+/**
+ * prctl_set_seccomp: configures current->seccomp.mode
+ * @seccomp_mode: requested mode to use
+ * @filter: optional struct sock_fprog for use with SECCOMP_MODE_FILTER
+ *
+ * This function may be called repeatedly with a @seccomp_mode of
+ * SECCOMP_MODE_FILTER to install additional filters.  Every filter
+ * successfully installed will be evaluated (in reverse order) for each system
+ * call the task makes.
+ *
+ * Once current->seccomp.mode is non-zero, it may not be changed.
+ *
+ * Returns 0 on success or -EINVAL on failure.
+ */
+long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
 {
-	long ret;
+	long ret = -EINVAL;
 
-	/* can set it only once to be even more secure */
-	ret = -EPERM;
-	if (unlikely(current->seccomp.mode))
+	if (current->seccomp.mode &&
+	    current->seccomp.mode != seccomp_mode)
 		goto out;
 
-	ret = -EINVAL;
-	if (seccomp_mode && seccomp_mode <= NR_SECCOMP_MODES) {
-		current->seccomp.mode = seccomp_mode;
-		set_thread_flag(TIF_SECCOMP);
+	switch (seccomp_mode) {
+	case SECCOMP_MODE_STRICT:
+		ret = 0;
 #ifdef TIF_NOTSC
 		disable_TSC();
 #endif
-		ret = 0;
+		break;
+#ifdef CONFIG_SECCOMP_FILTER
+	case SECCOMP_MODE_FILTER:
+		ret = seccomp_attach_user_filter(filter);
+		if (ret)
+			goto out;
+		break;
+#endif
+	default:
+		goto out;
 	}
 
- out:
+	current->seccomp.mode = seccomp_mode;
+	set_thread_flag(TIF_SECCOMP);
+out:
 	return ret;
 }
