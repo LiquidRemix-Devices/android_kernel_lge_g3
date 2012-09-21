@@ -1077,6 +1077,8 @@ void umount_tree(struct mount *mnt, int propagate, struct list_head *kill)
 		list_del_init(&p->mnt_expire);
 		list_del_init(&p->mnt_list);
 		__touch_mnt_namespace(p->mnt_ns);
+		if (p->mnt_ns)
+			__mnt_make_shortterm(p);
 		p->mnt_ns = NULL;
 		if (mnt_has_parent(p)) {
 			p->mnt_parent->mnt_ghosts++;
@@ -1831,8 +1833,14 @@ static int do_add_mount(struct mount *newmnt, struct path *path, int mnt_flags)
 		return err;
 
 	err = -EINVAL;
-	if (!(mnt_flags & MNT_SHRINKABLE) && !check_mnt(real_mount(path->mnt)))
-		goto unlock;
+	if (unlikely(!check_mnt(real_mount(path->mnt)))) {
+		/* that's acceptable only for automounts done in private ns */
+		if (!(mnt_flags & MNT_SHRINKABLE))
+			goto unlock;
+		/* ... and for those we'd better have mountpoint still alive */
+		if (!real_mount(path->mnt)->mnt_ns)
+			goto unlock;
+	}
 
 	/* Refuse the same filesystem on the same mount point */
 	err = -EBUSY;
