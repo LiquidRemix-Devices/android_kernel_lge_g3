@@ -51,9 +51,13 @@
 #define asm_volatile_goto(x...)	do { asm goto(x); asm (""); } while (0)
 
 #ifdef CONFIG_ARCH_USE_BUILTIN_BSWAP
+#if __GNUC_MINOR__ >= 4
 #define __HAVE_BUILTIN_BSWAP32__
 #define __HAVE_BUILTIN_BSWAP64__
+#endif
+#if __GNUC_MINOR__ >= 8 || (defined(__powerpc__) && __GNUC_MINOR__ >= 6)
 #define __HAVE_BUILTIN_BSWAP16__
+#endif
 #endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 
 #define KASAN_ABI_VERSION 4
