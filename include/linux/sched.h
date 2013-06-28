@@ -1725,7 +1725,6 @@ extern void delete_from_adj_tree(struct task_struct *task);
 static inline void add_2_adj_tree(struct task_struct *task) { }
 static inline void delete_from_adj_tree(struct task_struct *task) { }
 #endif
-
 /*
  * Without tasklist or rcu lock it is not safe to dereference
  * the result of task_pgrp/task_session even if task == current,
