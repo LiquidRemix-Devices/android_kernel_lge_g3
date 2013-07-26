@@ -32,6 +32,10 @@
 
 #include <asm/ioctls.h>
 
+#ifndef CONFIG_LOGCAT_SIZE
+#define CONFIG_LOGCAT_SIZE 256
+#endif
+
 static unsigned int log_enabled = 1;
 static unsigned int log_always_on = 0;
 
