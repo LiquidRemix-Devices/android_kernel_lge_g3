@@ -2312,10 +2312,18 @@ msmsdcc_request(struct mmc_host *mmc, struct mmc_request *mrq)
 	if ((mmc->card) && (mmc->card->quirks & MMC_QUIRK_INAND_DATA_TIMEOUT))
 		host->curr.req_tout_ms = 20000;
 	else {
+		#ifdef CONFIG_MACH_LGE
+		/* LGE_CHANGE
+		 * Increase Request-Timeout from 10sec to 15sec (because of 'CMD25: Request timeout')
+		 * 2014-01-16, B2-BSP-FS@lge.com
+		 */
+		host->curr.req_tout_ms = 15000;
+		#else
 		if (mrq->cmd->opcode == MMC_SEND_STATUS)
 			host->curr.req_tout_ms = 500;
 		else
 			host->curr.req_tout_ms = MSM_MMC_REQ_TIMEOUT;
+		#endif
 	}
 	/*
 	 * Kick the software request timeout timer here with the timeout
