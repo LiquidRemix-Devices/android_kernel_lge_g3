@@ -300,7 +300,7 @@ static int __cpuinit msm_cpufreq_cpu_callback(struct notifier_block *nfb,
 	int rc;
 
 	/* Fail hotplug until this driver can get CPU clocks */
-	if (!hotplug_ready)
+	if (!cpu_clk[0])
 		return NOTIFY_BAD;
 
 	switch (action & ~CPU_TASKS_FROZEN) {
