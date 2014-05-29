@@ -61,6 +61,12 @@ config ZEN_DECISION
 	  services.
 
 	  If unsure, say N.
+	  
+config MAKO_HOTPLUG
+        bool "Enable mako-hotplug cpu hotplug driver"
+        default n
+        help
+          Generic Intelli-plug cpu hotplug driver for ARM SOCs	  
 
 config BLU_PLUG
 	bool "Dynamic hotplug driver"
