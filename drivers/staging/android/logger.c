@@ -27,6 +27,7 @@
 #include <linux/time.h>
 #include "logger.h"
 #include "logger_interface.h"
+#include <linux/sec_bsp.h>
 
 #include <asm/ioctls.h>
 
