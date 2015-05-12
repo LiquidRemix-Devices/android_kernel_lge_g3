@@ -124,7 +124,14 @@ static bool platform_suspend_again(void)
 		 */
 		suspend = pm_get_wakeup_count(&count, false) &&
 			  pm_save_wakeup_count(count);
+
+		if (!suspend)
+			pr_debug("%s: wakeup occurred during suspend_again\n",
+				__func__);
 	}
+
+	pr_debug("%s: votes for: %s\n", __func__,
+		suspend ? "suspend" : "resume");
 
 	return suspend;
 }
@@ -308,7 +315,8 @@ int suspend_devices_and_enter(suspend_state_t state)
 
 	do {
 		error = suspend_enter(state, &wakeup);
-	} while (!error && !wakeup && platform_suspend_again());
+	} while (!error && !wakeup && need_suspend_ops(state)
+		&& platform_suspend_again());
 
  Resume_devices:
 	suspend_test_start();
