@@ -61,16 +61,8 @@ DEVICES="$DEVICES" >&2
 KVER="$KVER" >&2
 TestBuild=0
 
-# Vars
-#export LOCALVERSION=~`echo $VER`
-#export CROSS_COMPILE=${HOME}/Builds/KERNEL-SOURCE/toolchains/arm-eabi-6.0/bin/arm-eabi-
-#export ARCH=arm
-#export SUBARCH=arm
-#export KBUILD_BUILD_USER=Eliminater74
-#export KBUILD_BUILD_HOST=HP_ENVY_dv7.com
-#export CCACHE=ccache
-export ERROR_LOG=ERRORS
 
+export ERROR_LOG=ERRORS
 export LOCALVERSION=$LOCALVERSION
 export CROSS_COMPILE=$CROSS_COMPILE
 export ARCH=$ARCH
@@ -118,6 +110,10 @@ function clean_all {
 		make clean && make mrproper
 }
 
+function set_timestamp() {
+#BDATE=$(date +"%Y%m%d")
+KVER="$KVER" >&2
+}
 
 ## Change Variant in anykernel.sh file ##
 function change_variant {
@@ -214,6 +210,22 @@ function pipe_output() {
 	dialog --title "$title" --tailbox screen.log 25 140
 }
 
+
+## Get Size Of Filename and Check it ##
+function check_filesize() {
+	minsize=3
+	maxsize=18
+	cd $ZIP_MOVE
+	file="NebulaKernel_""$REV""_MR_""$VARIANT""_""$KVER"".zip"
+	actualsize=$(du -k "$file" | cut -f 1)
+	if [ $actualsize -ge $maxsize ]; then
+    echo size is over $maxsize kilobytes
+	else
+    echo size is under $minimumsize kilobytes
+	echo Size is: $actualsize
+fi
+}
+
 ## Bump all Defconfigs ##
 function bump_defconfigs() {
 	dialog --inputbox \
@@ -262,12 +274,12 @@ function tweaks_off() {
 		do
 		DEFCONFIG="${x}_defconfig"
 		cd $DEFCONFIGS
-		sed -i '3968s/.*/CONFIG_CC_OPTIMIZE_FOR_SIZE=y/' $DEFCONFIG
-		#sed -i '3969s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		#sed -i '3970s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		sed -i '3971s/.*/# CONFIG_CC_OPTIMIZE_FAST is not set/' $DEFCONFIG
-		sed -i '3972s/.*/CONFIG_LESS_OPTIMIZATION=y/' $DEFCONFIG
-		sed -i '3973s/.*/# CONFIG_MORE_OPTIMIZATION is not set/' $DEFCONFIG
+		sed -i '4010s/.*/CONFIG_CC_OPTIMIZE_FOR_SIZE=y/' $DEFCONFIG
+		#sed -i '4011s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		#sed -i '4012s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		sed -i '4013s/.*/# CONFIG_CC_OPTIMIZE_FAST is not set/' $DEFCONFIG
+		sed -i '4014s/.*/CONFIG_LESS_OPTIMIZATION=y/' $DEFCONFIG
+		sed -i '4015s/.*/# CONFIG_MORE_OPTIMIZATION is not set/' $DEFCONFIG
 		cd $KERNEL_DIR
 	done
 
@@ -284,12 +296,12 @@ function tweaks_on() {
 		do
 		DEFCONFIG="${x}_defconfig"
 		cd $DEFCONFIGS
-		sed -i '3968s/.*/# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set/' $DEFCONFIG
-		#sed -i '3969s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		#sed -i '3970s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		sed -i '3971s/.*/CONFIG_CC_OPTIMIZE_FAST=y/' $DEFCONFIG
-		sed -i '3972s/.*/# CONFIG_LESS_OPTIMIZATION is not set/' $DEFCONFIG
-		sed -i '3973s/.*/CONFIG_MORE_OPTIMIZATION=y/' $DEFCONFIG
+		sed -i '4010s/.*/# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set/' $DEFCONFIG
+		#sed -i '4011s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		#sed -i '4012s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		sed -i '4013s/.*/CONFIG_CC_OPTIMIZE_FAST=y/' $DEFCONFIG
+		sed -i '4014s/.*/# CONFIG_LESS_OPTIMIZATION is not set/' $DEFCONFIG
+		sed -i '4015s/.*/CONFIG_MORE_OPTIMIZATION=y/' $DEFCONFIG
 		cd $KERNEL_DIR
 	done
 
@@ -390,16 +402,18 @@ function make_zip {
 function finished_build {
 	DATE_END=$(date +"%s")
 	DIFF=$(($DATE_END - $DATE_START))
+	check_filesize
 		if [ -e $ZIMAGE_DIR/$KERNEL ]; then
 	dialog --title  "Build Finished"  --backtitle  "Build Finished" \
 	--infobox  "NebulaKernel_'$REV'_MR_'$VARIANT'_'$KVER'.zip \n\
 	Created Successfully..\n\
+	FileSize: $actualsize kb \n\
     Time: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds." 7 65 ; read 
 	else
 dialog --title  "Build Not Completed"  --backtitle  "Build Had Errors" \
 	--infobox  "Build Aborted Do to errors, zImage doesnt exist,\n\
 	Unsuccessful Build.." 7 65 ; read
-	cd $REPACK_DIR
+	cd $ZIP_MOVE
 	rm -rf NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip
 	cd $KERNEL_DIR
 	fi
@@ -471,8 +485,9 @@ done
 
 ## Clean Left over Garbage Files Y/N ##
 dialog --title "Clean Garbage Files" \
-	--backtitle "Linux Shell Script Tutorial Example" \
-	--yesno "Do you want to clean garbage files ?" 7 60
+	--backtitle "Clean Junk From Build Dir" \
+	--yesno "Do you want to clean garbage files ? \n\
+	Its a good idea do say yes here.." 7 60
  
 	# Get exit status
 	# 0 means user hit [yes] button.
@@ -489,7 +504,8 @@ esac
 ##  Build Kernel Y/N ##
 dialog --title "Build Kernel" \
 	--backtitle "Linux Shell Script Tutorial Example" \
-	--yesno "Are you sure you want to build Kernel ?" 7 60
+	--yesno "You are about to Build Kernel For $VARIANT, \n\
+	Are you sure you want to build Kernel ?" 7 60
  
 	# Get exit status
 	# 0 means user hit [yes] button.
@@ -545,7 +561,7 @@ case $menuitem in
 		Tweaks_ON) tweaks_on ;;
 		Tweaks_OFF) tweaks_off ;;
 		Settings) menu_settings ;;
-		Test) compiler_defconfigs ;;
+		Test) file=build-anykernel.sh; check_filesize ;;
 		2Test) echo "kernel: $KERNEL_DIR and $ZIMAGE_DIR"; exit ;;
 		Exit) echo "Bye"; exit;;
 		Cancel) exit ;;
@@ -557,6 +573,7 @@ esac
 
 #### Main Menu Start ####
 main() {
+	set_timestamp
     main_menu
 }
 

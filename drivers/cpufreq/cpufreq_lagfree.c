@@ -107,7 +107,7 @@ static struct dbs_tuners dbs_tuners_ins = {
 	//.freq_step = 5,
 };
 
-static inline unsigned int get_cpu_idle_time(unsigned int cpu)
+/*static inline unsigned int get_cpu_idle_time(unsigned int cpu)
 {
 	unsigned int add_nice = 0, ret;
 
@@ -120,6 +120,7 @@ static inline unsigned int get_cpu_idle_time(unsigned int cpu)
 
 	return ret;
 }
+*/
 
 /* keep track of frequency transitions */
 static int
@@ -273,7 +274,7 @@ static ssize_t store_ignore_nice_load(struct cpufreq_policy *policy,
 	for_each_online_cpu(j) {
 		struct cpu_dbs_info_s *j_dbs_info;
 		j_dbs_info = &per_cpu(cpu_dbs_info, j);
-		j_dbs_info->prev_cpu_idle_up = get_cpu_idle_time(j);
+		j_dbs_info->prev_cpu_idle_up = get_cpu_idle_time(j, 0);
 		j_dbs_info->prev_cpu_idle_down = j_dbs_info->prev_cpu_idle_up;
 	}
 	mutex_unlock(&dbs_mutex);
@@ -366,7 +367,7 @@ static void dbs_check_cpu(int cpu)
 	idle_ticks = UINT_MAX;
 
 	/* Check for frequency increase */
-	total_idle_ticks = get_cpu_idle_time(cpu);
+	total_idle_ticks = get_cpu_idle_time(cpu, 0);
 	tmp_idle_ticks = total_idle_ticks -
 		this_dbs_info->prev_cpu_idle_up;
 	this_dbs_info->prev_cpu_idle_up = total_idle_ticks;
@@ -534,7 +535,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 			j_dbs_info = &per_cpu(cpu_dbs_info, j);
 			j_dbs_info->cur_policy = policy;
 
-			j_dbs_info->prev_cpu_idle_up = get_cpu_idle_time(cpu);
+			j_dbs_info->prev_cpu_idle_up = get_cpu_idle_time(cpu, 0);
 			j_dbs_info->prev_cpu_idle_down
 				= j_dbs_info->prev_cpu_idle_up;
 		}

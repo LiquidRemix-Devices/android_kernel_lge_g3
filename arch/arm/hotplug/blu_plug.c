@@ -28,6 +28,8 @@
 #include <linux/slab.h>
 #include <linux/input.h>
 
+#define BLU_PLUG "blu_plug"
+#define HOTPLUG_ENABLED			0
 #define INIT_DELAY		(20 * HZ) /* Initial delay to 20 sec */
 #define DELAY			(HZ / 2)
 #define UP_THRESHOLD		(70)

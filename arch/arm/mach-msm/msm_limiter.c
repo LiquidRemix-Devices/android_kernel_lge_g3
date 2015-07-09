@@ -1,5 +1,5 @@
 /*
- * MSM CPU Frequency Limiter Driver
+ * MSM CPU Frequency Limiter Driver (C) 2015 Changed Min to 268800 For underclock
  *
  * Copyright (c) 2013-2014, Dorimanx <yuri@bynet.co.il>
  * Copyright (c) 2013-2014, Pranav Vashi <neobuddy89@gmail.com>
@@ -31,7 +31,7 @@
 #define DEFAULT_SUSPEND_DEFER_TIME	10
 #define DEFAULT_SUSPEND_FREQUENCY	1728000
 #define DEFAULT_RESUME_FREQUENCY	2457600
-#define DEFAULT_MIN_FREQUENCY		300000
+#define DEFAULT_MIN_FREQUENCY		268800
 
 static unsigned int debug = 0;
 module_param_named(debug_mask, debug, uint, 0644);
