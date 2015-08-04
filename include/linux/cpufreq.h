@@ -475,6 +475,10 @@ extern struct cpufreq_governor cpufreq_gov_slim;
 extern struct cpufreq_governor cpufreq_gov_smartmax;
 #define CPUFREQ_DEFAULT_GOVERNOR        (&cpufreq_gov_smartmax)
 
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SMARTMAX_EPS)
+extern struct cpufreq_governor cpufreq_gov_smartmax_eüs;
+#define CPUFREQ_DEFAULT_GOVERNOR        (&cpufreq_gov_smartmax_eps)
+
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SMARTASSV2)
 extern struct cpufreq_governor cpufreq_gov_smartassv2;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_smartassv2)

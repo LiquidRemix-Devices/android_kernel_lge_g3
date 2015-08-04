@@ -295,12 +295,6 @@ config CPU_FREQ_DEFAULT_GOV_SLP
 	select CPU_FREQ_GOV_SLP
 	help
 	  Use the CPUFreq governor 'slp' as default.	
-
-config CPU_FREQ_DEFAULT_GOV_SMARTMAX
-	bool "smartmax"
-	select CPU_FREQ_GOV_SMARTMAX
-	help
-	  Use the CPUFreq governor 'smartmax' as default
 	  
 config CPU_FREQ_DEFAULT_GOV_SMARTASSV2
 	bool "smartass2"
@@ -312,7 +306,19 @@ config CPU_FREQ_DEFAULT_GOV_SMARTASSH3
 	bool "smartassH3"
 	select CPU_FREQ_GOV_SMARTASSH3
 	help
-	  Use the CPUFreq governor 'slp' as default.
+	  Use the CPUFreq governor 'slp' as default.	  
+
+config CPU_FREQ_DEFAULT_GOV_SMARTMAX
+	bool "smartmax"
+	select CPU_FREQ_GOV_SMARTMAX
+	help
+	  Use the CPUFreq governor 'smartmax' as default
+	  
+config CPU_FREQ_DEFAULT_GOV_SMARTMAX_EPS
+        bool "smartmax_eps"
+        select CPU_FREQ_GOV_SMARTMAX_EPS
+        help
+          Use the CPUFreq governor 'smartmax eps' as default	  
 	
 config CPU_FREQ_DEFAULT_GOV_USERSPACE
 	bool "userspace"
@@ -875,7 +881,14 @@ config CPU_FREQ_GOV_SMARTMAX_FIND5
 config CPU_FREQ_GOV_SMARTMAX_G3
 	bool "'smartmax' defaults for g3"
 	depends on CPU_FREQ_GOV_SMARTMAX
-##########################################			  	  	
+##########################################	
+
+config CPU_FREQ_GOV_SMARTMAX_EPS
+        tristate "'smartmax EPS' cpufreq policy governor"
+        select CPU_FREQ_TABLE
+        help
+          'smartmax EPS' is the extreme powersaving version of smartmax
+		  	  	
 config CPU_FREQ_GOV_ARTERACTIVE
 	tristate "'arteractive' cpufreq policy governor"
 	help
