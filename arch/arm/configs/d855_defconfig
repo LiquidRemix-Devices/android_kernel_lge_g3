@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 D855 Global 32gb
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev9.2-T1-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev9.2-T2-Experimental"
 #########################################################
 #########################################################
 
