@@ -62,14 +62,6 @@ config ZEN_DECISION
 
 	  If unsure, say N.
 
-config ASMP
-	bool "Multi-core automatic hotplug support"
-	depends on SMP
-	default n
-	help
-	  Automatically hotplugs the multiple cpu cores on and off
-	  based on cpu load and suspend state
-
 config BLU_PLUG
 	bool "Dynamic hotplug driver"
 	depends on HOTPLUG_CPU
@@ -77,11 +69,6 @@ config BLU_PLUG
 	help
 	  The Dynamic hotplug driver automatically online/offline CPUs proportional to system load.
 	  
-config MSM_SLEEPER
-	bool "Limit max frequency while screen is off"
-	default n
-	help
-	  Limit max frequency while screen is off
 	  
 config FAST_HOTPLUG
 	bool "Enable fast hotplug"

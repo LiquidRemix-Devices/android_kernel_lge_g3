@@ -1,8 +1,12 @@
 cflags-y	+= -o2
 
 ### HotPlugs ###
-obj-y	:= intelli_plug.o bricked_hotplug.o msm_zen_decision.o alucard_hotplug.o msm_hotplug.o mako_hotplug.o
+#obj-y	:= intelli_plug.o bricked_hotplug.o msm_zen_decision.o alucard_hotplug.o msm_hotplug.o mako_hotplug.o
 
-#obj-$(CONFIG_MSM_HOTPLUG) += msm_hotplug.o
-#obj-$(CONFIG_INTELLI_HOTPLUG) += intelli_hotplug.o
-#obj-$(CONFIG_BRICKED_HOTPLUG) += bricked_hotplug.o
+obj-$(CONFIG_MSM_HOTPLUG) += msm_hotplug.o
+obj-$(CONFIG_INTELLI_HOTPLUG) += intelli_plug.o
+obj-$(CONFIG_BRICKED_HOTPLUG) += bricked_hotplug.o
+obj-$(CONFIG_MSM_ZEN_DECISION) += msm_zen_decision.o
+obj-$(CONFIG_ALCARD_HOTPLUG) += alucard_hotplug.o
+obj-$(CONFIG_MAKO_HOTPLUG) += mako_hotplug.o
+
