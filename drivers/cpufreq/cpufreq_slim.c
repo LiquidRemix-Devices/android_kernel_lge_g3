@@ -851,7 +851,6 @@ static void dbs_deinit_freq_map_table(void)
 		kfree(tblmap[i]);
 
 	del_timer(&freq_mode_timer2);
-	del_timer(&freq_mode_timer);
 }
 
 static inline int get_cpu_freq_index(unsigned int freq)
