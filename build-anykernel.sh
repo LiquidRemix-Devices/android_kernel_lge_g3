@@ -217,36 +217,95 @@ function pipe_output() {
 ## Bump all Defconfigs ##
 function bump_defconfigs() {
 	dialog --inputbox \
-		"What is your username?" 0 0 2> /tmp/inputbox.tmp.$$
+		"Enter Version NFO:" 0 0 2> /tmp/inputbox.tmp.$$
 		retval=$?
 		input=`cat /tmp/inputbox.tmp.$$`
 		rm -f /tmp/inputbox.tmp.$$
+			if [ -z "$input" ]; then
+			echo "String is empty"
+			exit
+			fi
 		case $retval in
 		0)
-		echo "Your username is '$input'"
+		echo "Version Enter: '$input'"
 		BUMP_REV="$input"
 		REV="$input";;
 		1)
 		echo "Cancel pressed.";;
 		esac
-		echo sed -i '17s/.*/REV="'$REV'"/' build-anykernel.cfg
-		#sed -i '17s/.*/REV="'$REV'"/' build-anykernel.cfg
+		sed -i '6s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $REPACK_DIR/anykernel.sh
+		sed -i '24s/.*/REV="'$REV'"/' $KERNEL_DIR/build-anykernel.cfg
 		OIFS=$IFS
 		IFS=';'
 		arr2=$DEVICES
 		for x in $arr2
 		do
 		DEFCONFIG="${x}_defconfig"
-		echo $DEFCONFIG and $BUMP_REV
 		cd $DEFCONFIGS
-		echo "$DEFCONFIGS"
-		#sed -i '9s/.*/CONFIG_LOCALVERSION="-Nebula_'$BUMP_REV'_w/MultiRom_Support"'/' $DEFCONFIG
+		sed -i '9s/.*/CONFIG_LOCALVERSION="-Nebula_Rev'$BUMP_REV'-Experimental"/' $DEFCONFIG
 		cd $KERNEL_DIR
 done
 
 IFS=$OIFS
+TITLE="Version Bumped"
+BACKTITLE="Version Bumped"
+INFOBOX="Bumped to Version $BUMP_REV"
+message
+}
+
+## Change Tweaks ##
+function tweaks_off() {
+		OIFS=$IFS
+		IFS=';'
+		arr2=$TWEAKNOT_DEVICES
+		for x in $arr2
+		do
+		DEFCONFIG="${x}_defconfig"
+		cd $DEFCONFIGS
+		sed -i '3968s/.*/CONFIG_CC_OPTIMIZE_FOR_SIZE=y/' $DEFCONFIG
+		#sed -i '3969s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		#sed -i '3970s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		sed -i '3971s/.*/# CONFIG_CC_OPTIMIZE_FAST is not set/' $DEFCONFIG
+		sed -i '3972s/.*/CONFIG_LESS_OPTIMIZATION=y/' $DEFCONFIG
+		sed -i '3973s/.*/# CONFIG_MORE_OPTIMIZATION is not set/' $DEFCONFIG
+		cd $KERNEL_DIR
+	done
+
+IFS=$OIFS
 exit
 }
+
+## Change Tweaks ##
+function tweaks_on() {
+		OIFS=$IFS
+		IFS=';'
+		arr2=$TWEAKNOT_DEVICES
+		for x in $arr2
+		do
+		DEFCONFIG="${x}_defconfig"
+		cd $DEFCONFIGS
+		sed -i '3968s/.*/# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set/' $DEFCONFIG
+		#sed -i '3969s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		#sed -i '3970s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
+		sed -i '3971s/.*/CONFIG_CC_OPTIMIZE_FAST=y/' $DEFCONFIG
+		sed -i '3972s/.*/# CONFIG_LESS_OPTIMIZATION is not set/' $DEFCONFIG
+		sed -i '3973s/.*/CONFIG_MORE_OPTIMIZATION=y/' $DEFCONFIG
+		cd $KERNEL_DIR
+	done
+
+IFS=$OIFS
+exit
+}
+
+## Unversal Message Box ##
+## $TITLE = The Title
+## $BACKTITLE = The Back Title
+## $INFOBOX = Message you want displayed
+function message() {
+	dialog --title  "$TITLE"  --backtitle  "$BACKTITLE" \
+	--infobox  "$INFOBOX" 7 65 ; read 
+}
+
 
 function menu_settings() {
 		echo "Test1: $TestBuild"
@@ -466,6 +525,8 @@ Choose the TASK" 20 50 8 \
 	"Log" "Logging Options [Log: $ERROR_LOG]" \
 	"Ccache" "Clear Ccache" \
 	"Bump" "Bump Version" \
+	"Tweaks_ON" "Tweaks ON" \
+	"Tweaks_OFF" "Tweaks OFF" \
 	"Settings" "Settings" \
 	"Test" "Testing Stage Area" \
 	"2Test" "Test 2" \
@@ -480,8 +541,11 @@ case $menuitem in
 		Clean) clean_all ;;
 		Log) menu_log ;;
 		Ccache) echo "Clearing Ccache.."; rm -rf ${HOME}/.ccache ;;
-		Test) bump_defconfigs ;;
+		Bump) bump_defconfigs ;;
+		Tweaks_ON) tweaks_on ;;
+		Tweaks_OFF) tweaks_off ;;
 		Settings) menu_settings ;;
+		Test) compiler_defconfigs ;;
 		2Test) echo "kernel: $KERNEL_DIR and $ZIMAGE_DIR"; exit ;;
 		Exit) echo "Bye"; exit;;
 		Cancel) exit ;;
