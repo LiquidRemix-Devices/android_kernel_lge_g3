@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 VS985 Verizon
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev8.1-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev8.2-Experimental"
 #########################################################
 #########################################################
 
@@ -4007,9 +4007,9 @@ CONFIG_QMI_ENCDEC=y
 
 
 
-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
 # CONFIG_CC_OPTIMIZE_DEFAULT is not set
 # CONFIG_CC_OPTIMIZE_MORE is not set
-# CONFIG_CC_OPTIMIZE_FAST is not set
-CONFIG_LESS_OPTIMIZATION=y
-# CONFIG_MORE_OPTIMIZATION is not set
+CONFIG_CC_OPTIMIZE_FAST=y
+# CONFIG_LESS_OPTIMIZATION is not set
+CONFIG_MORE_OPTIMIZATION=y
