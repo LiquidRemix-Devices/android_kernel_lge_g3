@@ -15,8 +15,8 @@
 # Added: batch Build                                                                      #
 # Added: External Configure File For easy editing                                         #
 # Added: Bump Version on all Defconfigs, ZipNames and anykernel.sh                        #
-# Added Tweaks on and off for the lowend devices that cant handle them on                 #
-# V2.5 08/12/2015                                                                         #
+#                                                                                         #
+#                                                                                         #
 #                                                                                         #
 #                                                                                         #
 #                                                                                         #
