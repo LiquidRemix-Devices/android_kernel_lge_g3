@@ -444,7 +444,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	selected_oom_score_adj = min_score_adj;
 
 	rcu_read_lock();
-
 #ifdef CONFIG_ANDROID_LMK_ADJ_RBTREE
 	for (tsk = pick_first_task();
 		tsk != pick_last_task();
@@ -488,6 +487,13 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 #else
 			continue;
 #endif
+		}
+		if (fatal_signal_pending(p) ||
+				((p->flags & PF_EXITING) &&
+					test_tsk_thread_flag(p, TIF_MEMDIE))) {
+			lowmem_print(2, "skip slow dying process %d\n", p->pid);
+			task_unlock(p);
+			continue;
 		}
 		tasksize = get_mm_rss(p->mm);
 		task_unlock(p);
@@ -673,14 +679,16 @@ DEFINE_SPINLOCK(lmk_lock);
 struct rb_root tasks_scoreadj = RB_ROOT;
 void add_2_adj_tree(struct task_struct *task)
 {
-	struct rb_node **link = &tasks_scoreadj.rb_node;
+	struct rb_node **link;
 	struct rb_node *parent = NULL;
 	struct task_struct *task_entry;
 	s64 key = task->signal->oom_score_adj;
+
 	/*
 	 * Find the right place in the rbtree:
 	 */
 	spin_lock(&lmk_lock);
+	link =  &tasks_scoreadj.rb_node;
 	while (*link) {
 		parent = *link;
 		task_entry = rb_entry(parent, struct task_struct, adj_node);
@@ -699,10 +707,12 @@ void add_2_adj_tree(struct task_struct *task)
 void delete_from_adj_tree(struct task_struct *task)
 {
 	spin_lock(&lmk_lock);
-	rb_erase(&task->adj_node, &tasks_scoreadj);
+	if (!RB_EMPTY_NODE(&task->adj_node)) {
+		rb_erase(&task->adj_node, &tasks_scoreadj);
+		RB_CLEAR_NODE(&task->adj_node);
+	}
 	spin_unlock(&lmk_lock);
 }
-
 
 static struct task_struct *pick_next_from_adj_tree(struct task_struct *task)
 {
@@ -715,7 +725,7 @@ static struct task_struct *pick_next_from_adj_tree(struct task_struct *task)
 	if (!next)
 		return NULL;
 
-	 return rb_entry(next, struct task_struct, adj_node);
+	return rb_entry(next, struct task_struct, adj_node);
 }
 
 static struct task_struct *pick_first_task(void)
@@ -731,7 +741,6 @@ static struct task_struct *pick_first_task(void)
 
 	return rb_entry(left, struct task_struct, adj_node);
 }
-
 static struct task_struct *pick_last_task(void)
 {
 	struct rb_node *right;
@@ -746,6 +755,7 @@ static struct task_struct *pick_last_task(void)
 	return rb_entry(right, struct task_struct, adj_node);
 }
 #endif
+
 
 module_param_named(cost, lowmem_shrinker.seeks, int, S_IRUGO | S_IWUSR);
 #ifdef CONFIG_ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES
