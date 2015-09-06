@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 D850 AT&T
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev8.3-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev8.4-T1-Experimental"
 #########################################################
 #########################################################
 
@@ -135,6 +135,7 @@ CONFIG_EXFAT_DEFAULT_IOCHARSET="utf8"
 CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
 CONFIG_ARCH_USE_BUILTIN_BSWAP=y
 CONFIG_BLK_DEV_DM_BUILTIN=y
+CONFIG_WAKE_GESTURES=y
 
 #### MultiROM Support ####
 CONFIG_KEXEC=y
