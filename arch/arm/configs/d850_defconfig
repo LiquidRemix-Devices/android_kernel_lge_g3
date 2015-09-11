@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 D850 AT&T
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev8.4-Final-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev8.5-T1-Experimental"
 #########################################################
 #########################################################
 
