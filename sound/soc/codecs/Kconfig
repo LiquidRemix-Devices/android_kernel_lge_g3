@@ -507,3 +507,10 @@ config SOUND_CONTROL_HAX_3_GPL
 	default y
 	help
 	  FauxSound WCD93xx chipset sound control hacks 3.0 for deeper hax
+
+# LGE_BSP_AUDIO, jeremy.pi@lge.com, Audience eS325 ALSA SoC Audio driver
+config SND_SOC_ES325_SLIM
+	bool "Audience es325 SLIMBus"
+	default n
+	help
+		Audience es325 Dual Mic Noise Reduction
