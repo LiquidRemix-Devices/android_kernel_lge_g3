@@ -221,4 +221,5 @@
 
 &sdhc_1 {
 	qcom,pad-drv-on = <0x7 0x4 0x4>;
+	qcom,vdd-lpm-sup = "disable";
 };

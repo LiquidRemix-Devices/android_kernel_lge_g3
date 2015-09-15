@@ -146,6 +146,9 @@
 		qcom,msm-bus,vectors-KBps =
 				<86 512 0 0>,
 				<86 512 500 800>;
+		// Disable Auto RFR (Ready For Receive) Function of msm_serial_hs
+		// Because of BT Sleep control error
+		qcom,msm-obs;
 	};
 
 	// IRRC (BLSP 2 UART 6). UART6 For IRRC

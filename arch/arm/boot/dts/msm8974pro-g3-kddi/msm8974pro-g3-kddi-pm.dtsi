@@ -30,6 +30,12 @@
 			revision = "...";
 		};
 	};
+	qcom,msm-thermal {
+		qcom,limit-temp = <70>;
+		qcom,temp-hysteresis = <5>;
+		qcom,core-limit-temp = <90>;
+		qcom,core-temp-hysteresis = <5>;
+	};
 	pm8941,lge_boost_gpio {
 		compatible = "pm8941,lge_boost_gpio";
 		label = "PM8941 GPIO 21 for Boost IC";
@@ -370,7 +376,7 @@
 		
 
 		qcom,leds@d300 {
-			flash-boost-supply = <&pm8941_chg_boost>;
+			flash_boost-supply = <&pm8941_chg_boost>;
 		};
 
 		pm8941_mvs1: regulator@8300 {

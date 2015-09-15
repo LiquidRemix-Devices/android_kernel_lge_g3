@@ -17,11 +17,24 @@
 };
 
 &soc {
+	/* ModemBSP: DDM tty & smd driver */
+	qcom,smdttyatnt {
+		compatible = "qcom,smdttyatnt";
+
+		smdtty_data11: qcom,smdtty-data11 {
+			qcom,smdtty-remote = "modem";
+			qcom,smdtty-port-name = "DATA11";
+		};
+	};
+
 	qcom,smdtty {
 		smdtty_ds: qcom,smdtty-ds {
 			qcom,smdtty-remote = "modem";
 			qcom,smdtty-port-name = "DS";
 		};
+
+		/* ModemBSP: DDM tty & smd driver */
+		/delete-node/qcom,smdtty-data11;
 	};
 };
 

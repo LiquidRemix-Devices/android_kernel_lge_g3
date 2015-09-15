@@ -62,10 +62,14 @@
 		};
 		max17048@36 {
 			status = "ok";
-			max17048,rcomp = <96>;
-			max17048,temp_co_hot = <225>;
-			max17048,temp_co_cold = <5050>;
-			max17048,empty = <0>;
+			max17048,rcomp_lgc = <96>;
+			max17048,temp_co_hot_lgc= <225>;
+			max17048,temp_co_cold_lgc = <5050>;
+			max17048,empty_lgc = <0>;
+			max17048,rcomp_tcd = <106>;
+			max17048,temp_co_hot_tcd= <900>;
+			max17048,temp_co_cold_tcd = <6325>;
+			max17048,empty_tcd = <0>;
 		};
 
 		bq24296@6b {
@@ -98,6 +102,13 @@
 		ti,wl_en1_gpio = <&pm8941_gpios 23 0x0>;
 		ti,wl_chg_int_gpio = <&pm8941_gpios 34 0x2>;
 		ti,wl_chg_full_gpio = <&pm8941_gpios 36 0x0>;
+	};
+
+	qcom,msm-thermal {
+		qcom,limit-temp = <70>;
+		qcom,temp-hysteresis = <5>;
+		qcom,core-limit-temp = <90>;
+		qcom,core-temp-hysteresis = <5>;
 	};
 
 	pm8941,lge_boost_gpio {

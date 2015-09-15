@@ -12,7 +12,7 @@
 
 &soc {
 	syncoam_sm100 {
-		status = "ok";
+		status = "disable";
 		vdd_ana-supply = <&pm8941_l19>;
 	};
 
