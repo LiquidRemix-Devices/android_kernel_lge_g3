@@ -25,11 +25,7 @@
 #include <linux/poll.h>
 #include <linux/slab.h>
 #include <linux/time.h>
-#include <linux/vmalloc.h>
 #include "logger.h"
-#include "logger_interface.h"
-#include <linux/sec_bsp.h>
-#include <linux/powersuspend.h>
 
 #include <asm/ioctls.h>
 
@@ -38,69 +34,41 @@
 #endif
 
 /*
- * 0 - Enabled
- * 1 - Auto Suspend
- * 2 - Disabled
- */
-static unsigned int log_mode = 1;
-static unsigned int log_enabled = 1; // Do not change this value
-
-module_param(log_mode, uint, S_IWUSR | S_IRUGO);
-
-/**
  * struct logger_log - represents a specific log, such as 'main' or 'radio'
- * @buffer:	The actual ring buffer
- * @misc:	The "misc" device representing the log
- * @wq:		The wait queue for @readers
- * @readers:	This log's readers
- * @mutex:	The mutex that protects the @buffer
- * @w_off:	The current write head offset
- * @head:	The head, or location that readers start reading at.
- * @size:	The size of the log
- * @logs:	The list of log channels
  *
  * This structure lives from module insertion until module removal, so it does
  * not need additional reference counting. The structure is protected by the
  * mutex 'mutex'.
  */
 struct logger_log {
-	unsigned char		*buffer;
-	struct miscdevice	misc;
-	wait_queue_head_t	wq;
-	struct list_head	readers;
-	struct mutex		mutex;
-	size_t			w_off;
-	size_t			head;
-	size_t			size;
-	struct list_head	logs;
+	unsigned char		*buffer;/* the ring buffer itself */
+	struct miscdevice	misc;	/* misc device representing the log */
+	wait_queue_head_t	wq;	/* wait queue for readers */
+	struct list_head	readers; /* this log's readers */
+	struct mutex		mutex;	/* mutex protecting buffer */
+	size_t			w_off;	/* current write head offset */
+	size_t			head;	/* new readers start here */
+	size_t			size;	/* size of the log */
 };
 
-static LIST_HEAD(log_list);
-
-
-/**
+/*
  * struct logger_reader - a logging device open for reading
- * @log:	The associated log
- * @list:	The associated entry in @logger_log's list
- * @r_off:	The current read head offset.
- * @r_all:	The reader can read all entries.
- * @r_ver:	The reader ABI version.
  *
  * This object lives from open to release, so we don't need additional
  * reference counting. The structure is protected by log->mutex.
  */
 struct logger_reader {
-	struct logger_log	*log;
-	struct list_head	list;
-	size_t			r_off;
-	bool			r_all;
-	int			r_ver;
+	struct logger_log	*log;	/* associated log */
+	struct list_head	list;	/* entry in logger_log's list */
+	size_t			r_off;	/* current read head offset */
+	bool			r_all;	/* reader can read all entries */
+	int			r_ver;	/* reader ABI version */
 };
 
 /* logger_offset - returns index 'n' into the log via (optimized) modulus */
-static size_t logger_offset(struct logger_log *log, size_t n)
+size_t logger_offset(struct logger_log *log, size_t n)
 {
-	return n & (log->size - 1);
+	return n & (log->size-1);
 }
 
 
@@ -432,12 +400,6 @@ static void do_write_log(struct logger_log *log, const void *buf, size_t count)
 {
 	size_t len;
 
-	// if logger mode is disabled, terminate instantly
-	if (logger_mode == 0)
-	{
-			return;
-	}
-
 	len = min(count, log->size - log->w_off);
 	memcpy(log->buffer + log->w_off, buf, len);
 
@@ -461,12 +423,6 @@ static ssize_t do_write_log_from_user(struct logger_log *log,
 {
 	size_t len;
 
-	// if logger mode is disabled, terminate instantly
-	if (logger_mode == 0)
-	{
-			return 0;
-	}
-
 	len = min(count, log->size - log->w_off);
 	if (len && copy_from_user(log->buffer + log->w_off, buf, len))
 		return -EFAULT;
@@ -486,39 +442,20 @@ static ssize_t do_write_log_from_user(struct logger_log *log,
 	return count;
 }
 
-static void log_early_suspend(struct power_suspend *handler)
-{
-	if (log_mode == 1)
-		log_enabled = 0;
-}
-
-static void log_late_resume(struct power_suspend *handler)
-{
-	log_enabled = 1;
-}
-
-static struct power_suspend log_suspend = {
-	.suspend = log_early_suspend,
-	.resume = log_late_resume,
-};
-
 /*
  * logger_aio_write - our write method, implementing support for write(),
  * writev(), and aio_write(). Writes are our fast path, and we try to optimize
  * them above all else.
  */
-static ssize_t logger_aio_write(struct kiocb *iocb, const struct iovec *iov,
+ssize_t logger_aio_write(struct kiocb *iocb, const struct iovec *iov,
 			 unsigned long nr_segs, loff_t ppos)
 {
-	struct logger_log *log;
-	size_t orig, ret = 0;
+	struct logger_log *log = file_get_log(iocb->ki_filp);
+	size_t orig = log->w_off;
 	struct logger_entry header;
 	struct timespec now;
+	ssize_t ret = 0;
 
-	if (!log_enabled || log_mode == 2)
-		return 0;
-
-	log = file_get_log(iocb->ki_filp);
 	now = current_kernel_time();
 
 	header.pid = current->tgid;
@@ -534,8 +471,6 @@ static ssize_t logger_aio_write(struct kiocb *iocb, const struct iovec *iov,
 		return 0;
 
 	mutex_lock(&log->mutex);
-
-	orig = log->w_off;
 
 	/*
 	 * Fix up any readers, pulling them forward to the first readable
@@ -574,15 +509,7 @@ static ssize_t logger_aio_write(struct kiocb *iocb, const struct iovec *iov,
 	return ret;
 }
 
-static struct logger_log *get_log_from_minor(int minor)
-{
-	struct logger_log *log;
-
-	list_for_each_entry(log, &log_list, logs)
-		if (log->misc.minor == minor)
-			return log;
-	return NULL;
-}
+static struct logger_log *get_log_from_minor(int);
 
 /*
  * logger_open - the log's open() file operation
@@ -743,11 +670,6 @@ static long logger_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			ret = -EBADF;
 			break;
 		}
-		if (!(in_egroup_p(file->f_dentry->d_inode->i_gid) ||
-				capable(CAP_SYSLOG))) {
-			ret = -EPERM;
-			break;
-		}
 		list_for_each_entry(reader, &log->readers, list)
 			reader->r_off = log->w_off;
 		log->head = log->w_off;
@@ -788,111 +710,84 @@ static const struct file_operations logger_fops = {
 };
 
 /*
- * Log size must be a power of two, greater than LOGGER_ENTRY_MAX_LEN,
- * and less than LONG_MAX minus LOGGER_ENTRY_MAX_LEN.
+ * Defines a log structure with name 'NAME' and a size of 'SIZE' bytes, which
+ * must be a power of two, and greater than
+ * (LOGGER_ENTRY_MAX_PAYLOAD + sizeof(struct logger_entry)).
  */
-static int __init create_log(char *log_name, int size)
+#define DEFINE_LOGGER_DEVICE(VAR, NAME, SIZE) \
+static unsigned char _buf_ ## VAR[SIZE]; \
+static struct logger_log VAR = { \
+	.buffer = _buf_ ## VAR, \
+	.misc = { \
+		.minor = MISC_DYNAMIC_MINOR, \
+		.name = NAME, \
+		.fops = &logger_fops, \
+		.parent = NULL, \
+	}, \
+	.wq = __WAIT_QUEUE_HEAD_INITIALIZER(VAR .wq), \
+	.readers = LIST_HEAD_INIT(VAR .readers), \
+	.mutex = __MUTEX_INITIALIZER(VAR .mutex), \
+	.w_off = 0, \
+	.head = 0, \
+	.size = SIZE, \
+};
+
+DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN, CONFIG_LOGCAT_SIZE*1024)
+DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS, CONFIG_LOGCAT_SIZE*1024)
+DEFINE_LOGGER_DEVICE(log_radio, LOGGER_LOG_RADIO, CONFIG_LOGCAT_SIZE*1024)
+DEFINE_LOGGER_DEVICE(log_system, LOGGER_LOG_SYSTEM, CONFIG_LOGCAT_SIZE*1024)
+
+static struct logger_log *get_log_from_minor(int minor)
 {
-	int ret = 0;
-	struct logger_log *log;
-	unsigned char *buffer;
+	if (log_main.misc.minor == minor)
+		return &log_main;
+	if (log_events.misc.minor == minor)
+		return &log_events;
+	if (log_radio.misc.minor == minor)
+		return &log_radio;
+	if (log_system.misc.minor == minor)
+		return &log_system;
+	return NULL;
+}
 
-	buffer = vmalloc(size);
-	if (buffer == NULL)
-		return -ENOMEM;
+static int __init init_log(struct logger_log *log)
+{
+	int ret;
 
-	log = kzalloc(sizeof(struct logger_log), GFP_KERNEL);
-	if (log == NULL) {
-		ret = -ENOMEM;
-		goto out_free_buffer;
-	}
-	log->buffer = buffer;
-
-	log->misc.minor = MISC_DYNAMIC_MINOR;
-	log->misc.name = kstrdup(log_name, GFP_KERNEL);
-	if (log->misc.name == NULL) {
-		ret = -ENOMEM;
-		goto out_free_log;
-	}
-
-	log->misc.fops = &logger_fops;
-	log->misc.parent = NULL;
-
-	init_waitqueue_head(&log->wq);
-	INIT_LIST_HEAD(&log->readers);
-	mutex_init(&log->mutex);
-	log->w_off = 0;
-	log->head = 0;
-	log->size = size;
-
-	INIT_LIST_HEAD(&log->logs);
-	list_add_tail(&log->logs, &log_list);
-
-	/* finally, initialize the misc device for this log */
 	ret = misc_register(&log->misc);
 	if (unlikely(ret)) {
 		printk(KERN_ERR "logger: failed to register misc "
 		       "device for log '%s'!\n", log->misc.name);
-		goto out_free_log;
+		return ret;
 	}
 
 	printk(KERN_INFO "logger: created %luK log '%s'\n",
 	       (unsigned long) log->size >> 10, log->misc.name);
 
 	return 0;
-
-out_free_log:
-	kfree(log);
-
-out_free_buffer:
-	vfree(buffer);
-	return ret;
 }
 
 static int __init logger_init(void)
 {
 	int ret;
 
-	register_power_suspend(&log_suspend);
-
-	ret = create_log(LOGGER_LOG_MAIN, CONFIG_LOGCAT_SIZE*1024);
+	ret = init_log(&log_main);
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_EVENTS, CONFIG_LOGCAT_SIZE*1024);
+	ret = init_log(&log_events);
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_RADIO, CONFIG_LOGCAT_SIZE*1024);
+	ret = init_log(&log_radio);
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_SYSTEM, CONFIG_LOGCAT_SIZE*1024);
+	ret = init_log(&log_system);
 	if (unlikely(ret))
 		goto out;
 
 out:
 	return ret;
 }
-
-static void __exit logger_exit(void)
-{
-	struct logger_log *current_log, *next_log;
-
-	list_for_each_entry_safe(current_log, next_log, &log_list, logs) {
-		/* we have to delete all the entry inside log_list */
-		misc_deregister(&current_log->misc);
-		vfree(current_log->buffer);
-		kfree(current_log->misc.name);
-		list_del(&current_log->logs);
-		kfree(current_log);
-	}
-}
-
-
 device_initcall(logger_init);
-module_exit(logger_exit);
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Robert Love, <rlove@google.com>");
-MODULE_DESCRIPTION("Android Logger");
