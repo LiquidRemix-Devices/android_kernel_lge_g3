@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 LS990 Sprint
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev8.5-T3-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev8.6-T1-Experimental"
 #########################################################
 #########################################################
 
