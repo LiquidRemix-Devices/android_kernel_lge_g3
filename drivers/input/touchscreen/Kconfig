@@ -1126,4 +1126,9 @@ config WAKE_GESTURES
     bool "Wake Gestures"
 
 
+config STATE_NOTIFIER
+        bool "State Notifier"
+	depends on TOUCHSCREEN_SYNAPTICS_G2
+	default y
+
 endif
