@@ -24,7 +24,7 @@
 				fw_image_s3528_a1 = "synaptics/g3/PLG468-V1.05-PR1801483-DS5.2.100.0.1005_50055185.img";
 				fw_image_s3528_a1_suntel = "synaptics/g3/PLG446-V1.20-PR1884174-DS5.2.18.1.1004_40055194_v7_2.img";
 				fw_image_s3528_a1_factory = "synaptics/g3/PLG468-V1.19-PR1880917-DS5.2.200.1.1002_50055193504C47343638.img";
-				fw_image_s3621 = "synaptics/g3/PLG298-F004.img";
+				fw_image_s3621 = "synaptics/g3/L0L55P1_1_05.img";
 				panel_spec = "synaptics/g3/g3_limit.txt";
 			};
 			
@@ -35,7 +35,7 @@
 				fw_image_s3528_a1 = "synaptics/g3/PLG468-V1.05-PR1801483-DS5.2.100.0.1005_50055185.img";
 				fw_image_s3528_a1_suntel = "synaptics/g3/PLG446-V1.20-PR1884174-DS5.2.18.1.1004_40055194_v7_2.img";
 				fw_image_s3528_a1_factory = "synaptics/g3/PLG468-V1.19-PR1880917-DS5.2.200.1.1002_50055193504C47343638.img";
-				fw_image_s3621 = "synaptics/g3/PLG298-F004.img";
+				fw_image_s3621 = "synaptics/g3/L0L55P1_1_05";
 				panel_spec = "synaptics/g3/g3_limit.txt";
 		};
 	};
