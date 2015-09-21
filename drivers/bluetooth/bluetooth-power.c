@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2010, 2013 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2009-2010, 2013-2014 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -26,6 +26,7 @@
 #include <linux/bluetooth-power.h>
 #include <linux/slab.h>
 #include <linux/regulator/consumer.h>
+#include <net/cnss.h>
 
 #define BT_PWR_DBG(fmt, arg...)  pr_debug("%s: " fmt "\n" , __func__ , ## arg)
 #define BT_PWR_INFO(fmt, arg...) pr_info("%s: " fmt "\n" , __func__ , ## arg)
@@ -34,6 +35,7 @@
 
 static struct of_device_id bt_power_match_table[] = {
 	{	.compatible = "qca,ar3002" },
+	{	.compatible = "qca,qca6174" },
 	{}
 };
 
@@ -167,20 +169,15 @@ static int bt_configure_gpios(int on)
 			BT_PWR_ERR("Unable to set direction\n");
 			return rc;
 		}
-
+		msleep(50);
 		rc = gpio_direction_output(bt_reset_gpio, 1);
 		if (rc) {
 			BT_PWR_ERR("Unable to set direction\n");
 			return rc;
 		}
-		msleep(100);
+		msleep(50);
 	} else {
 		gpio_set_value(bt_reset_gpio, 0);
-
-		rc = gpio_direction_input(bt_reset_gpio);
-		if (rc)
-			BT_PWR_ERR("Unable to set direction\n");
-
 		msleep(100);
 	}
 	return rc;
@@ -200,11 +197,11 @@ static int bluetooth_power(int on)
 				goto out;
 			}
 		}
-		if (bt_power_pdata->bt_vdd_ldo) {
-			rc = bt_configure_vreg(bt_power_pdata->bt_vdd_ldo);
+		if (bt_power_pdata->bt_vdd_xtal) {
+			rc = bt_configure_vreg(bt_power_pdata->bt_vdd_xtal);
 			if (rc < 0) {
-				BT_PWR_ERR("bt_power vddldo config failed");
-				goto vdd_ldo_fail;
+				BT_PWR_ERR("bt_power vddxtal config failed");
+				goto vdd_xtal_fail;
 			}
 		}
 		if (bt_power_pdata->bt_vdd_pa) {
@@ -212,6 +209,13 @@ static int bluetooth_power(int on)
 			if (rc < 0) {
 				BT_PWR_ERR("bt_power vddpa config failed");
 				goto vdd_pa_fail;
+			}
+		}
+		if (bt_power_pdata->bt_vdd_ldo) {
+			rc = bt_configure_vreg(bt_power_pdata->bt_vdd_ldo);
+			if (rc < 0) {
+				BT_PWR_ERR("bt_power vddldo config failed");
+				goto vdd_ldo_fail;
 			}
 		}
 		if (bt_power_pdata->bt_chip_pwd) {
@@ -235,13 +239,14 @@ gpio_fail:
 			gpio_free(bt_power_pdata->bt_gpio_sys_rst);
 		bt_vreg_disable(bt_power_pdata->bt_chip_pwd);
 chip_pwd_fail:
-		bt_vreg_disable(bt_power_pdata->bt_vdd_pa);
-vdd_pa_fail:
 		bt_vreg_disable(bt_power_pdata->bt_vdd_ldo);
 vdd_ldo_fail:
+		bt_vreg_disable(bt_power_pdata->bt_vdd_pa);
+vdd_pa_fail:
+		bt_vreg_disable(bt_power_pdata->bt_vdd_xtal);
+vdd_xtal_fail:
 		bt_vreg_disable(bt_power_pdata->bt_vdd_io);
 	}
-
 out:
 	return rc;
 }
@@ -265,6 +270,33 @@ static const struct rfkill_ops bluetooth_power_rfkill_ops = {
 	.set_block = bluetooth_toggle_radio,
 };
 
+#ifdef CONFIG_CNSS
+static ssize_t enable_extldo(struct device *dev, struct device_attribute *attr,
+			char *buf)
+{
+	int ret;
+	bool enable = false;
+	struct cnss_platform_cap cap;
+
+	ret = cnss_get_platform_cap(&cap);
+	if (ret) {
+		BT_PWR_ERR("Platform capability info from CNSS not available!");
+		enable = false;
+	} else if (!ret && (cap.cap_flag & CNSS_HAS_EXTERNAL_SWREG)) {
+		enable = true;
+	}
+	return snprintf(buf, 6, "%s", (enable ? "true" : "false"));
+}
+#else
+static ssize_t enable_extldo(struct device *dev, struct device_attribute *attr,
+			char *buf)
+{
+	return snprintf(buf, 6, "%s", "false");
+}
+#endif
+
+static DEVICE_ATTR(extldo, S_IRUGO, enable_extldo, NULL);
+
 static int bluetooth_power_rfkill_probe(struct platform_device *pdev)
 {
 	struct rfkill *rfkill;
@@ -278,6 +310,11 @@ static int bluetooth_power_rfkill_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "rfkill allocate failed\n");
 		return -ENOMEM;
 	}
+
+	/* add file into rfkill0 to handle LDO27 */
+	ret = device_create_file(&pdev->dev, &dev_attr_extldo);
+	if (ret < 0)
+		BT_PWR_ERR("device create file error!");
 
 	/* force Bluetooth off during init to allow for user control */
 	rfkill_init_sw_state(rfkill, 1);
@@ -332,7 +369,7 @@ static int bt_dt_parse_vreg_info(struct device *dev,
 		vreg->name = vreg_name;
 
 		snprintf(prop_name, MAX_PROP_SIZE,
-				"qcom,%s-voltage-level", vreg_name);
+				"%s-voltage-level", vreg_name);
 		prop = of_get_property(np, prop_name, &len);
 		if (!prop || (len != (2 * sizeof(__be32)))) {
 			dev_warn(dev, "%s %s property\n",
@@ -378,6 +415,12 @@ static int bt_power_populate_dt_pinfo(struct platform_device *pdev)
 			return rc;
 
 		rc = bt_dt_parse_vreg_info(&pdev->dev,
+					&bt_power_pdata->bt_vdd_xtal,
+					"qca,bt-vdd-xtal");
+		if (rc < 0)
+			return rc;
+
+		rc = bt_dt_parse_vreg_info(&pdev->dev,
 					&bt_power_pdata->bt_vdd_pa,
 					"qca,bt-vdd-pa");
 		if (rc < 0)
@@ -402,7 +445,7 @@ static int bt_power_populate_dt_pinfo(struct platform_device *pdev)
 	return 0;
 }
 
-static int __devinit bt_power_probe(struct platform_device *pdev)
+static int bt_power_probe(struct platform_device *pdev)
 {
 	int ret = 0;
 
@@ -451,7 +494,7 @@ free_pdata:
 	return ret;
 }
 
-static int __devexit bt_power_remove(struct platform_device *pdev)
+static int bt_power_remove(struct platform_device *pdev)
 {
 	dev_dbg(&pdev->dev, "%s\n", __func__);
 
@@ -467,7 +510,7 @@ static int __devexit bt_power_remove(struct platform_device *pdev)
 
 static struct platform_driver bt_power_driver = {
 	.probe = bt_power_probe,
-	.remove = __devexit_p(bt_power_remove),
+	.remove = bt_power_remove,
 	.driver = {
 		.name = "bt_power",
 		.owner = THIS_MODULE,
