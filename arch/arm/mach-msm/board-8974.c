@@ -59,6 +59,8 @@ int set_two_phase_freq_badass(int cpufreq);
 int set_three_phase_freq_badass(int cpufreq);
 #endif
 
+#define MSM_PERSISTENT_RAM_SIZE (SZ_1M)
+
 static struct memtype_reserve msm8974_reserve_table[] __initdata = {
 	[MEMTYPE_SMI] = {
 	},
