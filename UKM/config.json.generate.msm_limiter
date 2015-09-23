@@ -1,0 +1,284 @@
+cat << CTAG
+{
+    name:MSM_Limiter,
+    elements:[
+			{ STitleBar:{
+				title:"CPU Frequency Scaling"
+			}},
+				`if [ ! -f "/sys/kernel/msm_limiter/suspend_min_freq_0" ] && [ ! -f "/sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_all_cpus" ]; then
+					$BB echo '{ SSeekBar:{
+						title:"CPU Min Frequency",
+						description:"Set the minimum frequency the CPU scales down to.",
+						default:'\`sh $DEVICE DefaultCPUMinFrequency\`',
+						action:"cpuset '\`sh $DEVICE DirCPUMinFrequency\`'",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo }'
+					}},'
+				elif [ -f "/sys/kernel/msm_limiter/suspend_min_freq_0" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"CPU0 Min Frequency (MSM Limiter)",
+							description:"Set the minimum frequency the CPU0 scales down to.",
+							default:'\`cat /sys/kernel/msm_limiter/suspend_min_freq_0\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq_0",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},
+						{ SSeekBar:{
+							title:"CPU1 Min Frequency (MSM Limiter)",
+							description:"Set the minimum frequency the CPU1 scales down to.",
+							default:'\`cat /sys/kernel/msm_limiter/suspend_min_freq_1\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq_1",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},
+						{ SSeekBar:{
+							title:"CPU2 Min Frequency (MSM Limiter)",
+							description:"Set the minimum frequency the CPU2 scales down to.",
+							default:'\`cat /sys/kernel/msm_limiter/suspend_min_freq_2\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq_2",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},
+						{ SSeekBar:{
+							title:"CPU3 Min Frequency (MSM Limiter)",
+							description:"Set the minimum frequency the CPU3 scales down to.",
+							default:'\`cat /sys/kernel/msm_limiter/suspend_min_freq_3\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq_3",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},'
+				elif [ -f "/sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_all_cpus" ]; then
+					$BB echo '{ SSeekBar:{
+						title:"CPU0 Min Frequency (All CPUs)",
+						description:"Set the minimum frequency the CPU0 scales down to. Changing CPU0 will automatically change all other CPUs.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_all_cpus\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_all_cpus",
+						notify:[
+								{
+									on:APPLY,
+									do:[ REFRESH, APPLY ],
+									to:[
+										"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu1",
+										"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu2",
+										"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu3"
+									]
+								}
+							],
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU1 Min Frequency (All CPUs)",
+						description:"Set the minimum frequency the CPU1 scales down to.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu1\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu1",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU2 Min Frequency",
+						description:"Set the minimum frequency the CPU2 scales down to.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu2\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu2",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU3 Min Frequency (All CPUs)",
+						description:"Set the minimum frequency the CPU3 scales down to.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu3\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu3",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},'
+				fi`
+				`if [ ! -f "/sys/kernel/msm_limiter/resume_max_freq_0" ] && [ ! -f "/sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_all_cpus" ]; then
+					$BB echo '{ SSeekBar:{
+						title:"CPU Max Frequency",
+						description:"Set the maximum frequency the CPU scales up to.",
+						default:'\`sh $DEVICE DefaultCPUMaxFrequency\`',
+						action:"cpuset '\`sh $DEVICE DirCPUMaxFrequency\`'",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo }'
+					}},'
+				elif [ -f "/sys/kernel/msm_limiter/resume_max_freq_0" ]; then
+					$BB echo '{ SSeekBar:{
+						title:"CPU0 Max Frequency (MSM Limiter)",
+						description:"Set the maximum frequency the CPU0 scales up to.",
+						default:'\`cat /sys/kernel/msm_limiter/resume_max_freq_0\`',
+						action:"generic /sys/kernel/msm_limiter/resume_max_freq_0",
+						values:{ '
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU1 Max Frequency (MSM Limiter)",
+						description:"Set the maximum frequency the CPU1 scales up to.",
+						default:'\`cat /sys/kernel/msm_limiter/resume_max_freq_1\`',
+						action:"generic /sys/kernel/msm_limiter/resume_max_freq_1",
+						values:{ '
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU2 Max Frequency (MSM Limiter)",
+						description:"Set the maximum frequency the CPU2 scales up to.",
+						default:'\`cat /sys/kernel/msm_limiter/resume_max_freq_2\`',
+						action:"generic /sys/kernel/msm_limiter/resume_max_freq_2",
+						values:{ '
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU3 Max Frequency (MSM Limiter)",
+						description:"Set the maximum frequency the CPU3 scales up to.",
+						default:'\`cat /sys/kernel/msm_limiter/resume_max_freq_3\`',
+						action:"generic /sys/kernel/msm_limiter/resume_max_freq_3",
+						values:{ '
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},'
+				elif [ -f "/sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_all_cpus" ]; then
+					$BB echo '{ SSeekBar:{
+						title:"CPU0 Max Frequency (All CPUs)",
+						description:"Set the maximum frequency the CPU0 scales up to. Changing CPU0 will automatically change all other CPUs.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_all_cpus\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_all_cpus",
+						notify:[
+								{
+									on:APPLY,
+									do:[ REFRESH, APPLY ],
+									to:[
+										"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu1",
+										"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu2",
+										"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu3"
+									]
+								}
+							],
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU1 Max Frequency (All CPUs)",
+						description:"Set the maximum frequency the CPU1 scales up to.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu1\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu1",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU2 Max Frequency (All CPUs)",
+						description:"Set the maximum frequency the CPU2 scales up to.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu2\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu2",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},
+					{ SSeekBar:{
+						title:"CPU3 Max Frequency (All CPUs)",
+						description:"Set the maximum frequency the CPU3 scales up to.",
+						default:'\`$BB cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu3\`',
+						action:"generic /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu3",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},'
+				fi`
+				`if [ -f "/sys/devices/system/cpu/cpu0/cpufreq/screen_off_max_freq" ]; then
+				SOMF=\`$BB cat /sys/devices/system/cpu/cpu0/cpufreq/screen_off_max_freq\`
+					$BB echo '{ SSeekBar:{
+						title:"CPU Max Screen Off Frequency",
+						description:"Set the maximum frequency the CPU scales up to when the screen is off.",
+						default:'$SOMF',
+						action:"generic /sys/devices/system/cpu/cpu0/cpufreq/screen_off_max_freq",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},'
+				fi`
+				`if [ -d "/sys/kernel/msm_limiter" ]; then
+					if [ -f "/sys/kernel/msm_limiter/limiter_enabled" ]; then
+					MSMLIMIT=\`$BB cat /sys/kernel/msm_limiter/limiter_enabled\`;
+						$BB echo '{ SPane:{
+							title:"MSM Limiter"
+						}},
+							{ SCheckBox:{
+								label:"Enable",
+								description:"An in kernel driver that limits CPU frequency. Developed by neobuddy89.",
+								default:'$MSMLIMIT',
+								action:"generic /sys/kernel/msm_limiter/limiter_enabled"
+							}},'
+					fi
+					if [ -f "/sys/module/msm_limiter/parameters/debug_mask" ]; then
+					DEBUG=\`cat /sys/module/msm_limiter/parameters/debug_mask\`
+						echo '{ SCheckBox:{
+								label:"Debug Mask",
+								description:"Allows you to activate debug mask for MSM Limiter operations.",
+								default:'$DEBUG',
+								action:"generic /sys/module/msm_limiter/parameters/debug_mask"
+						}},'
+					fi
+					if [ -f "/sys/kernel/msm_limiter/suspend_min_freq" ]; then
+					SMINF=\`$BB cat /sys/kernel/msm_limiter/suspend_min_freq\`
+						$BB echo '{ SSeekBar:{
+							title:"Suspend Min Frequency",
+							description:"Set the minimum frequency all CPUs scales down to.",
+							default:'$SMINF',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},'
+					fi
+					if [ -f "/sys/kernel/msm_limiter/resume_max_freq" ]; then
+					RMF=\`$BB cat /sys/kernel/msm_limiter/resume_max_freq\`
+						$BB echo '{ SSeekBar:{
+							title:"Resume Max Frequency",
+							description:"Set the maximum frequency all CPUs scales up to.",
+							default:'$RMF',
+							action:"generic /sys/kernel/msm_limiter/resume_max_freq",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},'
+					fi
+					if [ -f "/sys/kernel/msm_limiter/suspend_max_freq" ]; then
+					SMF=\`$BB cat /sys/kernel/msm_limiter/suspend_max_freq\`
+						$BB echo '{ SSeekBar:{
+							title:"Suspend Max Frequency",
+							description:"Set the maximum frequency all CPUs scales up to when device is suspended.",
+							default:'$SMF',
+							action:"generic /sys/kernel/msm_limiter/suspend_max_freq",
+							values:{ '
+								sh $DEVICE CPUFrequencyList
+							$BB echo '}
+						}},'
+					fi
+					if [ -f "/sys/kernel/msm_limiter/suspend_defer_time" ]; then
+					SDT=\`$BB cat /sys/kernel/msm_limiter/suspend_defer_time\`
+							$BB echo '{ SSeekBar:{
+								title:"Suspend Defer Time",
+								min:0,
+								max:5000,
+								step:10,
+								default:'$SDT',
+								action:"generic /sys/kernel/msm_limiter/suspend_defer_time"
+							}},'
+					fi
+				fi`
+	]
+}
+CTAG

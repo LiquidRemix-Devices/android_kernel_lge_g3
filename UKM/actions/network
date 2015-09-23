@@ -1,0 +1,203 @@
+# By UpInTheAir for SkyHigh SM-T700 & T705 Exynos kernels
+
+BB=/sbin/busybox;
+
+case $1 in
+tcp_security)
+  P=/res/synapse/SkyHigh/tcp_security
+  if [ ! -z $2 ]; then
+  if [ $2 == Disabled ]; then
+    echo 0 > $P
+    	echo 256 > /proc/sys/net/ipv4/tcp_max_syn_backlog
+    	echo 5 > /proc/sys/net/ipv4/tcp_syn_retries
+    	echo 5 > /proc/sys/net/ipv4/tcp_synack_retries
+    	echo 32768 > /proc/sys/net/ipv4/tcp_max_tw_buckets
+    	echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all
+    	echo 0 > /proc/sys/net/ipv4/tcp_no_metrics_save
+    	echo 60 > /proc/sys/net/ipv4/tcp_fin_timeout
+    	echo 75 > /proc/sys/net/ipv4/tcp_keepalive_intvl
+   	echo 9 > /proc/sys/net/ipv4/tcp_keepalive_probes
+    	echo 7200 > /proc/sys/net/ipv4/tcp_keepalive_time
+    	echo 1 > /proc/sys/net/ipv4/conf/all/send_redirects
+    	echo 1 > /proc/sys/net/ipv4/conf/default/send_redirects
+    	echo 0 > /proc/sys/net/ipv4/conf/all/rp_filter
+    	echo 0 > /proc/sys/net/ipv4/conf/default/rp_filter
+    	echo 1 > /proc/sys/net/ipv4/conf/default/accept_source_route
+    	echo 1 > /proc/sys/net/ipv4/conf/all/accept_redirects
+    	echo 1 > /proc/sys/net/ipv4/conf/default/accept_redirects
+    	echo 1 > /proc/sys/net/ipv4/conf/all/secure_redirects
+    	echo 1 > /proc/sys/net/ipv4/conf/default/secure_redirects
+  elif [ $2 == Enabled ]; then
+    echo 1 > $P
+	echo 1024 > /proc/sys/net/ipv4/tcp_max_syn_backlog
+	echo 2 > /proc/sys/net/ipv4/tcp_syn_retries
+	echo 2 > /proc/sys/net/ipv4/tcp_synack_retries
+	echo 16384 > /proc/sys/net/ipv4/tcp_max_tw_buckets
+	echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_all
+	echo 1 > /proc/sys/net/ipv4/tcp_no_metrics_save
+	echo 15 > /proc/sys/net/ipv4/tcp_fin_timeout
+	echo 30 > /proc/sys/net/ipv4/tcp_keepalive_intvl
+	echo 5 > /proc/sys/net/ipv4/tcp_keepalive_probes
+	echo 1800 > /proc/sys/net/ipv4/tcp_keepalive_time
+	echo 0 > /proc/sys/net/ipv4/conf/all/send_redirects
+	echo 0 > /proc/sys/net/ipv4/conf/default/send_redirects
+	echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter
+	echo 1 > /proc/sys/net/ipv4/conf/default/rp_filter
+	echo 0 > /proc/sys/net/ipv4/conf/default/accept_source_route
+	echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects
+	echo 0 > /proc/sys/net/ipv4/conf/default/accept_redirects
+	echo 0 > /proc/sys/net/ipv4/conf/all/secure_redirects
+	echo 0 > /proc/sys/net/ipv4/conf/default/secure_redirects
+  fi; fi
+  copy=`cat $P`
+  if [ $copy == 0 ]; then
+    echo Disabled
+  elif [ $copy == 1 ]; then
+    echo Enabled
+  fi
+  ;;
+tcp_speed)
+  P=/res/synapse/SkyHigh/tcp_speed
+  if [ ! -z $2 ]; then
+  if [ $2 == Disabled ]; then
+    echo 0 > $P
+	setprop net.tcp.buffersize.default 4096,87380,704512,4096,16384,110208
+	setprop net.tcp.buffersize.wifi    524288,1048576,4525824,524288,1048576,4525824
+	setprop net.tcp.buffersize.lte     524288,1048576,2560000,524288,1048576,2560000
+	setprop net.tcp.buffersize.umts    4094,87380,704512,4096,16384,110208
+	setprop net.tcp.buffersize.hspa    4094,87380,704512,4096,16384,262144
+	setprop net.tcp.buffersize.hsupa   4094,87380,704512,4096,16384,262144
+	setprop net.tcp.buffersize.hsdpa   4094,87380,704512,4096,16384,262144
+	setprop net.tcp.buffersize.hspap   4094,87380,1220608,4096,16384,1220608
+	setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
+	setprop net.tcp.buffersize.gprs    4092,30000,30000,4096,8760,11680
+	setprop net.tcp.buffersize.evdo    4094,87380,262144,4096,16384,262144
+  elif [ $2 == Enabled ]; then
+    echo 1 > $P
+	setprop net.tcp.buffersize.default 6144,87380,110208,6144,16384,110208
+	setprop net.tcp.buffersize.wifi    262144,524288,1048576,262144,524288,1048576
+	setprop net.tcp.buffersize.lte     262144,524288,3145728,262144,524288,3145728
+	setprop net.tcp.buffersize.umts    6144,87380,110208,6144,16384,110208
+	setprop net.tcp.buffersize.hspa    6144,87380,262144,6144,16384,262144
+	setprop net.tcp.buffersize.hsupa   6144,262144,1048576,6144,262144,1048576
+	setprop net.tcp.buffersize.hsdpa   6144,262144,1048576,6144,262144,1048576
+	setprop net.tcp.buffersize.edge    6144,26280,35040,6144,16384,35040
+	setprop net.tcp.buffersize.gprs    6144,8760,11680,6144,8760,11680
+	setprop net.tcp.buffersize.evdo    6144,262144,1048576,6144,262144,1048576
+  fi; fi
+  copy=`cat $P`
+  if [ $copy == 0 ]; then
+    echo Disabled
+  elif [ $copy == 1 ]; then
+    echo Enabled
+  fi
+  ;;
+gps_zone)
+
+  mount -o remount,rw /system
+  $BB mount -t rootfs -o remount,rw rootfs
+
+  P=/res/synapse/SkyHigh/gps_zone
+  var_gps="/system/etc/gps.conf";
+
+# Backup original gps.conf in case of user revert.
+  if [ ! -e $var_gps.bkp ]; then
+	cp -a $var_gps $var_gps.bkp;
+  fi;
+
+  if [ ! -z $2 ]; then
+  if [ $2 == Default ]; then
+    			echo 0 > $P
+		cp -a $var_gps.bkp $var_gps;
+  elif [ $2 == Asia ]; then
+		CHECKGPS=`cat $var_gps | grep "NTP_SERVER=0.asia.pool.ntp.org"`;
+		if [ "$CHECKGPS" != "NTP_SERVER=0.asia.pool.ntp.org" ]; then
+    			echo 1 > $P
+			$BB sed -i "s/NTP_SERVER[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			$BB sed -i "s/-america[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			echo "NTP_SERVER=asia.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=0.asia.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=1.asia.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=2.asia.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=3.asia.pool.ntp.org" >> $var_gps;
+		fi;
+  elif [ $2 == Europe ]; then
+		CHECKGPS=`cat $var_gps | grep "NTP_SERVER=0.europe.pool.ntp.org"`;
+		if [ "$CHECKGPS" != "NTP_SERVER=0.europe.pool.ntp.org" ]; then
+    			echo 2 > $P
+			$BB sed -i "s/NTP_SERVER[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			$BB sed -i "s/-america[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			echo "NTP_SERVER=europe.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=0.europe.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=1.europe.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=2.europe.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=3.europe.pool.ntp.org" >> $var_gps;
+		fi;
+  elif [ $2 == Oceania ]; then
+		CHECKGPS=`cat $var_gps | grep "NTP_SERVER=0.oceania.pool.ntp.org"`;
+		if [ "$CHECKGPS" != "NTP_SERVER=0.oceania.pool.ntp.org" ]; then
+    			echo 3 > $P
+			$BB sed -i "s/NTP_SERVER[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			$BB sed -i "s/-america[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			echo "NTP_SERVER=oceania.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=0.oceania.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=1.oceania.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=2.oceania.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=3.oceania.pool.ntp.org" >> $var_gps;
+        	fi;
+  elif [ $2 == North_America ]; then
+		CHECKGPS=`cat $var_gps | grep "NTP_SERVER=0.north-america.pool.ntp.org"`;
+		if [ "$CHECKGPS" != "NTP_SERVER=0.north-america.pool.ntp.org" ]; then
+    			echo 4 > $P
+			$BB sed -i "s/NTP_SERVER[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			$BB sed -i "s/-america[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			echo "NTP_SERVER=north-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=0.north-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=1.north-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=2.north-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=3.north-america.pool.ntp.org" >> $var_gps;
+        	fi;
+  elif [ $2 == South_America ]; then
+		CHECKGPS=`cat $var_gps | grep "NTP_SERVER=0.south-america.pool.ntp.org"`;
+		if [ "$CHECKGPS" != "NTP_SERVER=0.south-america.pool.ntp.org" ]; then
+    			echo 5 > $P
+			$BB sed -i "s/NTP_SERVER[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			$BB sed -i "s/-america[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			echo "NTP_SERVER=south-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=0.south-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=1.south-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=2.south-america.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=3.south-america.pool.ntp.org" >> $var_gps;
+        	fi;
+  elif [ $2 == Africa ]; then
+		CHECKGPS=`cat $var_gps | grep "NTP_SERVER=0.africa.pool.ntp.org"`;
+		if [ "$CHECKGPS" != "NTP_SERVER=0.africa.pool.ntp.org" ]; then
+    			echo 6 > $P
+			$BB sed -i "s/NTP_SERVER[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			$BB sed -i "s/-america[.a-zA-Z\=-\0-5\]*//g" $var_gps;
+			echo "NTP_SERVER=africa.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=0.africa.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=1.africa.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=2.africa.pool.ntp.org" >> $var_gps;
+			echo "NTP_SERVER=3.africa.pool.ntp.org" >> $var_gps;
+		fi;
+  fi; fi
+
+  copy=`cat $P`
+  if [ $copy == 0 ]; then
+    echo Default
+  elif [ $copy == 1 ]; then
+    echo Asia
+  elif [ $copy == 2 ]; then
+    echo Europe
+  elif [ $copy == 3 ]; then
+    echo Oceania
+  elif [ $copy == 4 ]; then
+    echo North_America
+  elif [ $copy == 5 ]; then
+    echo South_America
+  elif [ $copy == 6 ]; then
+    echo Africa
+  fi
+  ;;
+esac

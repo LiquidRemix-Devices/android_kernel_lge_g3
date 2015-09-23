@@ -1,0 +1,394 @@
+#!/system/bin/sh
+
+cat << CTAG
+{
+    name:NETWORK,
+    elements:[
+    { SPane:{
+		title:"TCP Congestion Control",
+		description:" Select your preferred WIFI TCP algorithm. Regulates upload and download affecting throughput in various ways. Default is Westwood."
+    }},
+	{ SOptionList:{
+		default:`cat proc/sys/net/ipv4/tcp_congestion_control`,
+		action:"generic proc/sys/net/ipv4/tcp_congestion_control",
+		values:[`while read values; do busybox printf "%s, \n" $values; done < proc/sys/net/ipv4/tcp_available_congestion_control`]
+	}},
+		{ SPane:{
+		title:"WiFi Power Mode",
+		description:" Control the WiFi power mode during screen on & off.\n\nMax = Maximum power savings, but reduced throughput & increased AP latency.\nFast = Good power savings & throughput with a slightly reduced AP latency.\nOff = No power savings and normal throughput/AP latency (may help with HD video streaming performance).\nForce Off = No power savings and normal AP latency. (force off even if bt is active).\n\nNote: You MUST suspend and resume display for changes to take effect!\n"
+        }},
+	{ SDescription:{
+		description:""
+	}},
+        { SOptionList:{
+		title:"WiFi Power Mode While Screen-On",
+		description:"",
+		default:"2",
+		unit:"",
+		action:"generic /sys/module/dhd/parameters/wifi_pm_awake",
+		values:{
+		   	"0":"Off",
+		   	"1":"Max",
+		   	"2":"Fast",
+		   	"3":"Force Off"
+		}
+	}},
+	{ SSpacer:{
+		   height:1
+	}},
+	{ SOptionList:{
+		title:"WiFi Power Mode While Screen-Off",
+		description:"",
+		default:"1",
+		unit:"",
+		action:"generic /sys/module/dhd/parameters/wifi_pm_suspended",
+		values:{
+			"0":"Off",
+		   	"1":"Max",
+		   	"2":"Fast",
+		   	"3":"Force Off"
+		}
+	}},
+	{ SSpacer:{
+		   height:1
+	}},
+	{ SPane:{
+		title:"WiFi DTIM Interval",
+		description:" The Delivery Traffic Indication Message (DTIM) corresponds to every beacon sent by the WiFi access point, and lets clients know data is about to be exchanged. This interval allows your WiFi chip to sleep longer before it has to wake up and listen for broadcasts and multicasts. By default the driver uses a value of 0, which means it defaults to what the WiFi access point defaults to. Often times that default is 1 (as frequently as possible). The higher this number, the less power the WiFi radio will use, but the longer it will take before it knows data has arrived (aka push notifications may be slow).\n\n\tNote: You MUST suspend and resume display for changes to take effect!\n"
+        }},
+        { SSeekBar:{
+       		title:"WiFi DTIM Interval While Screen-On",
+		description:" Sets the ratio of how many DTIMs the driver will skip while the screen is on. 1:1 = every time (as fast as possible), 1:2 = every other one, 1:3 = every third one, etc. 0 means use access point's default value.\n\n\tNote: You MUST suspend and resume for changes to take effect!\n",
+		default:0,
+		max:100,
+		min:0,
+		step:1,
+		unit:"",
+		action:"generic /sys/module/dhd/parameters/dtim_awake",
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SSeekBar:{
+       		title:"WiFi DTIM Interval While Screen-Off",
+		description:" Sets the ratio of how many DTIMs the driver will skip while the screen is off. 1:1 = every time (as fast as possible), 1:2 = every other one, 1:3 = every third one, etc. 0 means use access point's default value.\n\n\tNote: You MUST suspend and resume display for changes to take effect!\n",
+		default:0,
+		max:100,
+		min:0,
+		step:1,
+		unit:"",
+		action:"generic /sys/module/dhd/parameters/dtim_suspended",
+	}},
+	{ SDescription:{
+		description:""
+	}},
+    { SPane:{
+            title:"Wakelock control",
+            description:"Enter 1 to 8 (1 = stock, higher = lower wake time) for wlan_rx and wlan_ctrl wakelock control."
+    }},
+	{ SDescription:{
+		description:""
+	}},
+    { SSeekBar:{
+            title:"Wireless wakelock timeout control",
+            description:"",
+            unit:"",
+            min:1,
+            max:8,
+            step:1,
+            default:`cat /sys/module/dhd/parameters/wl_divide`,
+            action:"generic /sys/module/dhd/parameters/wl_divide"
+    }},
+	{ SDescription:{
+		description:""
+	}},
+	{ STitleBar:{
+		title:"Screen mirroring / AllShare Cast fix"
+	}},
+	{ SDescription:{
+		description:" Possible screen mirroring / AllShare Cast fix for rooted devices, works for some. Turn OFF WIFI first. Default is Enabled."
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SOptionList:{
+		default:`echo $(/res/synapse/actions/mirror mirror_fix)`,
+		action:"mirror mirror_fix",
+		values:[Disabled, Enabled,]
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ STitleBar:{
+		title:"Clean WIFI Lease"
+	}},
+	{ SDescription:{
+		description:" Clean WIFI DHCP IP Lease. Push the button to activate!"
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SButton:{
+		label:"Clean WIFI Lease",
+		action:"devtools fix_wifi"
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SPane:{
+		title:"TCP/IP Network Security Tweak",
+		description:" Protect against SYN & DoS attack etc. Default is Disabled."
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SOptionList:{
+		default:`echo $(/res/synapse/actions/network tcp_security)`,
+		action:"network tcp_security",
+		values:[Disabled, Enabled,]
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SPane:{
+		title:"TCP/IP Network Speed Tweak",
+		description:" Optimize TCP buffer sizes for various networks. Default is Enabled."
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SOptionList:{
+		default:`echo $(/res/synapse/actions/network tcp_speed)`,
+		action:"network tcp_speed",
+		values:[Disabled, Enabled,]
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SPane:{
+		title:"3G DNS Tweaks",
+		description:" Allows you to set the default DNS (Domain Name System) for 3G connections. Use this to potentially speed up your browsing experience (depending on DNS location) and improve your security. Default is Disabled.",
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SDescription:{
+		description:" * You must have a mobile data network connection before applying new DNS *"
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SOptionList:{
+		default:`echo $(/res/synapse/actions/network dns)`,
+		action:"network dns",
+		values:[Disabled, Google, OpenDNS, Comodo, Level3, Norton_DNS, Smart_Viper,]
+	}},
+	{ SDescription:{
+		description:""
+	}},
+	{ SPane:{
+		title:"Hardening the TCP/IP stack to SYN attack",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_max_syn_backlog",
+		default:`cat /proc/sys/net/ipv4/tcp_max_syn_backlog`,
+		action:"generic /proc/sys/net/ipv4/tcp_max_syn_backlog",
+		values:{
+			`TCPMSB='128:"OFF", 1024:"ON"'
+			echo $TCPMSB`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_syn_retries",
+		default:`cat /proc/sys/net/ipv4/tcp_syn_retries`,
+		action:"generic /proc/sys/net/ipv4/tcp_syn_retries",
+		values:{
+			`TSR='6:"OFF", 2:"ON"'
+			echo $TSR`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_synack_retries",
+		default:`cat /proc/sys/net/ipv4/tcp_synack_retries`,
+		action:"generic /proc/sys/net/ipv4/tcp_synack_retries",
+		values:{
+			`TSKR='5:"OFF", 2:"ON"'
+			echo $TSKR`
+		}
+	}},
+	{ SPane:{
+		title:"Bump up tw_buckets in case we get DoS'd",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_max_tw_buckets",
+		default:`cat /proc/sys/net/ipv4/tcp_max_tw_buckets`,
+		action:"generic /proc/sys/net/ipv4/tcp_max_tw_buckets",
+		values:{
+			`TCPMTB='4096:"OFF", 16384:"ON"'
+			echo $TCPMTB`
+		}
+	}},
+	{ SPane:{
+		title:"Ignore pings",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.icmp_echo_ignore_all",
+		default:`cat /proc/sys/net/ipv4/icmp_echo_ignore_all`,
+		action:"generic /proc/sys/net/ipv4/icmp_echo_ignore_all",
+		values:{
+			`IEIA='0:"OFF", 1:"ON"'
+			echo $IEIA`
+		}
+	}},
+	{ SPane:{
+		title:"Don't cache connection metrics from previous connection",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_no_metrics_save",
+		default:`cat /proc/sys/net/ipv4/tcp_no_metrics_save`,
+		action:"generic /proc/sys/net/ipv4/tcp_no_metrics_save",
+		values:{
+			`TCPNMS='0:"OFF", 1:"ON"'
+			echo $TCPNMS`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_fin_timeout",
+		default:`cat /proc/sys/net/ipv4/tcp_fin_timeout`,
+		action:"generic /proc/sys/net/ipv4/tcp_fin_timeout",
+		values:{
+			`TCPFT='60:"OFF", 15:"ON"'
+			echo $TCPFT`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_keepalive_intvl",
+		default:`cat /proc/sys/net/ipv4/tcp_keepalive_intvl`,
+		action:"generic /proc/sys/net/ipv4/tcp_keepalive_intvl",
+		values:{
+			`TCPKAI='75:"OFF", 30:"ON"'
+			echo $TCPKAI`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_keepalive_probes",
+		default:`cat /proc/sys/net/ipv4/tcp_keepalive_probes`,
+		action:"generic /proc/sys/net/ipv4/tcp_keepalive_probes",
+		values:{
+			`TCPKAP='9:"OFF", 5:"ON"'
+			echo $TCPKAP`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.tcp_keepalive_time",
+		default:`cat /proc/sys/net/ipv4/tcp_keepalive_time`,
+		action:"generic /proc/sys/net/ipv4/tcp_keepalive_time",
+		values:{
+			`TCPKAT='7200:"OFF", 1800:"ON"'
+			echo $TCPKAT`
+		}
+	}},
+	{ SPane:{
+		title:"Don't pass traffic between networks or act as a router",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.all.send_redirects",
+		default:`cat /proc/sys/net/ipv4/conf/all/send_redirects`,
+		action:"generic /proc/sys/net/ipv4/conf/all/send_redirects",
+		values:{
+			`CASR='1:"OFF", 0:"ON"'
+			echo $CASR`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.default.send_redirects",
+		default:`cat /proc/sys/net/ipv4/conf/default/send_redirects`,
+		action:"generic /proc/sys/net/ipv4/conf/default/send_redirects",
+		values:{
+			`CDSR='1:"OFF", 0:"ON"'
+			echo $CDSR`
+		}
+	}},
+	{ SPane:{
+		title:"Enable spoofing protection (turn on reverse packet filtering)",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.all.rp_filter",
+		default:`cat /proc/sys/net/ipv4/conf/all/rp_filter`,
+		action:"generic /proc/sys/net/ipv4/conf/all/rp_filter",
+		values:{
+			`CARPF='0:"OFF", 1:"ON"'
+			echo $CARPF`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.default.rp_filter",
+		default:`cat /proc/sys/net/ipv4/conf/default/rp_filter`,
+		action:"generic /proc/sys/net/ipv4/conf/default/rp_filter",
+		values:{
+			`CDRPF='0:"OFF", 1:"ON"'
+			echo $CDRPF`
+		}
+	}},
+	{ SPane:{
+		title:"Don't accept source routing",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.default.accept_source_route",
+		default:`cat /proc/sys/net/ipv4/conf/default/accept_source_route`,
+		action:"generic /proc/sys/net/ipv4/conf/default/accept_source_route",
+		values:{
+			`CDASR='1:"OFF", 0:"ON"'
+			echo $CDASR`
+		}
+	}},
+	{ SPane:{
+		title:"Don't accept redirects",
+		description:" Values provided by zeppelinrox@XDA Kick-Ass-Kernelizer. Defaults are OFF.",
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.all.accept_redirects",
+		default:`cat /proc/sys/net/ipv4/conf/all/accept_redirects`,
+		action:"generic /proc/sys/net/ipv4/conf/all/accept_redirects",
+		values:{
+			`CAAR='1:"OFF", 0:"ON"'
+			echo $CAAR`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.default.accept_redirects",
+		default:`cat /proc/sys/net/ipv4/conf/default/accept_redirects`,
+		action:"generic /proc/sys/net/ipv4/conf/default/accept_redirects",
+		values:{
+			`CDAR='1:"OFF", 0:"ON"'
+			echo $CDAR`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.all.secure_redirects",
+		default:`cat /proc/sys/net/ipv4/conf/all/secure_redirects`,
+		action:"generic /proc/sys/net/ipv4/conf/all/secure_redirects",
+		values:{
+			`CAASECR='1:"OFF", 0:"ON"'
+			echo $CAASECR`
+		}
+	}},
+	{ SOptionList:{
+		title:"ipv4.conf.default.secure_redirects",
+		default:`cat /proc/sys/net/ipv4/conf/default/secure_redirects`,
+		action:"generic /proc/sys/net/ipv4/conf/default/secure_redirects",
+		values:{
+			`CDASECR='1:"OFF", 0:"ON"'
+			echo $CDASECR`
+		}
+	}},
+    ]
+}
+CTAG

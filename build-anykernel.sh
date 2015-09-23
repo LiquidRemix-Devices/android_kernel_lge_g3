@@ -15,8 +15,8 @@
 # Added: batch Build                                                                      #
 # Added: External Configure File For easy editing                                         #
 # Added: Bump Version on all Defconfigs, ZipNames and anykernel.sh                        #
-#                                                                                         #
-#                                                                                         #
+# Added: Tweaks On/Off                                                                    #
+# Added: UKM Synapse Support: Copy Scripts over to anykernel data dir                     #
 #                                                                                         #
 #                                                                                         #
 #                                                                                         #
@@ -79,6 +79,7 @@ PATCH_DIR="$PATCH_DIR" >&2
 MODULES_DIR="$MODULES_DIR" >&2
 TOOLS_DIR="$TOOLS_DIR" >&2
 RAMDISK_DIR="$RAMDISK_DIR" >&2
+UKM_DIR="$UKM_DIR" >&2
 SIGNAPK="$SIGNAPK" >&2
 SIGNAPK_KEYS="$SIGNAPK_KEYS" >&2
 DEFCONFIGS="$DEFCONFIGS" >&2
@@ -96,6 +97,7 @@ function clean_all {
 		cd $REPACK_DIR
 		rm -rf $KERNEL
 		rm -rf $DTBIMAGE
+		rm -rf data/UKM
 		rm -rf *.zip
 		cd $KERNEL_DIR
 		echo "Deleting arch/arm/boot/*.dtb's"
@@ -387,11 +389,9 @@ function make_dtb {
 }
 
 function make_zip {
+		cp -vr $UKM_DIR $REPACK_DIR/data
 		cd $REPACK_DIR
 		zip -r9 NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip *
-		#java -jar $SIGNAPK $SIGNAPK_KEYS/testkey.x509.pem $SIGNAPK_KEYS/testkey.pk8 NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER"-signed.zip
-		#mv NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER"-signed.zip $ZIP_MOVE
-		#cp NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip $COPY_ZIP
 		mv NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip $ZIP_MOVE
 		rm -rf NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip
 		cd $KERNEL_DIR

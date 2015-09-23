@@ -1,0 +1,185 @@
+UKM=/data/UKM;
+BB=$UKM/busybox;
+DEVICE=`sh $UKM/device/.device.sh`;
+
+TIMESTAMP=`date +%Y-%m-%d.%H.%M.%S`;
+LOGS=/sdcard/logs;
+
+case $1 in
+	bootloader)	
+		$BB echo `sh $DEVICE ToggleBootloader`;
+	;;
+	tamper)	
+		$BB echo `sh $DEVICE ToggleTamper`;
+	;;
+	selinux)	
+		if [[ ! -z $2 ]]; then
+			if [ $2 = "Enforcing" ]; then
+				setenforce 1;
+			elif [ $2 = "Permissive" ]; then
+				setenforce 0;
+			fi;
+		fi;
+
+		$BB echo `getenforce`;
+		#/sys/fs/selinux/enforce
+	;;
+	optimizedb)
+		for i in `$BB find /data -iname "*.db"`; do 
+			$UKM/sqlite3 $i 'VACUUM;' 2> /dev/null;
+			$UKM/sqlite3 $i 'REINDEX;' 2> /dev/null;
+		done;
+
+		for i in `$BB find /sdcard -iname "*.db"`; do
+			$UKM/sqlite3 $i 'VACUUM;' 2> /dev/null;
+			$UKM/sqlite3 $i 'REINDEX;' 2> /dev/null;
+		done;
+		
+		$BB echo "Databases have been optimized.";
+	;;
+	logcat)
+		saved="$LOGS/logcat-$TIMESTAMP.txt";
+		[ ! -d "$LOGS" ] && $BB mkdir -p "$LOGS";
+		$BB chmod 755 $LOGS;
+		
+		logcat -d > $saved;
+	;;
+	dmesg)
+		saved="$LOGS/dmesg-$TIMESTAMP.txt";
+		[ ! -d "$LOGS" ] && $BB mkdir -p "$LOGS";
+		$BB chmod 755 $LOGS;
+		
+		$BB dmesg > $saved;
+	;;
+	kmsg)
+		kmsg=/proc/last_kmsg;
+		if [ -f $kmsg ]; then
+			saved="$LOGS/last_kmsg-$TIMESTAMP.txt";
+			[ ! -d "$LOGS" ] && $BB mkdir -p "$LOGS";
+			$BB chmod 755 $LOGS;
+			
+			$BB cp -f $kmsg $saved;
+		else
+			$BB echo "$kmsg not found.";
+		fi;
+	;;
+	reboot)
+		$BB sleep 1;
+		reboot $2;
+	;;
+	cleardata)
+		am force-stop com.af.synapse 2> /dev/null;
+		$BB sleep 1;
+		$BB rm -R /data/data/com.af.synapse/databases;
+		$BB sleep 1;
+		am start -a android.intent.action.MAIN -n com.af.synapse/.MainActivity 2> /dev/null;
+	;;
+	akdownload)
+		if [ -d "/data/data/com.android.chrome" ]; then
+			am force-stop com.android.chrome 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d http://ak.hiddenbytes.org > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/mobi.mgeek.TunnyBrowser" ]; then
+			am force-stop mobi.mgeek.TunnyBrowser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n mobi.mgeek.TunnyBrowser/.BrowserActivity -d http://ak.hiddenbytes.org > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/com.android.browser" ]; then
+			am force-stop com.android.browser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.browser/.BrowserActivity -d http://ak.hiddenbytes.org > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		else
+			$BB echo "  Sorry, No browser Found ...  ";
+		fi;
+	;;
+	ukmxda)
+		if [ -d "/data/data/com.android.chrome" ]; then
+			am force-stop com.android.chrome 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d http://v.ht/gnhc > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/mobi.mgeek.TunnyBrowser" ]; then
+			am force-stop mobi.mgeek.TunnyBrowser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n mobi.mgeek.TunnyBrowser/.BrowserActivity -d http://v.ht/gnhc > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/com.android.browser" ]; then
+			am force-stop com.android.browser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.browser/.BrowserActivity -d http://v.ht/gnhc > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		else
+			$BB echo "  Sorry, No browser Found ...  ";
+		fi;
+	;;
+	ukmgithub)
+		if [ -d "/data/data/com.android.chrome" ]; then
+			am force-stop com.android.chrome 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d https://github.com/apbaxel > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/mobi.mgeek.TunnyBrowser" ]; then
+			am force-stop mobi.mgeek.TunnyBrowser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n mobi.mgeek.TunnyBrowser/.BrowserActivity -d https://github.com/apbaxel > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/com.android.browser" ]; then
+			am force-stop com.android.browser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.browser/.BrowserActivity -d https://github.com/apbaxel > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		else
+			$BB echo "  Sorry, No browser Found ...  ";
+		fi;
+	;;
+	akxda)
+		if [ -d "/data/data/com.android.chrome" ]; then
+			am force-stop com.android.chrome 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d http://v.ht/lYn3 > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/mobi.mgeek.TunnyBrowser" ]; then
+			am force-stop mobi.mgeek.TunnyBrowser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n mobi.mgeek.TunnyBrowser/.BrowserActivity -d http://v.ht/lYn3 > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/com.android.browser" ]; then
+			am force-stop com.android.browser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.browser/.BrowserActivity -d http://v.ht/lYn3 > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		else
+			$BB echo "  Sorry, No browser Found ...  ";
+		fi;
+	;;
+	akgithub)
+		if [ -d "/data/data/com.android.chrome" ]; then
+			am force-stop com.android.chrome 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d https://github.com/anarkia1976 > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/mobi.mgeek.TunnyBrowser" ]; then
+			am force-stop mobi.mgeek.TunnyBrowser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n mobi.mgeek.TunnyBrowser/.BrowserActivity -d https://github.com/anarkia1976 > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/com.android.browser" ]; then
+			am force-stop com.android.browser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.browser/.BrowserActivity -d https://github.com/anarkia1976 > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		else
+			$BB echo "  Sorry, No browser Found ...  ";
+		fi;
+	;;
+	akdonate)
+		if [ -d "/data/data/com.android.chrome" ]; then
+			am force-stop com.android.chrome 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d http://ak.hiddenbytes.org > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/mobi.mgeek.TunnyBrowser" ]; then
+			am force-stop mobi.mgeek.TunnyBrowser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n mobi.mgeek.TunnyBrowser/.BrowserActivity -d http://ak.hiddenbytes.org > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		elif [ -d "/data/data/com.android.browser" ]; then
+			am force-stop com.android.browser 2> /dev/null;
+			am start -a android.intent.action.VIEW -n com.android.browser/.BrowserActivity -d http://ak.hiddenbytes.org > /dev/null;
+			$BB echo "  Thanks from AK World ...  ";
+		else
+			$BB echo "  Sorry, No browser Found ...  ";
+		fi;
+	;;
+esac;
+
+case $1 in
+	logcat|dmesg|kmsg)
+		$BB echo "Logfile saved to $saved";
+	;;
+esac;

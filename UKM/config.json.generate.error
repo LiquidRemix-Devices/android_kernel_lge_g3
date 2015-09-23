@@ -1,0 +1,40 @@
+cat << CTAG
+{
+	name:ERROR,
+		elements:[
+			{ SLiveLabel:{
+				refresh:0,
+				style:italic,
+				action:"echo 'DEVICE NOT SUPPORTED'"
+			}},
+			{ SPane:{
+				title:"Universal Kernel Manager"
+			}},
+				{ SLiveLabel:{
+					refresh:0,
+					style:italic,
+					action:"live InfoCurrent"
+			}},
+			{ SPane:{
+				title:"777 Kernel"
+			}},
+				{ SLiveLabel:{
+					refresh:0,
+					style:italic,
+					action:"live KernelCurrent"
+			}},
+		{ SPane:{
+			title:"Disclaimer and Fixing",
+			description:"To update/refresh UKM, select Fix Device Not Supported below, if it does not work, probably your device is not supported. You can use the link to UKM to verify this."
+		}},
+			{ SButton:{
+					label:"Fix Device Not Supported",
+					action:"restorebackup restart"
+			}},
+			{ SButton:{
+					label:"UKM XDA Thread",
+					action:"devtools ukmxda"
+			}},
+		]
+}
+CTAG

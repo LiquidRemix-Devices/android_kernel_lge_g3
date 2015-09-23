@@ -1,0 +1,177 @@
+# Build.prop Editor by abhi08638
+#
+# First Init all file locations
+# 
+UKM=/data/UKM;
+BB=$UKM/busybox;
+BP=/system/build.prop;
+BACKUP=/system/build.prop.bak;
+READ=/$UKM/files/propRead;
+RESULT=/$UKM/files/propResult;
+MIC=/sdcard/Synapse/UKM/lowMic;
+if [ -f "$UKM/files/bpe" ]; then
+	BPE=/$UKM/files/bpe;
+fi;
+
+#
+#Mount System to enable read/write of build.prop
+#
+$BB mount -o remount,rw /system		
+
+#
+#Create Needed files on each action
+#
+echo "" >> "$RESULT";
+`cat "$BP" | cut -d# -f1 | sort> "$READ"`;
+
+#
+#Backup build.prop to build.prop.bak 
+#	if there is not one already
+#
+if [ ! -f "$BACKUP" ]; then
+	`cat "$BP" > "$BACKUP"`;
+fi;
+
+#
+#Begin arguments
+#
+case $1 in
+	viewall)
+		#
+		#List entire current build.prop
+		#
+		$BB echo `cat "$READ" > "$RESULT"`;
+		$BB echo " Listing all properties ";
+	;;
+
+	view)
+		#
+		#Refresh results
+		#
+		$BB echo `cat "$RESULT"`;
+	;;
+
+	reset)
+		#
+		#Reset input and results and restart Synapse
+		#
+		`cat "/dev/null" > "$UKM/files/bpe"`;
+		`cat "/dev/null" > "$RESULT"`;
+		am force-stop com.af.synapse 2> /dev/null;
+		am start -a android.intent.action.MAIN -n com.af.synapse/.MainActivity 2> /dev/null;
+	;;
+
+	doSearch)
+		#
+		#Search Local copy of build prop 
+		#
+		BPEVAR=`$BB cat "$BPE"`;
+		SEARCH=`$BB grep "$BPEVAR" "$READ"`; #| awk '{print $0,"\n"}'`;
+
+		`echo "$SEARCH" > "$RESULT"`;
+		COUNT=`wc -l "$RESULT" | awk '{print $1}'`;
+
+		if [ ! -z "$SEARCH" ]; then
+			$BB echo " $COUNT property(ies) found ";
+		else
+			$BB echo " $BPEVAR not found ";
+		fi;
+	;;
+
+	add)
+		#
+		#Search Local copy of build prop and verify before adding property
+		#	= is required for property to be added
+		#
+		BPEVAR=`$BB cat "$BPE"`;
+		line=$(grep "=" "$BPE")
+		if [ $? -eq 0 ]; then
+			FIND=`$BB cat "$BPE" | cut -d= -f1`;
+			SEARCH=`$BB grep "$FIND" "$READ"`;
+
+			if [ -z "$SEARCH" ]; then
+				echo "$BPEVAR" >> "$BP";
+				$BB echo " $FIND has been added. Please reboot for changes to take effect ";
+			else
+				$BB echo " $FIND already exists ";
+			fi;
+		else
+			$BB echo " $BPEVAR is an invalid property ";
+		fi;
+	;;
+	
+	delete)
+		#
+		#Search Local copy of build prop and verify before deleting property
+		#	= is required for property to be deleted
+		#
+		BPEVAR=`$BB cat "$BPE"`;
+		line=$(grep "=" "$BPE")
+		if [ $? -eq 0 ]; then
+			FIND=`$BB cat "$BPE" | cut -d= -f1`;
+			FIND+="=";
+			SEARCH=`$BB grep "$FIND" "$READ"`;
+    
+			if [ ! -z "$SEARCH" ]; then
+				$BB sed -i "/$FIND/d" ".$BP";
+				$BB echo " $FIND has been removed. Please reboot for changes to take effect ";
+			else
+				$BB echo " $FIND was not found ";
+			fi;
+		else
+			$BB echo " $BPEVAR is an invalid property ";
+		fi;
+	;;
+
+  InstallFix)
+		#
+		#Install low mic Fix
+		#
+		if [ ! -f "$MIC" ]; then
+			`cat "$BP" > "$MIC"`;
+		fi;
+ 
+		$BB sed -i '/ro.qc.sdk.audio.fluencetype=/d' ".$BP";
+		$BB sed -i '/persist.audio.fluence.voicerec=/d' ".$BP";
+		$BB sed -i '/persist.audio.fluence.voicecall=/d' ".$BP";
+		$BB sed -i '/persist.audio.fluence.speaker=/d' ".$BP";
+
+		echo "persist.audio.fluence.voicerec=false" >> "$BP";
+		echo "persist.audio.fluence.voicecall=true" >> "$BP";
+		echo "persist.audio.fluence.speaker=false" >> "$BP";
+
+		$BB echo " Low mic fix installed. Please reboot for changes to take effect "; 
+	;;
+
+	UninstallFix)
+		#
+		#UnInstall low mic Fix by reverting Build.prop
+		#
+		if [ ! -f "$MIC" ]; then
+			echo " Fix was not installed ";
+		else
+			`cat "$MIC" > "$BP"`;
+			$BB echo " Low mic fix uninstalled. Please reboot for changes to take effect "; 
+		fi;
+	;;
+
+	initFile)
+		#
+		#Create BPE file if it does not exist
+		#
+		if [ -f $2 ]; then
+			if [[ ! -z "$3" ]]; then
+				$BB echo "$3" > $2 2> /dev/null;
+			fi;
+			$BB echo "`$BB cat $2`";
+		else
+			$BB echo "$3" > $2 2> /dev/null;
+		fi;
+	;;
+esac;
+
+#
+#Mount System as Read only
+#
+$BB mount -o remount,ro /system
+

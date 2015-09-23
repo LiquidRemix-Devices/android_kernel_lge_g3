@@ -1,0 +1,141 @@
+cat << CTAG
+{
+	name:BUILD.PROP EDITOR,
+		elements:[
+				{ SPane:{
+				title:"build.prop Tweaks",
+				description:"A value of -1 on any of the following settings means that setting was not found in your build.prop file.",
+			}},
+				{ SSeekBar:{
+					title:"Wifi Scan Interval",
+					description:"Set the interval on which on wifi will scan for channels. Setting this to a higher value will save battery.",
+					unit:" sec",
+					min:-1,
+					max:300,
+					step:1,
+					default:15,
+					action:"buildprop wifi.supplicant_scan_interval",
+				}},
+				{ SSeekBar:{
+					title:"VM Heapsize",
+					description:"Set the maximum amount of heapsize (memory) a single instance of the Dalvik Virtual Machine (application) can obtain.",
+					unit:" MB",
+					min:-1,
+					max:1024,
+					step:1,
+					default:512,
+					action:"buildprop dalvik.vm.heapsize",
+				}},
+				{ SCheckBox:{
+					label:"Allow purging of assets",
+					description:"Purging of bitmap memory assets allows the freeing of more RAM when needed.",
+					default:0,
+					action:"buildprop persist.sys.purgeable_assets",
+				}},
+			{ SPane:{
+				title:"ADB over WIFI"
+			}},
+				{ SGeneric:{
+					title:"Device HostName",
+					default:`getprop net.hostname 2> /dev/null`,
+					action:"buildprop net.hostname",
+				}},
+				{ SGeneric:{
+					title:"Wireless Port",
+					default:`getprop service.adb.tcp.port`,
+					action:"buildprop service.adb.tcp.port",
+				}},
+			`if [ 2 == 1 ]; then
+				$BB echo '{ SPane:{
+					title:"DNS Tweaks",
+					description:"Allows you to set the default DNS (Domain Name System) for 3G connections. Use this to speed up your browsing experience and improve your security.",
+				}},
+					{ SDescription:{
+						description:"Google > DNS1: 8.8.8.8 | DNS2: 8.8.4.4"
+					}},
+					{ SDescription:{
+						description:"OpenDNS > DNS1: 208.67.222.222 | DNS2: 208.67.220.220"
+					}},
+					{ SGeneric:{
+						title:"3G DNS1:",
+						default:'\`getprop net.rmnet0.dns1\`',
+						action:"buildprop net.rmnet0.dns1",
+					}},
+					{ SGeneric:{
+						title:"3G DNS2:",
+						default:'\`getprop net.rmnet0.dns2\`',
+						action:"buildprop net.rmnet0.dns2",
+					}},'
+			fi`
+			{ SPane:{
+				title:"build.prop Editor created by abhi08638",
+				description:"Use this section to manipulate your build.prop file. A backup has already been created in /system/build.prop.bak if there wasn't one already. A zip called Build.prop_Recovery_Script.zip has been placed in /sdcard, in case you get stuck in a bootloop, flash this to revert to your original build.prop",
+			}},
+				{ SGeneric:{
+					title:"Build.prop input",
+					description:"enter a value to search for, add, or delete",
+					default:' ',
+					action:"scanprop initFile $UKM/files/bpe",
+				}},
+				{ SButton:{
+					label:"Search for property",
+					action:"scanprop doSearch",
+					notify:[
+						{
+							on:APPLY,
+							do:[ REFRESH, APPLY ],
+							to:"scanprop view"
+						}
+					]
+				}},
+				{ SButton:{
+					label:"Add property",
+					action:"scanprop add",
+				}},
+				{ SButton:{
+					label:"Delete property",
+					action:"scanprop delete",
+				}},
+				{ SButton:{
+					label:"List all",
+					action:"scanprop viewall",
+					notify:[
+						{
+							on:APPLY,
+							do:[ REFRESH, APPLY ],
+							to:"scanprop view"
+						}
+					]
+				}},
+				{ SButton:{
+					label:"Reset fields",
+					action:"scanprop reset",
+					notify:[
+						{
+							on:APPLY,
+							do:[ REFRESH, APPLY ],
+							to:"scanprop view"
+						}
+					]
+				}},
+				{ SGeneric:{
+					title:"Build.prop results",
+					description:"Results for searches will be shown here",
+					default:' ',
+					action:"scanprop view",
+				}},
+			{ SPane:{
+				title:"Low call volume fix ",
+				description:"Try installing this if you have low volume while in call",
+			}},
+				{ SButton:{
+					label:"Install fix",
+					action:"scanprop InstallFix",
+				}},
+				{ SButton:{
+					label:"Uninstall fix",
+					action:"scanprop UninstallFix",
+				}},
+		]	
+}
+CTAG

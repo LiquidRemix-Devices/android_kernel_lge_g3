@@ -1,0 +1,166 @@
+cat << CTAG
+{
+	name:NFO,
+		elements:[
+			{ SPane:{
+				title:{
+					en:"General",
+					es:"General"
+				},
+			}},	
+				{ SDescription:{
+					description:"><^>< UKM V4.4.3 Nebua Edition ><^><"
+				}},
+				{ SDescription:{
+					description:"Custom Scripts Created For Nebula Kernel"
+				}},
+				{ SDescription:{
+					description:"By: <a href='http://forum.xda-developers.com/member.php?u=5687366'>Eliminater74</a>"
+				}},
+				{ SDescription:{
+					description:"XDA Link: <a href='http://forum.xda-developers.com/lg-g3/development/kernel-nebulakernel-rev6-5-build20150715-t3161768'>Nebula Kernel</a>"
+				}},
+				{ SPane:{
+			title:"Special Features",
+			description:" CPU Voltage control,
+			GPU control,
+			OC/UC,
+			Init.d,
+			Selinux Permissive,
+			Led control,
+			Faux Sound control,
+			DynamicFsync,
+			Sweep2Wake,
+			Synapse,
+			CRC Disabler,
+			Intelli-Plug,
+			Intelli-Thermal,
+			KSM,
+			.... "
+				}},
+					{ SPane:{
+			title:"Special NOTES",
+			description:"Some more small Fixes. added Abillity to save bugreport"
+				}},
+				{ SPane:{
+					title:"Special thanks to"
+				}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=4794976'>@777Jon</a>"
+					}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=3418703'>@Tasssadar</a>"
+					}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=5721071'>@Fechinator</a>"
+					}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=3332811'>@Faux123</a>"
+					}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=3771760'>@aclegg2011</a>"
+					}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=5438598'>@RenderBroken</a>"
+					}},
+					{ SDescription:{
+						description:"> <a href='http://forum.xda-developers.com/member.php?u=5009632'>@thewalkingdude</a>"
+					}},
+					{ SPane:{
+				title:{
+					en:"Whats New",
+					es:"Whats New"
+				},
+			}},	
+				{ SDescription:{
+					description:"* V1.0 Wake Gestures, \n Rewrote Alot of sections \n"
+				}},	
+					{ SPane:{
+				title:{
+					en:"Projects",
+					es:"Projects"
+				},
+			}},	
+				{ SDescription:{
+					description:"My Projects"
+				}},
+		{ SPane:{
+				title:"LG G3, D85X/F400/LS990/VS985"
+				}},		
+				{ SDescription:{
+					description:"XDA Link: <a href='http://forum.xda-developers.com/lg-g3/development/kernel-nebulakernel-rev6-5-build20150715-t3161768'>Nebula Kernel</a>"
+				}},
+				{ SDescription:{
+					description:"XDA Link: <a href='http://forum.xda-developers.com/tmobile-lg-g3/development/multirom-resurrected-d851-testers-t3068340'>MultiRom V32 Resurrected</a>"
+				}},
+				{ SDescription:{
+					description:"XDA Link: <a href='http://forum.xda-developers.com/tmobile-lg-g3/development/rom-pac-rom-beta-1-lp-5-0-2-t3083910'>Pac-Man Rom (D851)</a>"
+				}},
+		{ SPane:{
+				title:"SamSung Galaxy S Tab 10.5 (T800)"
+				}},
+				{ SDescription:{
+					description:"XDA Link: <a href='http://forum.xda-developers.com/galaxy-tab-s/development/resurrection-remix-lollipop-5-0-2-v5-3-t3055220'>Resurrection Remix</a>"
+				}},
+				{ SDescription:{
+					description:"XDA Link: <a href='http://forum.xda-developers.com/galaxy-tab-s/development/rom-pac-rom-t3103502'>Pac-Man Rom</a>"
+				}},
+			{ SPane:{
+				title:{
+					en:"Device",
+					es:"Dispositivo"
+				},
+				description:"`getprop ro.product.model` (`getprop ro.product.device`)"
+			}},
+			{ SPane:{
+				title:{
+					en:"Android Version",
+					es:"Versión de Android"
+				},
+				description:"`getprop ro.build.version.release`"
+			}},
+			{ SPane:{
+				title:{
+					en:"Kernel Version",
+					es:"Versión del Núcleo"
+				},
+				description:"`$BB cat /proc/version`"
+			}},
+			{ SPane:{
+				title:{
+					en:"ROM Description",
+					es:"Descripción del ROM"
+				},
+				description:"`getprop ro.build.host | $BB awk '{print toupper($0)}'`"
+			}},
+			{ SPane:{
+				title:{
+					en:"ROM Version",
+					es:"Versión del ROM"
+				},
+				description:"`MODVER=\`getprop ro.modversion\`;
+					if [ -n $MODVER ]; then 
+						$BB echo $MODVER;
+					else 
+						$BB echo \`getprop ro.build.version.incremental\`;
+					fi;`"
+			}},
+			{ SPane:{
+				title:{
+					en:"Build Date",
+					es:"Fecha del ROM"
+				},
+				description:"`getprop ro.build.date`"
+			}},
+			{ STitleBar:{
+				title:{
+					en:"Last KMSG",
+					es:"Ultimo KMSG"
+				}
+			}},
+				{ SDescription:{
+					description:"`$BB cat $UKM/debug/last_kmsg`"
+				}},
+		]
+}
+CTAG

@@ -1,0 +1,70 @@
+BB=/sbin/busybox;
+
+# SQLite log location
+LOGS=/sdcard/SkyHigh/Logs/SQLite.txt;
+
+case $1 in
+  reboot)
+	$BB sleep 1;
+	reboot $2;
+  ;;
+  cleardata)
+	am force-stop com.af.synapse 2> /dev/null;
+	$BB sleep 1;
+	$BB rm -R /data/data/com.af.synapse/databases;
+	$BB sleep 1;
+	am start -a android.intent.action.MAIN -n com.af.synapse/.MainActivity 2> /dev/null;
+  ;;
+  optimizedb)
+	if [ -e $LOGS ]; then
+		rm $LOGS;
+	fi;
+
+	# Create Log folder on sdcard
+	LOG=/sdcard/SkyHigh/Logs;
+
+	[ ! -d "$LOG" ] && mkdir -p "$LOG";
+	chmod 755 $LOG
+
+	echo "SQLite database VACUUM and REINDEX started at $( date +"%m-%d-%Y %H:%M:%S" )" | tee -a $LOGS;
+
+	for i in `$BB find /data -iname "*.db"`; do 
+		sbin/sqlite3 $i 'VACUUM;' 2> /dev/null;
+			resVac=$?
+			if [ $resVac == 0 ]; then
+				resVac="SUCCESS";
+			else
+				resVac="ERRCODE-$resVac";
+			fi;
+		sbin/sqlite3 $i 'REINDEX;' 2> /dev/null;
+			resIndex=$?
+			if [ $resIndex == 0 ]; then
+				resIndex="SUCCESS";
+			else
+				resIndex="ERRCODE-$resIndex";
+			fi;
+		echo "Database $i:  VACUUM=$resVac  REINDEX=$resIndex" | tee -a $LOGS;
+	done;
+
+	for i in `$BB find /sdcard -iname "*.db"`; do
+		sbin/sqlite3 $i 'VACUUM;' 2> /dev/null;
+			resVac=$?
+			if [ $resVac == 0 ]; then
+				resVac="SUCCESS";
+			else
+				resVac="ERRCODE-$resVac";
+			fi;
+		sbin/sqlite3 $i 'REINDEX;' 2> /dev/null;
+			resIndex=$?
+			if [ $resIndex == 0 ]; then
+				resIndex="SUCCESS";
+			else
+				resIndex="ERRCODE-$resIndex";
+			fi;
+		echo "Database $i:  VACUUM=$resVac  REINDEX=$resIndex" | tee -a $LOGS;
+	done;
+		echo "SQLite database VACUUM and REINDEX finished at $( date +"%m-%d-%Y %H:%M:%S" )" | tee -a $LOGS;
+		
+	$BB echo "Databases have been optimized.";
+  ;;
+esac;
