@@ -248,7 +248,7 @@ function bump_defconfigs() {
 		echo "Cancel pressed.";;
 		esac
 		sed -i '6s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $REPACK_DIR/anykernel.sh
-		sed -i '24s/.*/REV="'$REV'"/' $KERNEL_DIR/build-anykernel.cfg
+		sed -i '23s/.*/REV="'$REV'"/' $KERNEL_DIR/build-anykernel.cfg
 		OIFS=$IFS
 		IFS=';'
 		arr2=$DEVICES
