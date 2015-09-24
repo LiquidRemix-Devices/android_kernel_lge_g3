@@ -2190,6 +2190,91 @@ cat << CTAG
 						}},'
 				fi
 			fi`
+			`if [ -d "/sys/devices/platform/msm_sleeper" ]; then
+				$BB echo '{ SPane:{
+					title:"MSM Sleeper"
+				}},'
+				if [ -f "/sys/devices/platform/msm_sleeper/enabled" ]; then
+				HOTENABLE=\`$BB cat /sys/devices/platform/msm_sleeper/enabled\`
+					$BB echo '{ SCheckBox:{
+						label:"Enable",
+						description:"An in kernel replacement for Qualcomms MPDecision. Developed by Alucard.",
+						default:'$HOTENABLE',
+						action:"generic /sys/devices/platform/msm_sleeper/enable"
+					}},'
+				fi
+				if [ -f "/sys/devices/platform/msm_sleeper/plug_all" ]; then
+				PLUGALL=\`$BB cat /sys/kernel/alucard_hotplug/plug_all\`
+						$BB echo '{ SCheckBox:{
+							label:"Hotplug IO is Busy",
+							description:"MSM Sleeper Plug_All On/Off",
+							default:'$PLUGALL',
+							action:"generic /sys/devices/platform/msm_sleeper/plug_all"
+						}},'
+				fi
+				if [ -f "/sys/devices/platform/msm_sleeper/max_online" ]; then
+				MAXON=\`$BB cat /sys/devices/platform/msm_sleeper/max_online\`
+					$BB echo '{ SSeekBar:{
+							title:"Max CPU's OnLine",
+							min:1,
+							max:'
+								sh $DEVICE MaxCPU
+							$BB echo ',
+							step:1,
+							default:'$MAXON',
+							action:"generic /sys/devices/platform/msm_sleeper/max_online"
+					}},'
+				fi
+				if [ -f "/sys/devices/platform/msm_sleeper/suspend_max_online" ]; then
+				MAXS=\`$BB cat /sys/kernel/alucard_hotplug/suspend_max_online\`;
+					$BB echo '{ SSeekBar:{
+						title:"Max CPU's OnLine W/Suspended",
+						min:1,
+						max:'
+							sh $DEVICE MaxCPU
+						$BB echo ',
+						step:1,
+						default:'$MAXS',
+						action:"generic /sys/devices/platform/msm_sleeper/suspend_max_online"
+					}},'
+				fi
+				if [ -f "/sys/devices/platform/msm_sleeper/up_threshold" ]; then
+				THRESHOLD=\`$BB cat /sys/kernel/alucard_hotplug/up_threshold\`
+					$BB echo '{ SSeekBar:{
+							title:"Up Threshold",
+							description:"Up Threshold.",
+							min:1,
+							max:100,
+							step:1,
+							default:'$THRESHOLD',
+							action:"generic /sys/devices/platform/msm_sleeper/up_threshold",
+					}},'
+				fi
+				if [ -f "/sys/devices/platform/msm_sleeper/down_count_max" ]; then
+				DCM=\`$BB cat /sys/kernel/alucard_hotplug/down_count_max\`
+					$BB echo '{ SSeekBar:{
+							title:"Down Count Max",
+							description:"Down Cound Max",
+							min:1,
+							max:50,
+							step:1,
+							default:'$DCM',
+							action:"generic /sys/devices/platform/msm_sleeper/down_count_max"
+					}},'
+				fi
+				if [ -f "/sys/devices/platform/msm_sleeper/up_count_max" ]; then
+				UCM=\`$BB cat /sys/devices/platform/msm_sleeper/up_count_max\`
+					$BB echo '{ SSeekBar:{
+							title:"Up Count Max",
+							description:"Up Count Max.",
+							min:1,
+							max:50,
+							step:1,
+							default:'$UCM',
+							action:"generic /sys/devices/platform/msm_sleeper/up_count_max"
+					}},'
+				fi
+			fi`	
 		]
 }
 CTAG
