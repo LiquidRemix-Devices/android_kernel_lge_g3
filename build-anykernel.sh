@@ -241,14 +241,14 @@ function bump_defconfigs() {
 			fi
 		case $retval in
 		0)
-		echo "Version Enter: '$input'"
 		BUMP_REV="$input"
+		OLD_REV="$REV"
 		REV="$input";;
 		1)
 		echo "Cancel pressed.";;
 		esac
 		sed -i '6s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $REPACK_DIR/anykernel.sh
-		sed -i '23s/.*/REV="'$REV'"/' $KERNEL_DIR/build-anykernel.cfg
+ 		sed -i 's/REV='$OLD_REV'/REV='$REV'/g' $KERNEL_DIR/build-anykernel.cfg
 		OIFS=$IFS
 		IFS=';'
 		arr2=$DEVICES
@@ -257,6 +257,7 @@ function bump_defconfigs() {
 		DEFCONFIG="${x}_defconfig"
 		cd $DEFCONFIGS
 		sed -i '9s/.*/CONFIG_LOCALVERSION="-Nebula_Rev'$BUMP_REV'-Experimental"/' $DEFCONFIG
+		
 		cd $KERNEL_DIR
 done
 
@@ -266,6 +267,78 @@ BACKTITLE="Version Bumped"
 INFOBOX="Bumped to Version $BUMP_REV"
 message
 }
+
+#######################################################
+# COMMANDS USED FOR STRINGS                           #
+#######################################################
+
+# backup_file <file>
+backup_file() { cp $1 $1~; }
+
+# replace_string <file> <if search string> <original string> <replacement string>
+function STRING_REPLACE() {
+  if [ -z "$(grep "$2" $1)" ]; then
+      sed -i "s;${3};${4};" $1;
+  fi;
+}
+
+function STRING_SHOW() { grep "^$2" "$1" | cut -d= -f2; }
+	replace_string() { grep "^$2" "$1" | cut -d= -f2; }
+#	getprop() { test -e /sbin/getprop && /sbin/getprop $1 || file_getprop /default.prop $1; }
+#	abort() { echo "$*"; exit 1; }
+
+# insert_line <file> <if search string> <before/after> <line match string> <inserted line>
+insert_line() {
+  if [ -z "$(grep "$2" $1)" ]; then
+    case $3 in
+      before) offset=0;;
+      after) offset=1;;
+    esac;
+    line=$((`grep -n "$4" $1 | cut -d: -f1` + offset));
+    sed -i "${line}s;^;${5};" $1;
+  fi;
+}
+
+# replace_line <file> <line replace string> <replacement line>
+replace_line() {
+  if [ ! -z "$(grep "$2" $1)" ]; then
+    line=`grep -n "$2" $1 | cut -d: -f1`;
+    sed -i "${line}s;.*;${3};" $1;
+  fi;
+}
+
+# remove_line <file> <line match string>
+remove_line() {
+  if [ ! -z "$(grep "$2" $1)" ]; then
+    line=`grep -n "$2" $1 | cut -d: -f1`;
+    sed -i "${line}d" $1;
+  fi;
+}
+
+# prepend_file <file> <if search string> <patch file>
+prepend_file() {
+  if [ -z "$(grep "$2" $1)" ]; then
+    echo "$(cat $patch/$3 $1)" > $1;
+  fi;
+}
+
+# append_file <file> <if search string> <patch file>
+append_file() {
+  if [ -z "$(grep "$2" $1)" ]; then
+    echo -ne "\n" >> $1;
+    cat $patch/$3 >> $1;
+    echo -ne "\n" >> $1;
+  fi;
+}
+
+# replace_file <file> <permissions> <patch file>
+replace_file() {
+  cp -fp $patch/$3 $1;
+  chmod $2 $1;
+}
+
+## end methods
+#####################################################
 
 ## Change Tweaks ##
 function tweaks_off() {
