@@ -36,6 +36,23 @@ typedef enum {
 	HW_REV_1_2,
 	HW_REV_MAX
 } hw_rev_type;
+#elif defined (CONFIG_MACH_MSM8974_DZNY_DCM)
+typedef enum {
+	HW_REV_EVB1 = 0,
+	HW_REV_EVB2,
+	HW_REV_A,
+	HW_REV_B,
+	HW_REV_C,
+	HW_REV_D,
+	HW_REV_E,
+	HW_REV_F,
+	HW_REV_G,
+	HW_REV_H,
+	HW_REV_1_0,
+	HW_REV_1_1,
+	HW_REV_1_2,
+	HW_REV_MAX
+} hw_rev_type;
 #else
 typedef enum {
 	HW_REV_EVB1 = 0,
@@ -107,6 +124,21 @@ struct pseudo_batt_info_type {
 struct pseudo_batt_info_type;
 void pseudo_batt_set(struct pseudo_batt_info_type *);
 #endif
+#ifdef CONFIG_LGE_SUPPORT_LCD_MAKER_ID
+typedef enum {
+	LCD_RENESAS_LGD = 0,
+	LCD_RENESAS_JDI,
+	LCD_MAKER_MAX,
+} lcd_maker_id;
+
+typedef struct {
+	lcd_maker_id maker_id;
+	int min_mvol;
+	int max_mvol;
+} lcd_vol_maker_tbl_type;
+
+lcd_maker_id lge_get_panel_maker(void);
+#endif
 
 enum lge_boot_mode_type {
 	LGE_BOOT_MODE_NORMAL = 0,
@@ -123,9 +155,14 @@ enum lge_boot_mode_type lge_get_boot_mode(void);
 int lge_get_factory_boot(void);
 int lge_get_factory_cable(void);
 
+#ifdef CONFIG_MACH_MSM8974_G2_VZW
+int lge_get_battery_low(void);
+#endif
+
 #ifdef CONFIG_USB_G_LGE_ANDROID
 void __init lge_add_android_usb_devices(void);
 #endif
+
 
 enum lge_laf_mode_type {
 	LGE_LAF_MODE_NORMAL = 0,
@@ -182,11 +219,14 @@ void __init lge_add_persist_ram_devices(void);
 void __init lge_add_lcd_misc_devices(void);
 #endif
 
+int gpio_debug_init(void);
+void gpio_debug_print(void);
+
 #ifdef CONFIG_LGE_QFPROM_INTERFACE
 void __init lge_add_qfprom_devices(void);
 #endif
 
-#ifdef CONFIG_LGE_DIAG_ENABLE_SYSFS
+#ifdef CONFIG_LGE_DIAG_USB_ACCESS_LOCK
 void __init lge_add_diag_devices(void);
 #endif
 #if defined(CONFIG_LGE_PM_BATTERY_ID_CHECKER)

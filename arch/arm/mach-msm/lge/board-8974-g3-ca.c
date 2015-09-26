@@ -132,7 +132,7 @@ void __init msm8974_add_drivers(void)
 #ifdef CONFIG_LGE_QFPROM_INTERFACE
 	lge_add_qfprom_devices();
 #endif
-#ifdef CONFIG_LGE_DIAG_ENABLE_SYSFS
+#ifdef CONFIG_LGE_DIAG_USB_ACCESS_LOCK
 	lge_add_diag_devices();
 #endif
 #ifdef CONFIG_LGE_LCD_TUNING

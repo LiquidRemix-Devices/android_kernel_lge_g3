@@ -850,7 +850,7 @@ static struct gpiomux_setting cam_settings[] = {
 		.drv = GPIOMUX_DRV_2MA,
 		.pull = GPIOMUX_PULL_DOWN,
 	},
-#ifdef CONFIG_MACH_LGE// yt.kim added for B2
+#ifdef CONFIG_MACH_LGE /* yt.kim added for B2 */
 	{
 		.func = GPIOMUX_FUNC_GPIO,/* 5 */
 		.drv = GPIOMUX_DRV_8MA,
@@ -2187,7 +2187,7 @@ void __init msm_8974_init_gpiomux(void)
 	msm_gpiomux_install(&sd_card_det, 1);
 
 /* LGE_CHANGE_S, [WiFi][jaewoo.hwang@lge.com], 2013-01-28, Wifi Bring Up */
-   // printk("jaewoo in msm_gpiomux_sdc3_install\n");
+/* printk("jaewoo in msm_gpiomux_sdc3_install\n"); */
 	msm_gpiomux_sdc3_install();
 /* LGE_CHANGE_E, [WiFi][jaewoo.hwang@lge.com], 2013-01-28, Wifi Bring Up */
 
@@ -2201,7 +2201,7 @@ void __init msm_8974_init_gpiomux(void)
 /* LGE_CHANGE, yeri.lee@lge.com, 2013-10-31, wm5110 Bring up*/
 	/* install the WM5110 GPIO functions */
 	msm_gpiomux_install(msm_wm5110_configs, ARRAY_SIZE(msm_wm5110_configs));
-	//msm_gpiomux_install(msm_taiko_config, ARRAY_SIZE(msm_taiko_config));
+	/* msm_gpiomux_install(msm_taiko_config, ARRAY_SIZE(msm_taiko_config)); */
 
 	msm_gpiomux_install(msm_hsic_configs, ARRAY_SIZE(msm_hsic_configs));
 	msm_gpiomux_install(msm_hsic_hub_configs,

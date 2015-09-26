@@ -60,6 +60,9 @@
 #include <mach/mpm.h>
 #include <mach/msm_bus.h>
 
+#include <mach/board_lge.h> //to use lge_get_board_revno()
+
+
 #include "msm_sdcc.h"
 #include "msm_sdcc_dml.h"
 
@@ -1718,7 +1721,7 @@ msmsdcc_pio_irq(int irq, void *dev_id)
 		* to prevent this, we inserted LG W/A code.
 		* 2013-04-22, G2-FS@lge.com
 		*/
-		if(!host->curr.data)
+		if (!host->curr.data)
 			break;
 	#endif
 
@@ -2303,15 +2306,11 @@ msmsdcc_request(struct mmc_host *mmc, struct mmc_request *mrq)
 	spin_lock_irqsave(&host->lock, flags);
 
 	/*
-	 * Set the controller catch-all timer to:
-	 *  - 20s for quirky cards
-	 * otherwise:
-	 *  - 500ms for CMD13
-	 *  - 8s for everything else
+	 * Set timeout value to 10 secs (or more in case of buggy cards)
 	 */
 	if ((mmc->card) && (mmc->card->quirks & MMC_QUIRK_INAND_DATA_TIMEOUT))
 		host->curr.req_tout_ms = 20000;
-	else {
+	else
 		#ifdef CONFIG_MACH_LGE
 		/* LGE_CHANGE
 		 * Increase Request-Timeout from 10sec to 15sec (because of 'CMD25: Request timeout')
@@ -2319,12 +2318,8 @@ msmsdcc_request(struct mmc_host *mmc, struct mmc_request *mrq)
 		 */
 		host->curr.req_tout_ms = 15000;
 		#else
-		if (mrq->cmd->opcode == MMC_SEND_STATUS)
-			host->curr.req_tout_ms = 500;
-		else
-			host->curr.req_tout_ms = MSM_MMC_REQ_TIMEOUT;
+		host->curr.req_tout_ms = MSM_MMC_REQ_TIMEOUT;
 		#endif
-	}
 	/*
 	 * Kick the software request timeout timer here with the timeout
 	 * value identified above
@@ -4354,13 +4349,10 @@ retry:
 		 */
 		{
 			int bcmdhd_id = MMC_SDCC_CONTROLLER_INDEX_SDCC2;
-		#if defined (CONFIG_MACH_MSM8974_G3_KDDI_EVB)
-			bcmdhd_id = 3; /* sdcc 3 */
-		#endif
-			
-            if (host->pdev->id == bcmdhd_id) {
-			    rc = 0;
-			    //panic("Failed to tune.\n"); /* please contact hayun.kim@lge.com */
+
+			if (host->pdev->id == bcmdhd_id) {
+				rc = 0;
+				/* panic("Failed to tune.\n"); please contact hayun.kim@lge.com */
 			}
 		}
 	#endif
@@ -5913,8 +5905,8 @@ err:
 
 /* LGE_CHANGE_S, [WiFi][hayun.kim@lge.com], 2013-01-22, Wifi Bring Up */
 #if defined(CONFIG_BCMDHD) || defined (CONFIG_BCMDHD_MODULE) /* joon For device tree. */
-extern int sdc2_status_register(void (*cb)(int card_present, void *dev), void *dev);
-extern unsigned int sdc2_status(struct device *);
+extern int wcf_status_register(void (*cb)(int card_present, void *dev), void *dev);
+extern unsigned int wcf_status(struct device *);
 #endif
 /* LGE_CHANGE_E, [WiFi][hayun.kim@lge.com], 2013-01-22, Wifi Bring Up */
 static int
@@ -6310,14 +6302,11 @@ msmsdcc_probe(struct platform_device *pdev)
 	{
 		int bcmdhd_id = MMC_SDCC_CONTROLLER_INDEX_SDCC2;
 	
-        #if defined (CONFIG_MACH_MSM8974_G3_KDDI_EVB)
-    	bcmdhd_id = 3; /* sdcc 3 */
-	    #endif
-		
-        printk("jaewoo :%s-%d> plat->nonremovable = %d\n", __FUNCTION__, host->pdev->id, plat->nonremovable );
+
+		printk("jaewoo :%s-%d> plat->nonremovable = %d\n", __FUNCTION__, host->pdev->id, plat->nonremovable );
 		if( host->pdev->id == bcmdhd_id ) {
-			plat->register_status_notify = sdc2_status_register;
-			plat->status = sdc2_status;
+			plat->register_status_notify = wcf_status_register;
+			plat->status = wcf_status;
 		}
 	}
 	#endif

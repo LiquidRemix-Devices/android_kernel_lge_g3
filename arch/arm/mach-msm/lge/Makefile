@@ -8,9 +8,11 @@ obj-$(CONFIG_MACH_MSM8974_G3_ATT) += board-8974-g3-us.o board-8974-g3-att-gpiomu
 obj-$(CONFIG_MACH_MSM8974_G3_TMO_US) += board-8974-g3-us.o board-8974-g3-tmo_us-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_SPR_US) += board-8974-g3-us.o board-8974-g3-spr_us-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_USC_US) += board-8974-g3-us.o board-8974-g3-usc_us-gpiomux.o
+obj-$(CONFIG_MACH_MSM8974_G3_ACG_US) += board-8974-g3-us.o board-8974-g3-acg_us-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_CMCC_CN) += board-8974-g3-cn.o board-8974-g3-cn-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_CTC_CN) += board-8974-g3-cn.o board-8974-g3-cn-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_CUCC_CN) += board-8974-g3-cn.o board-8974-g3-cn-gpiomux.o
+obj-$(CONFIG_MACH_MSM8974_G3_OPEN_HK) += board-8974-g3-cn.o board-8974-g3-cn-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_KDDI) += board-8974-g3-kddi.o board-8974-g3-kddi-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_KDDI_EVB) += board-8974-g3-kddi.o board-8974-g3-kddi-evb-gpiomux.o
 obj-$(CONFIG_MACH_MSM8974_G3_GLOBAL_COM) += board-8974-g3-global.o board-8974-g3-global_com-gpiomux.o
@@ -20,7 +22,7 @@ obj-$(CONFIG_MACH_LGE) += lge_charging_scenario.o
 obj-$(CONFIG_WIFI_CONTROL_FUNC) += wifi_bcm_lge.o
 obj-$(CONFIG_LGE_HANDLE_PANIC) += lge_handle_panic.o
 obj-$(CONFIG_LGE_BLUETOOTH) += board-8974-g3-rfkill.o
-
+obj-$(CONFIG_MACH_LGE) += lge_gpio_debug.o
 obj-$(CONFIG_LGE_BOOTLOADER_LOG) += lge_bootloader_log.o
 obj-$(CONFIG_LGE_BOOTLOADER_TIME_CHECKER) += lge_bootloader_time_checker.o
 

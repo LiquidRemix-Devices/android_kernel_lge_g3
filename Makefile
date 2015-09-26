@@ -384,6 +384,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-delete-null-pointer-checks \
 		   -mcpu=cortex-a15 -mtune=cortex-a15 -mfpu=neon-vfpv4 -marm \
 		   -fno-diagnostics-show-caret -fno-pic \
+		   -Wno-unused-variable \
 		   $(KERNELFLAGS)
 		   
 KBUILD_AFLAGS_KERNEL := $(KERNELFLAGS)
