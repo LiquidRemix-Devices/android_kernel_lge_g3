@@ -1713,7 +1713,7 @@ static struct msm_gpiomux_config sensor_configs[] __initdata = {
 #endif
 #endif
 
-#if defined(CONFIG_LGE_SM100)
+#if defined(CONFIG_LGE_SM100) || defined(CONFIG_TSPDRV)
 static struct gpiomux_setting vibrator_suspend_cfg = {
        .func = GPIOMUX_FUNC_GPIO,
        .drv = GPIOMUX_DRV_2MA,
@@ -2166,7 +2166,7 @@ void __init msm_8974_init_gpiomux(void)
 #if 0 /* disable sensor GPIO setting (enable ADSP)*/
 	msm_gpiomux_install(sensor_configs, ARRAY_SIZE(sensor_configs));
 #endif
-#if defined(CONFIG_LGE_SM100)
+#if defined(CONFIG_LGE_SM100) || defined(CONFIG_TSPDRV)
        msm_gpiomux_install(vibrator_configs, ARRAY_SIZE(vibrator_configs));
 #endif
 /* LGE_CHANGE_S, [BT][younghyun.kwon@lge.com], 2013-01-29 */

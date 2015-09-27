@@ -5905,8 +5905,8 @@ err:
 
 /* LGE_CHANGE_S, [WiFi][hayun.kim@lge.com], 2013-01-22, Wifi Bring Up */
 #if defined(CONFIG_BCMDHD) || defined (CONFIG_BCMDHD_MODULE) /* joon For device tree. */
-extern int wcf_status_register(void (*cb)(int card_present, void *dev), void *dev);
-extern unsigned int wcf_status(struct device *);
+extern int sdc2_status_register(void (*cb)(int card_present, void *dev), void *dev);
+extern unsigned int sdc2_status(struct device *);
 #endif
 /* LGE_CHANGE_E, [WiFi][hayun.kim@lge.com], 2013-01-22, Wifi Bring Up */
 static int
@@ -6305,8 +6305,8 @@ msmsdcc_probe(struct platform_device *pdev)
 
 		printk("jaewoo :%s-%d> plat->nonremovable = %d\n", __FUNCTION__, host->pdev->id, plat->nonremovable );
 		if( host->pdev->id == bcmdhd_id ) {
-			plat->register_status_notify = wcf_status_register;
-			plat->status = wcf_status;
+			plat->register_status_notify = sdc2_status_register;
+			plat->status = sdc2_status;
 		}
 	}
 	#endif

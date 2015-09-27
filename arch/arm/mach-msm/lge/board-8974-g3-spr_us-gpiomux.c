@@ -571,7 +571,6 @@ static struct msm_gpiomux_config msm_blsp2_uart7_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_uart7_suspend_cfg,
 		},
 	},
-#if 0	
 	{
 		.gpio	= 44,	/* BLSP2 UART7 RFR */
 		.settings = {
@@ -579,7 +578,6 @@ static struct msm_gpiomux_config msm_blsp2_uart7_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_uart7_suspend_cfg,
 		},
 	},
-#endif	
 };
 
 static struct msm_gpiomux_config msm_rumi_blsp_configs[] __initdata = {
@@ -941,14 +939,14 @@ static struct gpiomux_setting cam_settings[] = {
 	},
 
 	{
-		.func = GPIOMUX_FUNC_GPIO, /*active 2*/ /* 5 */ /* for INPUT pin */
+		.func = GPIOMUX_FUNC_GPIO, /*active 2*/ /* 5 */ // for INPUT pin
 		.drv = GPIOMUX_DRV_8MA,
 		.pull = GPIOMUX_PULL_UP,
 		.dir = GPIOMUX_IN,
 	},
 
 	{
-		.func = GPIOMUX_FUNC_GPIO, /*suspend 2*/ /* 6 */ /* for INPUT pin */
+		.func = GPIOMUX_FUNC_GPIO, /*suspend 2*/ /* 6 */ // for INPUT pin
 		.drv = GPIOMUX_DRV_8MA,
 		.pull = GPIOMUX_PULL_NONE,
 		.dir = GPIOMUX_IN,
@@ -1466,7 +1464,7 @@ static struct msm_gpiomux_config msm_sensor_configs_rev_a[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &cam_settings[4],
 		},
 	},
-#if 0 /* from REV A , pm_gpio_4 */
+#if 0 // from REV A , pm_gpio_4
 	{
 		.gpio = 57, /* 13M_VCM_EN */
 		.settings = {
@@ -1593,13 +1591,13 @@ static struct msm_gpiomux_config msm_sensor_configs_rev_b[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &cam_settings[4],
 		},
 	},
-	{
+ 	{
 		.gpio = 61, /* LDAF_INT */
-		.settings = {
+ 		.settings = {
 			[GPIOMUX_ACTIVE]    = &cam_settings[5],
 			[GPIOMUX_SUSPENDED] = &cam_settings[6],
-		},
-	},
+ 		},
+ 	},
 };
 
 #endif /* #if defined(CONFIG_MACH_LGE) */
@@ -2552,7 +2550,7 @@ void __init msm_8974_init_gpiomux(void)
 		msm_gpiomux_install(msm_epm_configs,
 				ARRAY_SIZE(msm_epm_configs));
 
-	if (lge_get_board_revno() < HW_REV_A)
+	if(lge_get_board_revno() < HW_REV_A)
 		msm_gpiomux_install_nowrite(msm_lcd_configs,
 				ARRAY_SIZE(msm_lcd_configs));
 

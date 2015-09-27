@@ -124,9 +124,6 @@ void __init msm8974_add_drivers(void)
 #ifdef CONFIG_LGE_QFPROM_INTERFACE
 	lge_add_qfprom_devices();
 #endif
-#ifdef CONFIG_LGE_DIAG_ENABLE_SYSFS
-	lge_add_diag_devices();
-#endif
 /* LGE_CHANGE_S, [WiFi][jaewoo.hwang@lge.com], 2013-01-28, Wifi Bring Up */
 #if defined (CONFIG_BCMDHD) || defined (CONFIG_BCMDHD_MODULE)
 	init_bcm_wifi();

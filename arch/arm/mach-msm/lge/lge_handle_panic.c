@@ -136,34 +136,12 @@ static int gen_mba_panic(const char *val, struct kernel_param *kp)
 module_param_call(gen_mba_panic, gen_mba_panic, param_get_bool, &dummy_arg,
 		S_IWUSR | S_IRUGO);
 
-static int gen_modem_panic_type = 0;
-
-int lge_get_modem_panic(void)
-{
-	return gen_modem_panic_type;
-}
-
-EXPORT_SYMBOL(lge_get_modem_panic);
-
 static int gen_modem_panic(const char *val, struct kernel_param *kp)
 {
-	int ret = param_set_int(val, kp);
-	if (ret) {
-		pr_err("error setting value %d\n", ret);
-		return ret;
-	}
-	pr_err("gen_modem_panic param to %d\n", gen_modem_panic_type);
-	switch (gen_modem_panic_type) {
-		case 2:
-			subsys_modem_restart();
-			break;
-		default:
-			subsystem_restart("modem");
-			break;
-	}
+	subsystem_restart("modem");
 	return 0;
 }
-module_param_call(gen_modem_panic, gen_modem_panic, param_get_bool, &gen_modem_panic_type,
+module_param_call(gen_modem_panic, gen_modem_panic, param_get_bool, &dummy_arg,
 		S_IWUSR | S_IRUGO);
 
 static int gen_wcnss_panic(const char *val, struct kernel_param *kp)

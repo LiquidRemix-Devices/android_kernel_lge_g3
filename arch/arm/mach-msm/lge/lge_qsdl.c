@@ -71,10 +71,7 @@ static int lge_qsdl_trigger_notify(struct platform_device *pdev)
 {
 	struct qsdl_uevent_table info[] = {
 		{0x0301, {"QSDL=Q002", NULL}, },
-		{0x0302, {"QSDL=Q002", NULL}, },
 		{0x0303, {"QSDL=Q002", NULL}, },
-		{0x0304, {"QSDL=Q002", NULL}, },
-		{0x0308, {"QSDL=Q002", NULL}, },
 		{0x0400, {"QSDL=Q002", NULL}, },
 		{0x0100, {"QSDL=Q003", NULL}, },
 		{0x3001, {"QSDL=Q005", NULL}, },
@@ -143,10 +140,7 @@ static ssize_t lge_qsdl_apps_info_show(struct device *dev,
 
 	struct qsdl_sysfs_table info[] = {
 		{0x0301, "Q002"},
-		{0x0302, "Q002"},
 		{0x0303, "Q002"},
-		{0x0304, "Q002"},
-		{0x0308, "Q002"},
 		{0x0400, "Q002"},
 		{0x0100, "Q003"},
 		{0x3001, "Q005"},
@@ -246,7 +240,7 @@ static int __init lge_qsdl_handler_probe(struct platform_device *pdev)
 		data->using_uevent = pdata->using_uevent;
 	} else {
 		pr_err("%s: probe fail - no platform data\n", __func__);
-		devm_kfree(&pdev->dev, data);
+		kfree(data);
 		return -ENODEV;
 	}
 
@@ -268,7 +262,7 @@ static int __init lge_qsdl_handler_probe(struct platform_device *pdev)
 	return 0;
 
 fail_sysfs_group:
-	devm_kfree(&pdev->dev, data);
+	kfree(data);
 	pr_err("%s: probe fail - %d\n", __func__, ret);
 	return ret;
 }

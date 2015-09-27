@@ -6,7 +6,6 @@ menu "LGE Board Selection"
 config MACH_MSM8974_G3_KR
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 KR"
 	help
 	  Support for the Qualcomm MSM8974 G3 KR device.
@@ -14,7 +13,6 @@ config MACH_MSM8974_G3_KR
 config MACH_MSM8974_G3_LGU
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 LGU"
 	help
 	  Support for the Qualcomm MSM8974 G3 LG Uplus device.
@@ -22,7 +20,6 @@ config MACH_MSM8974_G3_LGU
 config MACH_MSM8974_G3_LGU_EVB
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 LGU EVB"
 	help
 	  Support for the Qualcomm MSM8974 G3 LG Uplus EVB device.
@@ -30,7 +27,6 @@ config MACH_MSM8974_G3_LGU_EVB
 config MACH_MSM8974_G3_SKT
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 SKT"
 	help
 	  Support for the Qualcomm MSM8974 G3 SKT device.
@@ -38,7 +34,6 @@ config MACH_MSM8974_G3_SKT
 config MACH_MSM8974_G3_KT
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 KT"
 	help
 	  Support for the Qualcomm MSM8974 G3 KT device.
@@ -46,7 +41,6 @@ config MACH_MSM8974_G3_KT
 config MACH_MSM8974_G3_VZW
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 VZW"
 	help
 	  Support for the Qualcomm MSM8974 G3 Verizon device.
@@ -54,7 +48,6 @@ config MACH_MSM8974_G3_VZW
 config MACH_MSM8974_G3_LRA
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 LRA"
 	help
 	  Support for the Qualcomm MSM8974 G3 LRA device.
@@ -62,7 +55,6 @@ config MACH_MSM8974_G3_LRA
 config MACH_MSM8974_G3_ATT
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 ATT"
 	help
 	  Support for the Qualcomm MSM8974 G3 AT&T device.
@@ -70,7 +62,6 @@ config MACH_MSM8974_G3_ATT
 config MACH_MSM8974_G3_SPR_US
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 SPR US"
 	help
 	  Support for the Qualcomm MSM8974 G3 Sprint device.
@@ -78,23 +69,13 @@ config MACH_MSM8974_G3_SPR_US
 config MACH_MSM8974_G3_USC_US
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 USC US"
 	help
 	  Support for the Qualcomm MSM8974 G3 Usc device.
 
-config MACH_MSM8974_G3_ACG_US
-	depends on ARCH_MSM8974
-	select MACH_LGE
-	select MACH_MSM8974_G3
-	bool "MSM8974 G3 ACG US"
-	help
-	  Support for the Qualcomm MSM8974 G3 ACG device.
-
 config MACH_MSM8974_G3_TMO_US
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 TMO US"
 	help
 	  Support for the Qualcomm MSM8974 G3 AT&T device.
@@ -102,7 +83,6 @@ config MACH_MSM8974_G3_TMO_US
 config MACH_MSM8974_G3_CN
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 CN"
 	help
 	  Support for the Qualcomm MSM8974 G3 CHINA device.
@@ -110,7 +90,6 @@ config MACH_MSM8974_G3_CN
 config MACH_MSM8974_G3_CMCC_CN
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 CMCC CN"
 	help
 	  Support for the Qualcomm MSM8974 G3 CMCC device.
@@ -118,7 +97,6 @@ config MACH_MSM8974_G3_CMCC_CN
 config MACH_MSM8974_G3_CTC_CN
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 CTC CN"
 	help
 	  Support for the Qualcomm MSM8974 G3 CTC device.
@@ -126,23 +104,13 @@ config MACH_MSM8974_G3_CTC_CN
 config MACH_MSM8974_G3_CUCC_CN
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 CUCC CN"
 	help
 	  Support for the Qualcomm MSM8974 G3 CUCC device.
-
-config MACH_MSM8974_G3_OPEN_HK
-	depends on ARCH_MSM8974
-	select MACH_LGE
-	select MACH_MSM8974_G3
-	bool "MSM8974 G3 OPEN HK"
-	help
-	  Support for the Qualcomm MSM8974 G3 OPEN_HK device.
-
+	  
 config MACH_MSM8974_G3_KDDI
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 KDDI"
 	help
 	  Support for the Qualcomm MSM8974 G3 KDDI device.
@@ -150,7 +118,6 @@ config MACH_MSM8974_G3_KDDI
 config MACH_MSM8974_G3_KDDI_EVB
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 KDDI EVB"
 	help
 	  Support for the Qualcomm MSM8974 G3 LG KDDI EVB device.
@@ -158,7 +125,6 @@ config MACH_MSM8974_G3_KDDI_EVB
 config MACH_MSM8974_G3_GLOBAL_COM
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 GLOBAL COM"
 	help
 	  Support for the Qualcomm MSM8974 G3 GLOBAL device.
@@ -172,7 +138,6 @@ config MACH_MSM8974_G3_GLOBAL_COM_LOWMEM
 config MACH_MSM8974_G3_CA
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 CA"
 	help
 	  Support for the Qualcomm MSM8974 G3 Canada device.
@@ -180,7 +145,6 @@ config MACH_MSM8974_G3_CA
 config MACH_MSM8974_G3_BELL
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 BELL"
 	help
 	  Support for the Qualcomm MSM8974 G3 BELL device.
@@ -188,7 +152,6 @@ config MACH_MSM8974_G3_BELL
 config MACH_MSM8974_G3_TLS
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 TLS"
 	help
 	  Support for the Qualcomm MSM8974 G3 TLS device.
@@ -196,7 +159,6 @@ config MACH_MSM8974_G3_TLS
 config MACH_MSM8974_G3_RGS
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 RGS"
 	help
 	  Support for the Qualcomm MSM8974 G3 RGS device.
@@ -204,15 +166,13 @@ config MACH_MSM8974_G3_RGS
 config MACH_MSM8974_G3_VTR
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 VTR"
 	help
 	  Support for the Qualcomm MSM8974 G3 VTR device.
-
+	  
 config MACH_MSM8974_G3_WIN
 	depends on ARCH_MSM8974
 	select MACH_LGE
-	select MACH_MSM8974_G3
 	bool "MSM8974 G3 WIN"
 	help
 	  Support for the Qualcomm MSM8974 G3 WIN device.
@@ -294,36 +254,5 @@ config LGE_QFPROM_INTERFACE
 	depends on MACH_LGE
 	help
 	  LGE QFPROM DRIVER.
-
-
-config LGE_DIAG_BYPASS
-	tristate "Support LGE diag bypass for factory"
-	default n
-	depends on MACH_LGE
-	help
-	  LGE diag bypass
-
-
-config LGE_LCD_OFF_DIMMING
-	tristate "Support LGE LCD off dimming reboot"
-	default n
-	depends on MACH_LGE
-	help
-	  Support lcd off or dimming reboot when reboot reason is "LCD off". lcd stay dimming until lcd is off and on again.
-
-config LGE_LIMIT_FREQ_TABLE
-    bool "Set limitation to cpu frquency for manufacturing"
-    default n
-    depends on MACH_LGE
-    help
-      set limitation to cpu frquency for manufacturing
-
-config LGE_GDSC_SWCONTROL
-	bool "Support to use controlling gdsc by sw for msm8974AA"
-	default n
-	depends on MACH_LGE
-	help
-	  When enable this, LGE's sw control code for gdsc enable and diasble
-	  are used. Normally, msm8974AA chipset based LGE model may use it.
 
 endmenu

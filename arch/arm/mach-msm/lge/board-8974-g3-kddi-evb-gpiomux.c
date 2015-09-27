@@ -20,11 +20,11 @@
 #include <mach/socinfo.h>
 #include <mach/board_lge.h>
 
-/* #define KS8851_IRQ_GPIO 94 */
+//#define KS8851_IRQ_GPIO 94
 /* soojung.lim@lge.com, 2013-05-23
  * To use 24MHz GP/GCC_GP clock for V2 H/W
  */
-int g_is_tlmm_spare_reg_value;
+int g_is_tlmm_spare_reg_value = 0;
 
 #define WLAN_CLK	40
 #define WLAN_SET	39
@@ -306,7 +306,7 @@ static struct gpiomux_setting lge_fullseg_i2c_config_suspend = {
 };
 
 static struct gpiomux_setting lge_fullseg_ctrl_pin_suspend = {
-/* 1SEG SPI INTERUPT, 1SEG POWER EN, 1SEG LDO EN */
+// 1SEG SPI INTERUPT, 1SEG POWER EN, 1SEG LDO EN
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_8MA,
 	.pull = GPIOMUX_PULL_UP,
@@ -357,7 +357,7 @@ static struct msm_gpiomux_config lge_fullseg_blsp8_i2c_tsif_configs[] __initdata
 		},
 	},
 	/*{
-		.gpio	   = 77,				//	 FULLSEG_INT_N
+		.gpio	   = 77,					// FULLSEG_INT_N 
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &lge_fullseg_ctrl_pin_suspend,
 		},
@@ -495,6 +495,7 @@ static struct gpiomux_setting irda_pwdn_active_config = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_8MA,
 	.pull = GPIOMUX_PULL_UP,
+	
 };
 
 static struct gpiomux_setting gpio_irda_tx_active_config = {
@@ -517,7 +518,7 @@ static struct msm_gpiomux_config irda_pwdn_config[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &irda_pwdn_suspended_config,
 			[GPIOMUX_ACTIVE] = &irda_pwdn_active_config,
 		},
-	},
+	},	
 	{
 		.gpio	   = 8, 		/* BLSP3 UART TX */
 		.settings = {
@@ -946,7 +947,7 @@ static struct msm_gpiomux_config msm_lcd_configs[] __initdata = {
 };
 
 #if defined(CONFIG_LGE_NFC_SONY_KDDI)
-static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata = {
+static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata ={
 		/* FELICA PON */
 		{
 			.gpio = 104,
@@ -954,7 +955,7 @@ static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata = {
 				[GPIOMUX_SUSPENDED] = &felica_pon_cfg,
 			},
 		},
-
+	
 		/* FELICA RFS */
 		{
 			.gpio = 102,
@@ -962,7 +963,7 @@ static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata = {
 				[GPIOMUX_SUSPENDED] = &felica_rfs_cfg,
 			},
 		},
-
+	
 		/* FELICA INT */
 		{
 			.gpio = 46,
@@ -970,7 +971,7 @@ static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata = {
 				[GPIOMUX_SUSPENDED] = &felica_int_cfg,
 			},
 		},
-
+	
 		/* FELICA CEN */
 		{
 			.gpio = 45,
@@ -991,7 +992,7 @@ static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata = {
 			.settings = {
 				[GPIOMUX_SUSPENDED] = &snfc_intu_cfg,
 			},
-		},
+		},	
 		/* NFC HVDD */
 		{
 			.gpio = 145,
@@ -999,7 +1000,7 @@ static struct msm_gpiomux_config msm8974_nfc_configs[] __initdata = {
 				[GPIOMUX_SUSPENDED] = &snfc_hvdd_cfg,
 			},
 		},
-};
+};	
 #endif
 
 static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
@@ -1117,7 +1118,7 @@ static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
 #endif
 
 /* LGE_CHANGE_S, [BT][younghyun.kwon@lge.com], 2013-01-29 */
-/* #ifndef CONFIG_LGE_BLUETOOTH */
+//#ifndef CONFIG_LGE_BLUETOOTH
 #if 0
 	{
 		.gpio      = 53,		/* BLSP2 QUP4 SPI_DATA_MOSI */
@@ -1248,7 +1249,7 @@ static struct msm_gpiomux_config msm8974_felica_uart_blsp1_configs[] __initdata 
 };
 #endif
 static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
-/* main camera */
+//main camera
 	{
 		.gpio = 15, /* CAM_MCLK0 */
 		.settings = {
@@ -1299,7 +1300,7 @@ static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
 		},
 	},
 
-/* front camera */
+//front camera
 	{
 		.gpio = 17, /* CAM_MCLK2 */
 		.settings = {
@@ -1336,7 +1337,7 @@ static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
 		},
 	},
 
-#if !defined(CONFIG_LGE_NFC_SONY_KDDI)
+#if !defined(CONFIG_LGE_NFC_SONY_KDDI)	
 	{
 		.gpio = 23, /* FLASH_LED_EN */
 		.settings = {
@@ -1353,7 +1354,7 @@ static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
 	},
 #endif
 
-#if 0 /* unused gpio */
+#if 0 //unused gpio
 	{
 		.gpio = 25, /* WEBCAM2_RESET_N */
 		.settings = {
@@ -1532,21 +1533,21 @@ static struct msm_gpiomux_config slimport_configs[] __initdata = {
 #endif
 
 #ifdef CONFIG_MACH_LGE
-static struct gpiomux_setting headset_active_cfg_gpio65 = {
+static struct gpiomux_setting headset_active_cfg_gpio65 ={
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
 	.pull = GPIOMUX_PULL_UP,
 	.dir  = GPIOMUX_IN,
 };
 
-static struct gpiomux_setting headset_active_cfg_gpio64 = {
+static struct gpiomux_setting headset_active_cfg_gpio64 ={
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
 	.pull = GPIOMUX_PULL_UP,
 	.dir  = GPIOMUX_IN,
 };
 
-static struct msm_gpiomux_config headset_configs[] = {
+static struct msm_gpiomux_config headset_configs[] ={
 	{
 		.gpio = 64,
 		.settings = {
@@ -1748,7 +1749,7 @@ static struct msm_gpiomux_config msm8974_sdc3_configs[] __initdata = {
 		.gpio      = 37,
 		.settings = {
 			[GPIOMUX_ACTIVE]    = &sdc3_cmd_data_0_3_actv_cfg,
-			[GPIOMUX_SUSPENDED] = &sdc3_suspend_cfg, /* sdc3_data_1_suspend_cfg */
+			[GPIOMUX_SUSPENDED] = &sdc3_suspend_cfg, //sdc3_data_1_suspend_cfg
 		},
 	},
 
@@ -2093,7 +2094,7 @@ void __init msm_8974_init_gpiomux(void)
 #endif
 
 #if defined(CONFIG_KS8851) || defined(CONFIG_KS8851_MODULE)
-/*	msm_gpiomux_install(msm_eth_configs, ARRAY_SIZE(msm_eth_configs)); */
+//	msm_gpiomux_install(msm_eth_configs, ARRAY_SIZE(msm_eth_configs));
 #endif
 	msm_gpiomux_install(msm_blsp_configs, ARRAY_SIZE(msm_blsp_configs));
 
@@ -2137,7 +2138,7 @@ void __init msm_8974_init_gpiomux(void)
 
 	msm_gpiomux_install(msm_taiko_config, ARRAY_SIZE(msm_taiko_config));
 
-	/* msm_gpiomux_install(msm_hsic_configs, ARRAY_SIZE(msm_hsic_configs)); */
+	//msm_gpiomux_install(msm_hsic_configs, ARRAY_SIZE(msm_hsic_configs));
 	msm_gpiomux_install(msm_hsic_hub_configs,
 				ARRAY_SIZE(msm_hsic_hub_configs));
 
@@ -2165,10 +2166,10 @@ void __init msm_8974_init_gpiomux(void)
 					ARRAY_SIZE(slimport_configs));
 #endif
 #if defined(CONFIG_MACH_LGE)
-/* msm_gpiomux_install(msm_display_configs, ARRAY_SIZE(msm_display_configs)); */
+//msm_gpiomux_install(msm_display_configs, ARRAY_SIZE(msm_display_configs));
 	msm_gpiomux_install(msm_hall_ic_configs, ARRAY_SIZE(msm_hall_ic_configs));
 
-	msm_gpiomux_install(headset_configs, ARRAY_SIZE(headset_configs));
+   	msm_gpiomux_install(headset_configs,ARRAY_SIZE(headset_configs));
 #endif
 #if 0 /* disable sensor GPIO setting (enable ADSP)*/
 	msm_gpiomux_install(sensor_configs, ARRAY_SIZE(sensor_configs));
