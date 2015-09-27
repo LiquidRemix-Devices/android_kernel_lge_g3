@@ -430,6 +430,10 @@ int dhd_adjust_tcp_winsize(int index, int pk_type, int op_mode, struct sk_buff *
 int set_softap_params(dhd_pub_t *dhd)
 {
 	uint32 iovar_set;
+#ifdef SOFTAP_TPUT_LRL_SRL_RETRY_LIMIT
+	s32 srl = 127;
+	s32 lrl = 127;
+#endif
 	char iov_buf[WLC_IOCTL_SMLEN];
 	int ret = 0;
 	if (dhd->op_mode & DHD_FLAG_HOSTAP_MODE) {
@@ -464,6 +468,12 @@ int set_softap_params(dhd_pub_t *dhd)
 		bcm_mkiovar("ampdu_rr_retry_limit", (char *)&iovar_set, 4, iov_buf,
 		 sizeof(iov_buf));
 		dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iov_buf, sizeof(iov_buf), TRUE, 0);
+#ifdef SOFTAP_TPUT_LRL_SRL_RETRY_LIMIT
+		dhd_wl_ioctl_cmd(dhd, WLC_SET_SRL, &srl, sizeof(s32), TRUE, 0);
+
+		dhd_wl_ioctl_cmd(dhd, WLC_SET_LRL, &lrl, sizeof(s32), TRUE, 0);
+#endif
+
 #endif
 
 #ifdef BCM4334_CHIP

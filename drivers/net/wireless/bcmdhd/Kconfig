@@ -170,35 +170,8 @@ config BCM4335BT
 	  This is a configuration for bt lock enable.
 
 config BRCM_WAPI
-        depends on BCMDHD
         bool "Enables WAPI support"
         depends on BCMDHD
         default n
         ---help---
           Enables WAPI support
-
-config BCMDHD_MULTI_MODULE_VID
-	bool "BCM Supports Multi module vendor ID"
-	default n
-
-config BCMDHD_DEFAULT_NVRAM_PATH
-    depends on BCMDHD_MULTI_MODULE_VID
-    string "Default NVRAM path"
-    default "/system/etc/wifi/bcmdhd.cal"
-    ---help---
-      Path to the default calibration file.
-
-config BCMDHD_MURATA_NVRAM_PATH
-    depends on BCMDHD_MULTI_MODULE_VID
-    string "Murata NVRAM path"
-    default "/system/etc/wifi/bcmdhd_murata.cal"
-    ---help---
-      Path to the murata calibration file.
-
-config BCMDHD_LGIT_NVRAM_PATH
-    depends on BCMDHD_MULTI_MODULE_VID
-    string "LGIT NVRAM path"
-    default "/system/etc/wifi/bcmdhd_lgit.cal"
-    ---help---
-      Path to the lgit calibration file.
-

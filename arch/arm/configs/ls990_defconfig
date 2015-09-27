@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 LS990 Sprint
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev9.0-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev9.1-T1-Experimental"
 #########################################################
 #########################################################
 
@@ -145,6 +145,7 @@ CONFIG_ARCH_USE_BUILTIN_BSWAP=y
 CONFIG_BLK_DEV_DM_BUILTIN=y
 # CONFIG_CPU_QUIET is not set
 CONFIG_WAKE_GESTURES=y
+CONFIG_BCMDHD_SDIO=y
 
 #### MultiROM Support ####
 CONFIG_KEXEC=y
