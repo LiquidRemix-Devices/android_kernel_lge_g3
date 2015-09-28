@@ -1,7 +1,7 @@
 /*
  * Linux cfg80211 driver - Android related functions
  *
- * Copyright (C) 1999-2015, Broadcom Corporation
+ * Copyright (C) 1999-2014, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: wl_android.h 487838 2014-06-27 05:51:44Z $
+ * $Id: wl_android.h 459578 2014-03-04 08:24:27Z $
  */
 
 #include <linux/module.h>
@@ -31,7 +31,7 @@
 /* If any feature uses the Generic Netlink Interface, put it here to enable WL_GENL
  * automatically
  */
-#if defined(BT_WIFI_HANDOVER) || defined(WL_NAN)
+#if defined(BCMCCX_S69)
 #define WL_GENL
 #endif
 
@@ -56,6 +56,17 @@ void wl_android_post_init(void);
 int wl_android_wifi_on(struct net_device *dev);
 int wl_android_wifi_off(struct net_device *dev);
 int wl_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd);
+
+#if defined(CONFIG_WIFI_CONTROL_FUNC)
+int wl_android_wifictrl_func_add(void);
+void wl_android_wifictrl_func_del(void);
+void* wl_android_prealloc(int section, unsigned long size);
+
+int wifi_get_irq_number(unsigned long *irq_flags_ptr);
+int wifi_set_power(int on, unsigned long msec);
+int wifi_get_mac_addr(unsigned char *buf);
+void *wifi_get_country_code(char *ccode);
+#endif /* CONFIG_WIFI_CONTROL_FUNC */
 
 #ifdef WL_GENL
 typedef struct bcm_event_hdr {
@@ -91,14 +102,15 @@ enum {
 	BCM_E_SVC_FOUND,
 	BCM_E_DEV_FOUND,
 	BCM_E_DEV_LOST,
-	BCM_E_DEV_BT_WIFI_HO_REQ,
+#ifdef BCMCCX_S69
+	BCM_E_DEV_S69RESP,
+#endif
 	BCM_E_MAX
 };
 
 s32 wl_genl_send_msg(struct net_device *ndev, u32 event_type,
 	u8 *string, u16 len, u8 *hdr, u16 hdrlen);
 #endif /* WL_GENL */
-s32 wl_netlink_send_msg(int pid, int type, int seq, void *data, size_t size);
 
 /* hostap mac mode */
 #define MACLIST_MODE_DISABLED   0
