@@ -1740,6 +1740,7 @@ CONFIG_WLAN=y
 # CONFIG_ATH_COMMON is not set
 CONFIG_WIFI_CONTROL_FUNC=y
 CONFIG_BCMDHD=y
+CONFIG_BCMDHD_NEW=y
 # CONFIG_BCM4330 is not set
 # CONFIG_BCM4334 is not set
 # CONFIG_BCM43341 is not set
@@ -1769,6 +1770,9 @@ CONFIG_BCMDHD_LGIT_NVRAM_PATH="/system/etc/wifi/bcmdhd_lgit.cal"
 # CONFIG_IWM is not set
 # CONFIG_LIBERTAS is not set
 # CONFIG_MWIFIEX is not set
+
+
+
 
 #
 # Enable WiMAX (Networking options) to see the WiMAX drivers
