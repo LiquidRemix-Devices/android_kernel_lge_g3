@@ -3,6 +3,7 @@ BCM43XX DHD 1.201.54.1 for L OS.
 DHD 1.201.54.1 (2014.10.06)
   - Initial release for L OS
 
+
 DHD 1.201.54.2.1 (2014.11.14)
   - Implemented Link statistics, Gscan and RTT features
   - Enabled tailpadding for packets (CSP#854392)
