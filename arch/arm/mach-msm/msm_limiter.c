@@ -25,15 +25,13 @@
 #endif
 #include <linux/msm_limiter.h>
 #define MSM_CPUFREQ_LIMIT_MAJOR		3
-#define MSM_CPUFREQ_LIMIT_MINOR		6
+#define MSM_CPUFREQ_LIMIT_MINOR		8
 
-
-static unsigned int debug = 0;
-module_param_named(debug_mask, debug, uint, 0644);
+static unsigned int debug_mask = 0;
 
 #define dprintk(msg...)		\
 do { 				\
-	if (debug)		\
+	if (debug_mask)		\
 		pr_info(msg);	\
 } while (0)
 
@@ -103,7 +101,7 @@ static void __msm_limit_suspend(struct power_suspend *handler)
 static void __msm_limit_suspend(void)
 #endif
 {
-	if (!limit.limiter_enabled)
+	if (!limit.limiter_enabled || limit.suspended)
 		return;
 
 	INIT_DELAYED_WORK(&limit.suspend_work, msm_limit_suspend);
@@ -249,6 +247,32 @@ static ssize_t limiter_enabled_store(struct kobject *kobj,
 	return count;
 }
 
+static ssize_t debug_mask_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%u\n", debug_mask);
+}
+
+static ssize_t debug_mask_store(struct kobject *kobj,
+				      struct kobj_attribute *attr,
+				      const char *buf, size_t count)
+{
+	int ret;
+	unsigned int val;
+
+	ret = sscanf(buf, "%u\n", &val);
+	if (ret != 1 || val < 0 || val > 1)
+		return -EINVAL;
+
+	if (val == debug_mask)
+		return count;
+
+	debug_mask = val;
+
+	return count;
+}
+
+
 static ssize_t suspend_defer_time_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
@@ -300,6 +324,69 @@ out:
 	return count;
 }
 
+static ssize_t store_resume_max_freq_all(struct kobject *kobj,
+					struct kobj_attribute *attr,
+					const char *buf, size_t count)
+{
+	int ret;
+	unsigned int val, cpu;
+	ret = sscanf(buf, "%u\n", &val);
+	if (ret != 1)
+		return -EINVAL;
+	if (val == 0)
+		goto out;
+
+	if (val < limit.suspend_min_freq_all)
+		val = limit.suspend_min_freq_all;
+
+out:
+	limit.resume_max_freq_all = val;
+	for_each_possible_cpu(cpu) {
+		limit.resume_max_freq[cpu] = val;
+		if (limit.limiter_enabled)
+			update_cpu_max_freq(cpu);
+	}
+	return count;
+}
+
+static ssize_t store_suspend_min_freq_all(struct kobject *kobj,
+					struct kobj_attribute *attr,
+ 					const char *buf, size_t count)
+{
+	int ret;
+	unsigned int val, cpu;
+	ret = sscanf(buf, "%u\n", &val);
+	if (ret != 1)
+		return -EINVAL;
+	if (val == 0)
+		goto out;
+	if (val > limit.resume_max_freq_all)
+		val = limit.resume_max_freq_all;
+
+out:
+	limit.suspend_min_freq_all = val;
+	for_each_possible_cpu(cpu) {
+		limit.suspend_min_freq[cpu] = val;
+		if (limit.limiter_enabled)
+			update_cpu_min_freq(cpu);
+	}
+	return count;
+}
+
+static ssize_t store_scaling_governor_all(struct kobject *kobj,
+					struct kobj_attribute *attr,
+					const char *buf, size_t count)
+{
+	int ret, cpu;
+	char val[16];
+	ret = sscanf(buf, "%s\n", val);
+	if (ret != 1)
+		return -EINVAL;
+
+	for_each_possible_cpu(cpu)
+		ret = cpufreq_set_gov(val, cpu);
+	return count;
+}
 
 #define multi_cpu(cpu)					\
 static ssize_t store_resume_max_freq_##cpu		\
@@ -378,7 +465,7 @@ static ssize_t show_scaling_governor_##cpu(		\
  struct kobj_attribute *attr, char *buf)		\
 {							\
 	return sprintf(buf, "%s\n",			\
-	cpufreq_get_gov(cpu));			\
+	cpufreq_get_gov(cpu));				\
 }							\
 static ssize_t show_live_max_freq_##cpu(		\
  struct kobject *kobj,					\
@@ -430,6 +517,21 @@ multi_cpu(1);
 multi_cpu(2);
 multi_cpu(3);
 
+static struct kobj_attribute resume_max_freq =
+	__ATTR(resume_max_freq, 0666,
+		show_resume_max_freq_0,
+		store_resume_max_freq_all);
+
+static struct kobj_attribute suspend_min_freq =
+	__ATTR(suspend_min_freq, 0666,
+		show_suspend_min_freq_0,
+		store_suspend_min_freq_all);
+
+static struct kobj_attribute scaling_governor =
+	__ATTR(scaling_governor, 0666,
+		show_scaling_governor_0,
+		store_scaling_governor_all);
+
 static ssize_t msm_cpufreq_limit_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
@@ -447,6 +549,11 @@ static struct kobj_attribute limiter_enabled_attribute =
 		limiter_enabled_show,
 		limiter_enabled_store);
 
+static struct kobj_attribute debug_mask_attribute =
+	__ATTR(debug_mask, 0666,
+		debug_mask_show,
+		debug_mask_store);
+
 static struct kobj_attribute suspend_defer_time_attribute =
 	__ATTR(suspend_defer_time, 0666,
 		suspend_defer_time_show,
@@ -460,16 +567,20 @@ static struct kobj_attribute suspend_max_freq_attribute =
 static struct attribute *msm_cpufreq_limit_attrs[] =
 	{
 		&limiter_enabled_attribute.attr,
+		&debug_mask_attribute.attr,
 		&suspend_defer_time_attribute.attr,
 		&suspend_max_freq_attribute.attr,
+		&resume_max_freq.attr,
 		&resume_max_freq_0.attr,
 		&resume_max_freq_1.attr,
 		&resume_max_freq_2.attr,
 		&resume_max_freq_3.attr,
+		&suspend_min_freq.attr,
 		&suspend_min_freq_0.attr,
 		&suspend_min_freq_1.attr,
 		&suspend_min_freq_2.attr,
 		&suspend_min_freq_3.attr,
+		&scaling_governor.attr,
 		&scaling_governor_0.attr,
 		&scaling_governor_1.attr,
 		&scaling_governor_2.attr,
