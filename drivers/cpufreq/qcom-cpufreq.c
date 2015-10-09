@@ -90,7 +90,7 @@ EXPORT_SYMBOL(get_cpu_min_lock);
 void set_cpu_min_lock(unsigned int cpu, int freq)
 {
 	if (cpu >= 0 && cpu < NR_CPUS) {
-		if (freq <= 268800 || freq > 2880000)
+		if (freq <= 268800 || freq > 3033600)
 			lower_limit_freq[cpu] = 0;
 		else
 			lower_limit_freq[cpu] = freq;

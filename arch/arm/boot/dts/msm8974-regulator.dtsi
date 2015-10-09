@@ -132,7 +132,7 @@
 		status = "okay";
 		pm8841_s4: regulator-s4 {
 			/* set min to retention state */
-			regulator-min-microvolt = <500000>;
+			regulator-min-microvolt = <815000>;
 			/* max is set to Normal */
 			regulator-max-microvolt = <900000>;
 			status = "okay";
@@ -144,9 +144,9 @@
 			qcom,use-voltage-corner;
 			regulator-min-microvolt = <1>;
 			/* limit max corner to Turbo state */
-			regulator-max-microvolt = <5>;
+			regulator-max-microvolt = <7>;
 			/* init state start from SVS Krait state */
-			qcom,init-voltage-corner = <2>; /* SVS Krait */
+			qcom,init-voltage-corner = <3>; /* SVS SOC */
 		};
 		pm8841_s4_floor_corner: regulator-s4-floor-corner {
 			compatible = "qcom,rpm-regulator-smd";
@@ -154,7 +154,7 @@
 			qcom,set = <3>;
 			regulator-min-microvolt = <1>;
 			/* limit max corner to Turbo state */
-			regulator-max-microvolt = <5>;
+			regulator-max-microvolt = <7>;
 			qcom,use-voltage-floor-corner;
 			qcom,always-send-voltage;
 		};
@@ -213,9 +213,9 @@
 	rpm-regulator-ldoa3 {
 		status = "okay";
 		pm8941_l3: regulator-l3 {
-			regulator-min-microvolt = <1200000>;
-			regulator-max-microvolt = <1200000>;
-			qcom,init-voltage = <1200000>;
+			regulator-min-microvolt = <1225000>;
+			regulator-max-microvolt = <1225000>;
+			qcom,init-voltage = <1225000>;
 			status = "okay";
 		};
 	};
@@ -293,9 +293,9 @@
 	rpm-regulator-ldoa11 {
 		status = "okay";
 		pm8941_l11: regulator-l11 {
-			regulator-min-microvolt = <1000000>;
-			regulator-max-microvolt = <1300000>;
-			qcom,init-voltage = <1000000>;
+			regulator-min-microvolt = <1050000>;
+			regulator-max-microvolt = <1350000>;
+			qcom,init-voltage = <1050000>;
 			status = "okay";
 		};
 	};
@@ -371,7 +371,7 @@
 		status = "okay";
 		pm8941_l18: regulator-l18 {
 			regulator-min-microvolt = <2700000>;
-			regulator-max-microvolt = <2700000>;
+			regulator-max-microvolt = <2850000>;
 			qcom,init-voltage = <2700000>;
 			status = "okay";
 		};
