@@ -86,7 +86,11 @@ config CPU_FREQ_DEFAULT_GOV_ARTERACTIVE
 	  Use the CPUFreq governor 'arteractive' as default. This allows
 	  you to get a full dynamic cpu frequency capable system by simply
 	  loading your cpufreq low-level hardware driver, using the
-	  'arteractive' governor for latency-sensitive workloads.	
+	  'arteractive' governor for latency-sensitive workloads.
+	  
+config CPU_FREQ_DEFAULT_GOV_BADASS
+	bool "badass"
+	select CPU_FREQ_GOV_BADASS	  	
 
 config CPU_FREQ_DEFAULT_GOV_BARRY_ALLEN
 	bool "barry_allen"
@@ -114,6 +118,16 @@ config CPU_FREQ_DEFAULT_GOV_BOOSTACTIVE
 	  you to get a full dynamic cpu frequency capable system by simply
 	  loading your cpufreq low-level hardware driver, using the
 	  'interactive' governor for latency-sensitive workloads.
+	  
+config CPU_FREQ_DEFAULT_GOV_BRAZILIANWAX
+	bool "brazilianwax"
+	select CPU_FREQ_GOV_BRAZILIANWAX
+	---help---
+	  Use the CPUFreq governor 'brazilianwax' as default. This allows
+	  you to get a full dynamic cpu frequency capable system by simply
+	  loading your cpufreq low-level hardware driver, using the
+	  'brazilianwax' governor for latency-sensitive workloads and demanding
+	  performance.	  
 	  
 config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
 	bool "conservative"
@@ -282,6 +296,19 @@ config CPU_FREQ_DEFAULT_GOV_POWERSAVE
 	  Use the CPUFreq governor 'powersave' as default. This sets
 	  the frequency statically to the lowest frequency supported by
 	  the CPU.	 
+	  
+config CPU_FREQ_DEFAULT_GOV_SAKURACTIVE
+	bool "sakuractive"
+	select CPU_FREQ_GOV_SAKURACTIVE
+	select CPU_FREQ_GOV_PERFORMANCE
+	help
+	  Use the CPUFreq governor 'sakuractive' as default. This allows you
+	  to get a full dynamic frequency capable system with CPU
+	  hotplug support by simply loading your cpufreq low-level
+	  hardware driver.  Be aware that not all cpufreq drivers
+	  support the hotplug governor. If unsure have a look at
+	  the help section of the driver. Fallback governor will be the
+	  performance governor.	  
 
 config CPU_FREQ_DEFAULT_GOV_SLIM
 	bool "slim"
@@ -318,7 +345,20 @@ config CPU_FREQ_DEFAULT_GOV_SMARTMAX_EPS
         bool "smartmax_eps"
         select CPU_FREQ_GOV_SMARTMAX_EPS
         help
-          Use the CPUFreq governor 'smartmax eps' as default	  
+          Use the CPUFreq governor 'smartmax eps' as default
+	  
+config CPU_FREQ_DEFAULT_GOV_UBERDEMAND
+	bool "uberdemand"
+	select CPU_FREQ_GOV_UBERDEMAND
+	select CPU_FREQ_GOV_PERFORMANCE
+	help
+	  Use the CPUFreq governor 'ondemand' as default. This allows
+	  you to get a full dynamic frequency capable system by simply
+	  loading your cpufreq low-level hardware driver.
+	  Be aware that not all cpufreq drivers support the ondemand
+	  governor. If unsure have a look at the help section of the
+	  driver. Fallback governor will be the performance governor.
+	  uberdemand has built in a second phase profile.	  	  
 	
 config CPU_FREQ_DEFAULT_GOV_USERSPACE
 	bool "userspace"
@@ -410,7 +450,76 @@ config CPU_FREQ_GOV_ARTERACTIVE
 	tristate "'arteractive' cpufreq policy governor"
 	help
 	  'arteractive' - This driver adds the interactive governor
-	  from the SM-G900F source drop.	  
+	  from the SM-G900F source drop.
+	  
+config CPU_FREQ_GOV_BADASS
+	tristate "'badass' cpufreq policy governor"
+	select CPU_FREQ_TABLE
+	help
+	  'badass' - This driver adds a dynamic cpufreq policy governor.
+	  The governor does a periodic polling and
+	  changes frequency based on the CPU utilization.
+	  The support for this governor depends on CPU capability to
+	  do fast frequency switching (i.e, very low latency frequency	  transitions).
+	  To compile this driver as a module, choose M here: the
+	  module will be called cpufreq_badass.
+	  If in doubt, say N.
+
+config CONFIG_CPU_FREQ_GOV_BADASS_SECOND_PHASE_FREQ
+	int "'badass' Second Phase Frequency"
+	default 2572800
+	depends on CPU_FREQ_GOV_BADASS	  
+
+config CONFIG_CPU_FREQ_GOV_BADASS_THIRD_PHASE_FREQ
+	int "'badass' Third Phase Frequency"
+	default 2457600
+	depends on CPU_FREQ_GOV_BADASS
+
+config CPU_FREQ_GOV_BADASS_2_PHASE
+	tristate "'2-phase' power-efficiency badass algorithm"
+	depends on CPU_FREQ_GOV_BADASS
+	help
+	  '2-phase' - This driver adds a new algo to save power
+
+config CPU_FREQ_GOV_BADASS_2_PHASE_FREQ
+	int "'2-phase' badass frequency"
+	default 1267200
+	depends on CPU_FREQ_GOV_BADASS
+	depends on CPU_FREQ_GOV_BADASS_2_PHASE
+
+config CPU_FREQ_GOV_BADASS_3_PHASE
+	tristate "'3-phase' power-efficiency badass algorithm"
+	depends on CPU_FREQ_GOV_BADASS
+	depends on CPU_FREQ_GOV_BADASS_2_PHASE
+	help
+	  '3-phase' - This driver adds a new algo to save power
+
+config CPU_FREQ_GOV_BADASS_3_PHASE_FREQ
+	int "'3-phase' badass frequency"
+	default 1497600
+	depends on CPU_FREQ_GOV_BADASS
+	depends on CPU_FREQ_GOV_BADASS_2_PHASE
+	depends on CPU_FREQ_GOV_BADASS_3_PHASE
+
+config CPU_FREQ_GOV_BADASS_GPU_CONTROL
+	tristate "'gpu_control' power-efficiency badass algorithm"
+	depends on CPU_FREQ_GOV_BADASS
+	depends on CPU_FREQ_GOV_BADASS_2_PHASE
+	help
+	  'gpu_control' - This driver adds a new algo to save power
+
+config CPU_FREQ_GOV_BADASS_LOWBAT_POWERSAVE
+	tristate "'lowbat_powersave' power-efficiency badass algorithm"
+	depends on CPU_FREQ_GOV_BADASS
+	help
+	  'lowbat_powersave' - This driver adds a new algo to save power
+
+config CPU_FREQ_GOV_BADASS_ALLOW_BYPASS
+	tristate "Allows bypassing phases"
+	depends on CPU_FREQ_GOV_BADASS
+	depends on CPU_FREQ_GOV_BADASS_2_PHASE
+	help
+	  'allow_bypass' - This driver adds a bypass to the phases	  	  
 
 config CPU_FREQ_GOV_BARRY_ALLEN
 	tristate "'barry_allen' cpufreq policy governor"
@@ -462,6 +571,14 @@ config CPU_FREQ_GOV_BOOSTACTIVE
 	  For details, take a look at linux/Documentation/cpu-freq.
 
 	  If in doubt, say N.
+	  
+config CPU_FREQ_GOV_BRAZILIANWAX
+	tristate "'brazilianwax' cpufreq governor"
+	depends on CPU_FREQ
+	help
+          'brazilianwax' - a "slightly more agressive smart" optimized governor!
+
+	  If in doubt, say N.	  
 	
 config CPU_FREQ_GOV_CONSERVATIVE
 	tristate "'conservative' cpufreq governor"
@@ -738,6 +855,26 @@ config CPU_FREQ_GOV_POWERSAVE
 	  module will be called cpufreq_powersave.
 
 	  If in doubt, say Y.
+	  
+config CPU_FREQ_GOV_SAKURACTIVE
+	tristate "'sakuractive' cpufreq governor"
+	depends on CPU_FREQ && NO_HZ && HOTPLUG_CPU
+	help
+	  'sakuractive' - this driver mimics the frequency scaling behavior
+	  in 'ondemand', but with several key differences.  First is
+	  that frequency transitions use the CPUFreq table directly,
+	  instead of incrementing in a percentage of the maximum
+	  available frequency.  Second 'sakuractive' will offline auxillary
+	  CPUs when the system is idle, and online those CPUs once the
+	  system becomes busy again.  This last feature is needed for
+	  architectures which transition to low power states when only
+	  the "master" CPU is online, or for thermally constrained
+	  devices.
+
+	  If you don't have one of these architectures or devices, use
+	  'ondemand' instead.
+
+	  If in doubt, say N.	  
 
 config CPU_FREQ_GOV_SLIM
 	tristate "'slim' cpufreq policy governor"
@@ -893,11 +1030,22 @@ config CPU_FREQ_GOV_SMARTMAX_EPS
         help
           'smartmax EPS' is the extreme powersaving version of smartmax
 		  	  	
-config CPU_FREQ_GOV_ARTERACTIVE
-	tristate "'arteractive' cpufreq policy governor"
+	  
+config CPU_FREQ_GOV_UBERDEMAND
+	tristate "'uberdemand' cpufreq policy governor"
+	select CPU_FREQ_TABLE
 	help
-	  'arteractive' - This driver adds the interactive governor
-	  from the SM-G900F source drop.
+	  'uberdemand' - This driver adds a dynamic cpufreq policy governor.
+	  The governor does a periodic polling and
+	  changes frequency based on the CPU utilization.
+	  The support for this governor depends on CPU capability to
+	  do fast frequency switching (i.e, very low latency frequency
+	  transitions).
+
+config CPU_FREQ_GOV_UBERDEMAND_SECOND_PHASE_FREQ
+	int "'uberdemand' Second Phase Frequency"
+	default 2457600
+	depends on CPU_FREQ_GOV_UBERDEMAND	  
 
 config CPU_FREQ_GOV_USERSPACE
 	tristate "'userspace' governor for userspace frequency scaling"
