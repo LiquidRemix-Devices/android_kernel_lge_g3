@@ -48,8 +48,8 @@ struct cpufreq_governor cpufreq_gov_alucard = {
 };
 
 struct cpufreq_alucard_cpuinfo {
-	cputime64_t prev_cpu_wall;
-	cputime64_t prev_cpu_idle;
+	u64 prev_cpu_wall;
+	u64 prev_cpu_idle;
 	struct cpufreq_frequency_table *freq_table;
 	struct delayed_work work;
 	struct cpufreq_policy *cur_policy;
@@ -379,7 +379,7 @@ static void alucard_check_cpu(struct cpufreq_alucard_cpuinfo *this_alucard_cpuin
 	int inc_cpu_load;
 	int pump_inc_step;
 	int pump_dec_step;
-	cputime64_t cur_wall_time, cur_idle_time;
+	u64 cur_wall_time, cur_idle_time;
 	unsigned int wall_time, idle_time;
 #ifndef CONFIG_CPU_EXYNOS4210
 	unsigned int index = 0;

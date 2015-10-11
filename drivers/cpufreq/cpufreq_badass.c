@@ -95,10 +95,10 @@ struct cpufreq_governor cpufreq_gov_badass = {
 enum {BDS_NORMAL_SAMPLE, BDS_SUB_SAMPLE};
 
 struct cpu_bds_info_s {
-	cputime64_t prev_cpu_idle;
-	cputime64_t prev_cpu_iowait;
-	cputime64_t prev_cpu_wall;
-	cputime64_t prev_cpu_nice;
+	u64 prev_cpu_idle;
+	u64 prev_cpu_iowait;
+	u64 prev_cpu_wall;
+	u64 prev_cpu_nice;
 	struct cpufreq_policy *cur_policy;
 	struct delayed_work work;
 	struct cpufreq_frequency_table *freq_table;
@@ -167,7 +167,7 @@ static struct bds_tuners {
 #endif
 };
 
-static inline cputime64_t get_cpu_iowait_time(unsigned int cpu, cputime64_t *wall)
+static inline u64 get_cpu_iowait_time(unsigned int cpu, u64 *wall)
 {
 	u64 iowait_time = get_cpu_iowait_time_us(cpu, wall);
 
@@ -727,7 +727,7 @@ static void bds_check_cpu(struct cpu_bds_info_s *this_bds_info)
 
 	for_each_cpu(j, policy->cpus) {
 		struct cpu_bds_info_s *j_bds_info;
-		cputime64_t cur_wall_time, cur_idle_time, cur_iowait_time;
+		u64 cur_wall_time, cur_idle_time, cur_iowait_time;
 		unsigned int idle_time, wall_time, iowait_time;
 		unsigned int load, load_freq;
 		int freq_avg;
@@ -747,7 +747,7 @@ static void bds_check_cpu(struct cpu_bds_info_s *this_bds_info)
 		j_bds_info->prev_cpu_iowait = cur_iowait_time;
 
 		if (bds_tuners_ins.ignore_nice) {
-			cputime64_t cur_nice;
+			u64 cur_nice;
 			unsigned long cur_nice_jiffies;
 
 			cur_nice = (kcpustat_cpu(j).cpustat[CPUTIME_NICE] - j_bds_info->prev_cpu_nice);
@@ -1194,7 +1194,7 @@ static int cpufreq_governor_bds(struct cpufreq_policy *policy,
 
 static int __init cpufreq_gov_bds_init(void)
 {
-	cputime64_t wall;
+	u64 wall;
 	u64 idle_time;
 	unsigned int i;
 	int cpu = get_cpu();
