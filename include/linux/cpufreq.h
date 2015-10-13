@@ -458,6 +458,10 @@ extern struct cpufreq_governor cpufreq_gov_lagfree;
 extern struct cpufreq_governor cpufreq_gov_lionheart;
 #define CPUFREQ_DEFAULT_GOVERNOR 	(&cpufreq_gov_LIONHEART)
 
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_LULZACTIVE)
+extern struct cpufreq_governor 		cpufreq_gov_lulzactive;
+#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_lulzactive)
+
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_NIGHTMARE)
 extern struct cpufreq_governor cpufreq_gov_nightmare;
 #define CPUFREQ_DEFAULT_GOVERNOR (&cpufreq_gov_nightmare)

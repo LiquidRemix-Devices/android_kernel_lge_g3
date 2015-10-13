@@ -33,6 +33,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_INTERACTIVE)		+= cpufreq_interactive.o
 obj-$(CONFIG_CPU_FREQ_GOV_KTOONSERVATIVEQ) 	+= cpufreq_ktoonservativeq.o
 #obj-$(CONFIG_CPU_FREQ_GOV_LAGFREE)      	+= cpufreq_lagfree.o
 obj-$(CONFIG_CPU_FREQ_GOV_LIONHEART)   	        += cpufreq_lionheart.o
+obj-$(CONFIG_CPU_FREQ_GOV_LULZACTIVE)		+= cpufreq_lulzactive.o
 obj-$(CONFIG_CPU_FREQ_GOV_MYTHX_PLUG)		+= cpufreq_mythx_plug.o
 obj-$(CONFIG_CPU_FREQ_GOV_NIGHTMARE)		+= cpufreq_nightmare.o
 obj-$(CONFIG_CPU_FREQ_GOV_ONDEMAND)		+= cpufreq_ondemand.o
