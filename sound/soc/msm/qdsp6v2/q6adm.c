@@ -692,8 +692,8 @@ void send_adm_custom_topology(int port_id)
 
 	get_adm_custom_topology(&cal_block);
 	if (cal_block.cal_size == 0) {
-		pr_debug("%s: no cal to send addr= 0x%x\n",
-				__func__, cal_block.cal_paddr);
+		pr_debug("%s: no cal to send addr= 0x%pa\n",
+				__func__, &cal_block.cal_paddr);
 		goto done;
 	}
 
