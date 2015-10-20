@@ -66,7 +66,7 @@
 #include <linux/msm_tsens.h>
 #endif /* defined(CONFIG_THERMAL_TSENS8974)... */
 
- #define ENABLE_INPUTBOOSTER			// ZZ: enable/disable inputbooster support
+#define ENABLE_INPUTBOOSTER			// ZZ: enable/disable inputbooster support
 // #define ENABLE_WORK_RESTARTLOOP		// ZZ: enable/disable restart loop for touchboost (DO NOT ENABLE IN THIS VERSION -> NOT STABLE YET!)
 
 #ifdef ENABLE_INPUTBOOSTER
@@ -75,7 +75,7 @@
 #endif /* ENABLE_INPUTBOOSTER */
 
 // Yank: enable/disable sysfs interface to display current zzmoove version
-#define ZZMOOVE_VERSION "develop"
+#define ZZMOOVE_VERSION "1.0 beta8"
 
 // ZZ: support for 2,4,6 or 8 cores (this will enable/disable hotplug threshold tuneables and limit hotplug max limit tuneable)
 #define MAX_CORES					(4)
