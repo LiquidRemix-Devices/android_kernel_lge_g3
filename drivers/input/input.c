@@ -1561,7 +1561,7 @@ static void input_dev_toggle(struct input_dev *dev, bool activate)
  *
  * This function tries to reset the state of an opened input device and
  * bring internal state and state if the hardware in sync with each other.
- * We mark all keys as released, restore LED state, repeat rate, etc.
+ * We restore LED state, repeat rate, etc.
  */
 void input_reset_device(struct input_dev *dev)
 {
@@ -1569,25 +1569,6 @@ void input_reset_device(struct input_dev *dev)
 
 	if (dev->users) {
 		input_dev_toggle(dev, true);
-
-		/*
-		 * Keys that have been pressed at suspend time are unlikely
-		 * to be still pressed when we resume.
-		 */
-        /* LGE_CHANGE
-         *
-         * During Suspend & Resume Do not release keys for Power Long Key press.
-         * If some devices want to release pressed keys on Suspend,
-         * Add the routine on each devices.
-         *
-         * B2-BSP-TS@lge.com
-         */
-		/*if (!test_bit(INPUT_PROP_NO_DUMMY_RELEASE, dev->propbit)) {
-			spin_lock_irq(&dev->event_lock);
-			input_dev_release_keys(dev);
-			spin_unlock_irq(&dev->event_lock);
-		}
-        */
 	}
 
 	mutex_unlock(&dev->mutex);
