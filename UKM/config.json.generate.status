@@ -17,7 +17,7 @@ cat << CTAG
 			}},
 				{ SLiveLabel:{
 					description: "CPU1 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
-					refresh:2000,
+					refresh:5000,
 					action:"live CPU1_MAX_MIN_Freq"
 				}},
 			{ STitleBar:{
@@ -25,7 +25,7 @@ cat << CTAG
 			}},
 				{ SLiveLabel:{
 					description: "CPU2 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
-					refresh:2000,
+					refresh:5000,
 					action:"live CPU2_MAX_MIN_Freq"
 				}},
 			{ STitleBar:{
@@ -33,7 +33,7 @@ cat << CTAG
 			}},
 				{ SLiveLabel:{
 					description: "CPU3 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
-					refresh:2000,
+					refresh:5000,
 					action:"live CPU3_MAX_MIN_Freq"
 				}},
 			{ STitleBar:{
@@ -113,15 +113,6 @@ cat << CTAG
 					description:"Virtual compressed swap memory, add more usable free RAM by compressing real memory.",
 					refresh:3000,
 					action:"live ZRAMStats"
-				}},
-			{ STitleBar:{
-				title:"Ultra Kernel Samepage Merging:"
-			}},
-				{ SLiveLabel:{
-					title:"UKSM Stats:",
-					description:"Memory samepage merging is not quick process. So, stats may show 0 MB initially.",
-					refresh:3000,
-					action:"live UKSMStats"
 				}},
 			{ STitleBar:{
 				title:"Uptime:"

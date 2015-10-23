@@ -489,25 +489,34 @@ case "$1" in
 		$BB echo "`$BB cat /proc/sys/net/ipv4/tcp_congestion_control`";
 	;;
 	LiveCPU0_MAX_MIN_Freq)
-		FREQMAXCPU0="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq` / 1000)MHz"
-		FREQMINCPU0="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq` / 1000)MHz"
-		echo "Max CPU0 Freq: $FREQMAXCPU0@nMin CPU0 Freq: $FREQMINCPU0"
+		FREQMAXCPU0=`$BB cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2> /dev/null`;
+		FREQMINCPU0=`$BB cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 2> /dev/null`;
+		if [ -z "$FREQMAXCPU0" ]; then CPU0="Offline"; else CPU0="$((CPU0 / 1000)) MHz"; fi;
+		if [ -z "$FREQMINCPU0" ]; then CPU0="Offline"; else CPU0="$((CPU0 / 1000)) MHz"; fi;
+				echo "Max CPU0 Freq: $FREQMAXCPU0@nMin CPU0 Freq: $FREQMINCPU0"
 	;;
 	LiveCPU1_MAX_MIN_Freq)
-		FREQMAXCPU1="$(expr `cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu1` / 1000)MHz"
-		FREQMINCPU1="$(expr `cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu1` / 1000)MHz"
-		echo "Max CPU1 Freq: $FREQMAXCPU1@nMin CPU1 Freq: $FREQMINCPU1"
+		FREQMAXCPU1=`$BB cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2> /dev/null`;
+		FREQMINCPU1=`$BB cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 2> /dev/null`;
+		if [ -z "$FREQMAXCPU1" ]; then CPU1="Offline"; else CPU1="$((CPU1 / 1000)) MHz"; fi;
+		if [ -z "$FREQMINCPU1" ]; then CPU1="Offline"; else CPU1="$((CPU1 / 1000)) MHz"; fi;
+				echo "Max CPU1 Freq: $FREQMAXCPU1@nMin CPU1 Freq: $FREQMINCPU1"
 	;;
 	LiveCPU2_MAX_MIN_Freq)
-		FREQMAXCPU2="$(expr `cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu2` / 1000)MHz"
-		FREQMINCPU2="$(expr `cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu2` / 1000)MHz"
-		echo "Max CPU2 Freq: $FREQMAXCPU2@nMin CPU2 Freq: $FREQMINCPU2"
+		FREQMAXCPU2=`$BB cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2> /dev/null`;
+		FREQMINCPU2=`$BB cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 2> /dev/null`;
+		if [ -z "$FREQMAXCPU2" ]; then CPU2="Offline"; else CPU2="$((CPU2 / 1000)) MHz"; fi;
+		if [ -z "$FREQMINCPU2" ]; then CPU2="Offline"; else CPU2="$((CPU2 / 1000)) MHz"; fi;
+				echo "Max CPU2 Freq: $FREQMAXCPU2@nMin CPU2 Freq: $FREQMINCPU2"
 	;;
 	LiveCPU3_MAX_MIN_Freq)
-		FREQMAXCPU3="$(expr `cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_max_freq_cpu3` / 1000)MHz"
-		FREQMINCPU3="$(expr `cat /sys/devices/system/cpu/cpufreq/all_cpus/scaling_min_freq_cpu3` / 1000)MHz"
-		echo "Max CPU3 Freq: $FREQMAXCPU3@nMin CPU3 Freq: $FREQMINCPU3"
+		FREQMAXCPU0=`$BB cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2> /dev/null`;
+		FREQMINCPU0=`$BB cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 2> /dev/null`;
+		if [ -z "$FREQMAXCPU3" ]; then CPU3="Offline"; else CPU3="$((CPU3 / 1000)) MHz"; fi;
+		if [ -z "$FREQMINCPU3" ]; then CPU3="Offline"; else CPU3="$((CPU3 / 1000)) MHz"; fi;
+				echo "Max CPU3 Freq: $FREQMAXCPU3@nMin CPU3 Freq: $FREQMINCPU3"
 	;;
+	
 	LiveCPU_HOTPLUG)
 		if [ "$(cat /sys/devices/system/cpu/cpu0/rq-stats/hotplug_enable)" -eq "1" ]; then
 			DEFAULT_HOTPLUG=Active;
