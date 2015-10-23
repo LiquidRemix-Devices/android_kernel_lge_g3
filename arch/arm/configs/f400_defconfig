@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 F400
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev10.0-T1-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev10.0-T2-OverClocked-Experimental"
 #########################################################
 #########################################################
 
