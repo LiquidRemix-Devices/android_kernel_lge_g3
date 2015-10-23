@@ -15,7 +15,7 @@ cat << CTAG
 			$BB echo ','
 			. $UKM/config.json.generate.live
 			$BB echo ','
-			. $UKM/config.json.generate.msm_limiter
+			. $UKM/config.json.generate.cpuplus
 			$BB echo ','
 			. $UKM/config.json.generate.cpu
 			$BB echo ','
@@ -47,7 +47,7 @@ cat << CTAG
 			$BB echo ','
 			. $UKM/config.json.generate.misc
 			$BB echo ','
-			. $UKM/config.json.generate.advanced
+			. $UKM/config.json.generate.status
 			$BB echo ','
 			. $UKM/config.json.generate.tools
 			$BB echo ','

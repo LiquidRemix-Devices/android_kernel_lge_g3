@@ -1,6 +1,6 @@
 cat << CTAG
 {
-	name:ADV,
+	name:Advanced,
 		elements:[
 			`[ -d "/sys/module/pm_8x60" ] && PM=/sys/module/pm_8x60;
 			[ -d "/sys/module/msm_pm" ] && PM=/sys/module/msm_pm;
@@ -154,28 +154,10 @@ cat << CTAG
 					}},'
 			fi`
 			`if [ -f "/sys/module/lowmemorykiller/parameters/minfree" ]; then
-				AUTO=\`$BB cat /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk\`
-				VMP=\`$BB cat /sys/module/lowmemorykiller/parameters/vmpressure_file_min\`
 				$BB echo '{ SPane:{
 					title:"Manual Low Memory Killer",
 					description:"LMK Minfree controls how much memory each app type can hold, and is responsible for memory management for multitasking."
 				}},
-					{ SCheckBox:{
-						label:"Adaptive LMK",
-						description:"The basic idea here is to make LMK more aggressive dynamically when such a thrashing scenario is detected. To detect thrashing, this patch uses vmpressure events. The values of vmpressure upon which an action has to be taken, was derived empirically.",
-						default:'$AUTO',
-						action:"generic /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk"
-					}},
-					{ SSeekBar:{
-						title:"VMPressure file min",
-						description:"This parameter controls the behaviour of LMK when vmpressure is in the range of 90-94. Adaptive lmk triggers based on number file pages wrt vmpressure_file_min, when vmpressure is in the range of 90-94. Usually this is a pseudo minfree value, higher than the highest configured value in minfree array.",
-						unit:" pages",
-						step:1,
-						min:0,
-						max:100,
-						default:'$VMP',
-						action:"generic /sys/module/lowmemorykiller/parameters/vmpressure_file_min"
-					}},
 					{ SOptionList:{
 						title:"LMK Profile",
 						description:"This option will auto-tune LMK minfree values as per selected profile.",

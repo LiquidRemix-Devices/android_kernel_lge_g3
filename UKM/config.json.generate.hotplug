@@ -2,6 +2,14 @@ cat << CTAG
 {
 	name:HOTPLUG,
 		elements:[
+			{ SLiveLabel:{
+		title:"Core Status",
+		refresh:500,
+		action:"live CORESTATUS"
+	}},
+        { STitleBar:{
+		title:"Hotplug Driver"
+        }},
 			{ SPane:{
 				title:"Info"
 			}},

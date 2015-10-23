@@ -49,6 +49,15 @@ cat << CTAG
 		label:"Save last_kmsg",
 		action:"log kmsg"
 	}},
+	{ STitleBar:{
+	title:{
+		en:"Last KMSG",
+		es:"Ultimo KMSG"
+		}
+		}},
+		{ SDescription:{
+		description:"`$BB cat $UKM/debug/last_kmsg`"
+	}},
     ]
 }
 CTAG

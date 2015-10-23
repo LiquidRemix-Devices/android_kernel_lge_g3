@@ -53,9 +53,9 @@ susp)
 temp)
   echo Battery: $(($(cat /sys/class/power_supply/battery/temp) / 10))°C "|" CPU: $(($(cat /sys/class/thermal/thermal_zone7/temp) / 1 ))°C
   ;;
-hard)
-  echo `cat /sys/kernel/cpufreq_hardlimit/version`
-  ;;
+msm_limiter)
+echo `cat /sys/kernel/msm_limiter/version`
+ ;;
 sound)
   echo `cat /sys/kernel/sound_control_3/gpl_sound_control_version`
   ;;

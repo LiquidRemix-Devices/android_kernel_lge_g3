@@ -10,7 +10,7 @@ cat << CTAG
 	}},
 	{ SLiveLabel:{
 	title:"CPU Frenquency",
-		refresh:500,
+		refresh:2000,
 		action:"show freq"
 	}},
         { SLiveLabel:{
@@ -19,7 +19,7 @@ cat << CTAG
                   action:"echo \$(( \$(cat /sys/devices/system/cpu/cpu0/online) + \$(cat /sys/devices/system/cpu/cpu1/online) + \$(cat /sys/devices/system/cpu/cpu2/online) + \$(cat /sys/devices/system/cpu/cpu3/online) )) core\\\\(s\\\\)"
         }},
 	{ SLiveLabel:{
-		refresh:1000,
+		refresh:5000,
 		action:"show cpufreq"
 	}},
     	{ SLiveLabel:{

@@ -47,12 +47,18 @@ cat << CTAG
 						done < /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels
 			fi`
 			`if [ -f "/sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table" ]; then
-				$BB echo '{ STitleBar:{
+				$BB echo '{ SLiveLabel:{
+						title:"Your PVS Bin is",
+						refresh:0,
+						action:"live PVSbin"
+				}},
+					{ STitleBar:{
 					title:"CPU Global Voltage"
 				}},
 					{ SSeekBar:{
 						default:0,
 						action:"voltage cpuvoltglobal global",
+						description:"Voltages are already set at their optimum values by default. DO NOT REPORT any random reboot or issue if you change CPU volt across any frequency.",
 						unit:" mV",
 						min:-300,
 						max:300,

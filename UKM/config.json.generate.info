@@ -9,7 +9,7 @@ cat << CTAG
 				},
 			}},	
 				{ SDescription:{
-					description:"><^>< UKM V4.4.4 Nebua Edition ><^><"
+					description:"><^>< UKM V5.0.0 Nebua Edition ><^><"
 				}},
 				{ SDescription:{
 					description:"Custom Scripts Created For Nebula Kernel"
@@ -23,6 +23,7 @@ cat << CTAG
 				{ SPane:{
 			title:"Special Features",
 			description:" CPU Voltage control,
+			MSM_LIMITER,
 			GPU control,
 			OC/UC,
 			Init.d,
@@ -30,7 +31,6 @@ cat << CTAG
 			Led control,
 			Faux Sound control,
 			DynamicFsync,
-			Sweep2Wake,
 			Synapse,
 			CRC Disabler,
 			Intelli-Plug,
@@ -73,7 +73,7 @@ cat << CTAG
 				},
 			}},	
 				{ SDescription:{
-					description:"* V1.0 Wake Gestures, \n Rewrote Alot of sections \n"
+					description:"* Fixed MSM_LIMITER Section \n"
 				}},	
 					{ SPane:{
 				title:{
@@ -152,15 +152,6 @@ cat << CTAG
 				},
 				description:"`getprop ro.build.date`"
 			}},
-			{ STitleBar:{
-				title:{
-					en:"Last KMSG",
-					es:"Ultimo KMSG"
-				}
-			}},
-				{ SDescription:{
-					description:"`$BB cat $UKM/debug/last_kmsg`"
-				}},
 		]
 }
 CTAG

@@ -1,90 +1,187 @@
+#!/sbin/busybox sh
+
 cat << CTAG
 {
 	name:STATUS,
 		elements:[
-			{ SPane:{
-				title:"CPU PVS/SPEED Level:"
+			{ STitleBar:{
+				title:"CPU0 Scaling Frequencies"
 			}},
 				{ SLiveLabel:{
-					refresh:10000,
-					style:italic,
-					action:"live CpuPvsLevel"
-			}},
-			{ SPane:{
-				title:"Battery Temperature:"
-			}},
-				{ SLiveLabel:{
-					refresh:3000,
-					style:italic,
-					action:"live BatteryTemperature"
+					description: "CPU0 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
+					refresh:2000,
+					action:"live CPU0_MAX_MIN_Freq"
 				}},
-			{ SPane:{
+			{ STitleBar:{
+				title:"CPU1 Scaling Frequencies"
+			}},
+				{ SLiveLabel:{
+					description: "CPU1 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
+					refresh:2000,
+					action:"live CPU1_MAX_MIN_Freq"
+				}},
+			{ STitleBar:{
+				title:"CPU2 Scaling Frequencies"
+			}},
+				{ SLiveLabel:{
+					description: "CPU2 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
+					refresh:2000,
+					action:"live CPU2_MAX_MIN_Freq"
+				}},
+			{ STitleBar:{
+				title:"CPU3 Scaling Frequencies"
+			}},
+				{ SLiveLabel:{
+					description: "CPU3 Scaling Min Max frequencies are affected by thermal engine/driver and CPU Boost driver. You may enable and use MSM Limiter Driver below to make sure scaling frequencies are desired ranges most of the time.",
+					refresh:2000,
+					action:"live CPU3_MAX_MIN_Freq"
+				}},
+			{ STitleBar:{
+				title:"CPU Cores State"
+			}},
+				{ SLiveLabel:{
+					description: "Actual CORES state, Active or Sleeping.",
+					refresh:1000,
+					action:"live CPU_CORES_ON_OFF"
+				}},
+			{ STitleBar:{
 				title:"CPU Temperature:"
 			}},
 				{ SLiveLabel:{
 					refresh:3000,
-					style:italic,
 					action:"live CPUTemperature"
 				}},
-			{ SPane:{
+			{ STitleBar:{
+				title:"Current Active CPU0 Governor"
+			}},
+				{ SLiveLabel:{
+					description: "Display Current Active CPU0 Governor",
+					refresh:10000,
+					action:"live DefaultCPU0Governor"
+				}},
+			{ STitleBar:{
+				title:"Current Active CPU1 Governor"
+			}},
+				{ SLiveLabel:{
+					description: "Display Current Active CPU1 Governor",
+					refresh:10000,
+					action:"live DefaultCPU1Governor"
+				}},
+			{ STitleBar:{
+				title:"Current Active CPU2 Governor"
+			}},
+				{ SLiveLabel:{
+					description: "Display Current Active CPU2 Governor",
+					refresh:10000,
+					action:"live DefaultCPU2Governor"
+				}},
+			{ STitleBar:{
+				title:"Current Active CPU3 Governor"
+			}},
+				{ SLiveLabel:{
+					description: "Display Current Active CPU3 Governor",
+					refresh:10000,
+					action:"live DefaultCPU3Governor"
+				}},
+			{ STitleBar:{
+				title:"Current Active CPU HotPlug"
+			}},
+				{ SLiveLabel:{
+					description: "Display Current Active CPU HotPlug Driver",
+					refresh:8000,
+					action:"live CPU_HOTPLUG"
+				}},
+			{ STitleBar:{
+				title:"Battery Temperature:"
+			}},
+				{ SLiveLabel:{
+					refresh:3000,
+					action:"live BatteryTemperature"
+				}},
+			{ STitleBar:{
 				title:"Memory:"
 			}},
 				{ SLiveLabel:{
 					refresh:3000,
-					style:italic,
 					action:"live Memory"
 				}},
-			{ SPane:{
+			{ STitleBar:{
+				title:"ZRAM Virtual SWAP:"
+			}},
+				{ SLiveLabel:{
+					title:"ZRAM Stats:",
+					description:"Virtual compressed swap memory, add more usable free RAM by compressing real memory.",
+					refresh:3000,
+					action:"live ZRAMStats"
+				}},
+			{ STitleBar:{
+				title:"Ultra Kernel Samepage Merging:"
+			}},
+				{ SLiveLabel:{
+					title:"UKSM Stats:",
+					description:"Memory samepage merging is not quick process. So, stats may show 0 MB initially.",
+					refresh:3000,
+					action:"live UKSMStats"
+				}},
+			{ STitleBar:{
 				title:"Uptime:"
 			}},
 				{ SLiveLabel:{
-					refresh:0,
-					style:italic,
+					refresh:5000,
 					action:"live UpTime"
 				}},
-			{ SPane:{
+			{ STitleBar:{
 				title:"Unused States:"
 			}},
 				{ SLiveLabel:{
-					refresh:0,
-					style:italic,
+					refresh:5000,
 					action:"live UnUsed"
 				}},
-			{ SPane:{
+			{ STitleBar:{
 				title:"Time in States:"
 			}},
 				{ SLiveLabel:{
-					refresh:0,
-					style:italic,
+					refresh:5000,
 					action:"live Time 0 9"
 				}},
 				{ SLiveLabel:{
-					refresh:0,
-					style:italic,
+					refresh:5000,
 					action:"live Time 10 19"
 				}},
-				{ SLiveLabel:{
-					refresh:0,
-					style:italic,
-					action:"live Time 20 29"
-				}},
-			`if [ -f "/proc/wakelocks" ]; then
-				$BB echo '{ SPane:{
-					title:"Kernel Wakelocks (Top 10):"
-				}},
-					{ SLiveLabel:{
-						refresh:0,
-						style:italic,
-						action:"live WakelocksKernel"
-					}},'
-			fi`
-			{ SPane:{
-				title:"Installation Check:"
+			{ STitleBar:{
+				title:"MMC0 IO Read Ahead Size:"
 			}},
 				{ SLiveLabel:{
-					refresh:0,
-					style:italic,
-					action:"live InstallationCheck"
+					refresh:10000,
+					action:"live IntIOReadAheadSize"
+				}},
+			{ STitleBar:{
+				title:"MMC1 IO Read Ahead Size:"
+			}},
+				{ SLiveLabel:{
+					refresh:10000,
+					action:"live ExtIOReadAheadSize"
+				}},
+			{ STitleBar:{
+				title:"MMC0 Current IO Scheduler:"
+			}},
+				{ SLiveLabel:{
+					refresh:10000,
+					action:"live IntIOScheduler"
+				}},
+			{ STitleBar:{
+				title:"MMC1 Current IO Scheduler:"
+			}},
+				{ SLiveLabel:{
+					refresh:10000,
+					action:"live ExtIOScheduler"
+				}},
+			{ STitleBar:{
+				title:"NET Current TCP Congestion:"
+			}},
+				{ SLiveLabel:{
+					refresh:10000,
+					action:"live TCPCongestion"
 				}},
 		]
 }
