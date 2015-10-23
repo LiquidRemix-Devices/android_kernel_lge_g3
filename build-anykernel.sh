@@ -6,7 +6,7 @@
 #                                                                                         #
 # Build Script W/AnyKernel V2 Support Plus        07/22/2015                              #
 #                                                                                         #
-# Added: Random+YYYYMMDD Format at end of zip                                             #
+# Added: YYYYMMDD_HHMMSS Added to end of Zip Package                                      #
 # Added: SignApk to sign all zips     <--- removed for now                                #
 # Added: Build.log Error Only or Full Log                                                 #
 # Added: Automatic change anykernel.sh device settings                                    #
@@ -17,9 +17,14 @@
 # Added: Bump Version on all Defconfigs, ZipNames and anykernel.sh                        #
 # Added: Tweaks On/Off                                                                    #
 # Added: UKM Synapse Support: Copy Scripts over to anykernel data dir                     #
+# Added: Stand Alone UKM Zip Creater                                                      #
 #                                                                                         #
 #                                                                                         #
-#                                                                                         #
+###########################################################################################
+
+### DO NOT EDIT ANYTHING BELOW THIS LINE ###
+### EDIT ONLY AnyKernel.cfg File Only ###
+
 ###########################################################################################
 
 # Store menu options selected by the user
@@ -53,6 +58,9 @@ THREAD="-j$(grep -c ^processor /proc/cpuinfo)"
 KERNEL="zImage"
 DTBIMAGE="dtb"
 
+# UKM Synapse Details #
+UKM_REV="$UKM_REV" >&2
+
 # Kernel Details
 VER="$VER" >&2
 REV="$REV" >&2
@@ -72,7 +80,8 @@ export KBUILD_BUILD_HOST=$KBUILD_BUILD_USER
 export CCACHE=$CCACHE
 #export ERROR_LOG=$ERROR_LOG
 
-# Paths
+##################################################################
+## PATHS ## 
 KERNEL_DIR="$KERNEL_DIR" >&2
 REPACK_DIR="$REPACK_DIR" >&2
 PATCH_DIR="$PATCH_DIR" >&2
@@ -86,17 +95,18 @@ DEFCONFIGS="$DEFCONFIGS" >&2
 ZIP_MOVE="$ZIP_MOVE" >&2
 COPY_ZIP="$COPY_ZIP" >&2
 ZIMAGE_DIR="$ZIMAGE_DIR" >&2
-
+STAND_ALONE_UKM_DIR="$STAND_ALONE_UKM_DIR" >&2
+##################################################################
 
 # Functions
 
 ## Clean everything that is left over ##
 function clean_all {
 		rm -rf $MODULES_DIR/*
-		#rm -rf ~/.ccache
 		cd $REPACK_DIR
 		rm -rf $KERNEL
 		rm -rf $DTBIMAGE
+		echo "Deleting data/UKM Scripts From $REPACK_DIR"
 		rm -rf data/UKM
 		rm -rf *.zip
 		cd $KERNEL_DIR
@@ -268,6 +278,34 @@ INFOBOX="Bumped to Version $BUMP_REV"
 message
 }
 
+## Bump UKM Synapse Version ##
+function bump_ukm() {
+	dialog --inputbox \
+		"Enter Version NFO:" 0 0 2> /tmp/inputbox.tmp.$$
+		retval=$?
+		input=`cat /tmp/inputbox.tmp.$$`
+		rm -f /tmp/inputbox.tmp.$$
+			if [ -z "$input" ]; then
+			echo "String is empty"
+			exit
+			fi
+		case $retval in
+		0)
+		BUMP_UKM_REV="$input"
+		OLD_UKM_REV="$UKM_REV"
+		UKM_REV="$input";;
+		1)
+		echo "Cancel pressed.";;
+		esac
+		sed -i '6s/.*/kernel.string=UKM Synapse Suport Rev'$UKM_REV' By Eliminater74/' $STAND_ALONE_UKM_DIR/anykernel.sh
+ 		sed -i 's/UKM_REV='$OLD_UKM_REV'/UKM_REV='$UKM_REV'/g' $KERNEL_DIR/build-anykernel.cfg
+IFS=$OIFS
+TITLE="Version Bumped"
+BACKTITLE="Version Bumped"
+INFOBOX="Bumped to Version $BUMP_UKM_REV"
+message
+}
+
 #######################################################
 # COMMANDS USED FOR STRINGS                           #
 #######################################################
@@ -338,50 +376,26 @@ replace_file() {
 }
 
 ## end methods
-#####################################################
+#######################################################
 
-## Change Tweaks ##
-function tweaks_off() {
-		OIFS=$IFS
-		IFS=';'
-		arr2=$TWEAKNOT_DEVICES
-		for x in $arr2
-		do
-		DEFCONFIG="${x}_defconfig"
-		cd $DEFCONFIGS
-		sed -i '4010s/.*/CONFIG_CC_OPTIMIZE_FOR_SIZE=y/' $DEFCONFIG
-		#sed -i '4011s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		#sed -i '4012s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		sed -i '4013s/.*/# CONFIG_CC_OPTIMIZE_FAST is not set/' $DEFCONFIG
-		sed -i '4014s/.*/CONFIG_LESS_OPTIMIZATION=y/' $DEFCONFIG
-		sed -i '4015s/.*/# CONFIG_MORE_OPTIMIZATION is not set/' $DEFCONFIG
+## Build Stand Alone Synapse UKM Scripts Zip Package ##
+function Build_Stand_Alone_Synapse() {
+	cd $STAND_ALONE_UKM_DIR
+	echo "Cleaning out OLD UKM Files.."
+	rm -rf data/UKM
+	cd $KERNEL_DIR
+	echo "Copying New UKM Scripts Over.."
+	cp -vr $UKM_DIR $STAND_ALONE_UKM_DIR/data
+	cd $STAND_ALONE_UKM_DIR
+	echo "Creating Synapse Stand Alone Zip.."
+	zip -r9 UKM_Synapse_Scripts_Rev"$UKM_REV"_"$KVER".zip *
+		mv UKM_Synapse_Scripts_Rev"$UKM_REV"_"$KVER".zip $ZIP_MOVE
+		rm -rf UKM_Synapse_Scripts_Rev"$UKM_REV"_"$KVER".zip
 		cd $KERNEL_DIR
-	done
-
-IFS=$OIFS
-exit
-}
-
-## Change Tweaks ##
-function tweaks_on() {
-		OIFS=$IFS
-		IFS=';'
-		arr2=$TWEAKNOT_DEVICES
-		for x in $arr2
-		do
-		DEFCONFIG="${x}_defconfig"
-		cd $DEFCONFIGS
-		sed -i '4010s/.*/# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set/' $DEFCONFIG
-		#sed -i '4011s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		#sed -i '4012s/.*/kernel.string=Nebula Kernel Rev'$REV' By Eliminater74/' $DEFCONFIG
-		sed -i '4013s/.*/CONFIG_CC_OPTIMIZE_FAST=y/' $DEFCONFIG
-		sed -i '4014s/.*/# CONFIG_LESS_OPTIMIZATION is not set/' $DEFCONFIG
-		sed -i '4015s/.*/CONFIG_MORE_OPTIMIZATION=y/' $DEFCONFIG
-		cd $KERNEL_DIR
-	done
-
-IFS=$OIFS
-exit
+TITLE="UKM Stand Alone Created"
+BACKTITLE="UKM Stand Alone"
+INFOBOX="UKM_Synapse_Scripts_Rev'$UKM_REV'_'$KVER'.zip \n\n Created Successfully"
+message	
 }
 
 ## Unversal Message Box ##
@@ -614,8 +628,8 @@ Choose the TASK" 20 50 8 \
 	"Log" "Logging Options [Log: $ERROR_LOG]" \
 	"Ccache" "Clear Ccache" \
 	"Bump" "Bump Version" \
-	"Tweaks_ON" "Tweaks ON" \
-	"Tweaks_OFF" "Tweaks OFF" \
+	"SA_Synapse" "Build UKM Scripts (Stand Alone)" \
+	"Bump_UKM" "Bump UKM Version" \
 	"Settings" "Settings" \
 	"Test" "Testing Stage Area" \
 	"2Test" "Test 2" \
@@ -631,8 +645,8 @@ case $menuitem in
 		Log) menu_log ;;
 		Ccache) echo "Clearing Ccache.."; rm -rf ${HOME}/.ccache ;;
 		Bump) bump_defconfigs ;;
-		Tweaks_ON) tweaks_on ;;
-		Tweaks_OFF) tweaks_off ;;
+		SA_Synapse) Build_Stand_Alone_Synapse ;;
+		Bump_UKM) bump_ukm ;;
 		Settings) menu_settings ;;
 		Test) file=build-anykernel.sh; check_filesize ;;
 		2Test) echo "kernel: $KERNEL_DIR and $ZIMAGE_DIR"; exit ;;
