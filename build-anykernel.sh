@@ -521,10 +521,11 @@ options=(1 "D850"
          3 "D852"
 		 4 "D855"
 		 5 "D855_lowmem"
-		 6 "F400"
-		 7 "ls990"
-		 8 "vs985"
-         9 "Build All")
+		 6 "D856"
+		 7 "F400"
+		 8 "ls990"
+		 9 "vs985"
+         10 "Build All")
 
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
@@ -552,18 +553,22 @@ do
 			DEFCONFIG="d855_lowmem_defconfig"
 			break;;
 		6)
+			VARIANT="d856"
+			DEFCONFIG="d856_defconfig"
+			break;;	
+		7)
 			VARIANT="f400"
 			DEFCONFIG="f400_defconfig"
 			break;;	
-		7)
+		8)
 			VARIANT="ls990"
 			DEFCONFIG="ls990_defconfig"
 			break;;
-		8)
+		9)
 			VARIANT="vs985"
 			DEFCONFIG="vs985_defconfig"
 			break;;
-		9) build_all
+		10) build_all
 			break;;
 		
     esac
