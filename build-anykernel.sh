@@ -106,8 +106,8 @@ function clean_all {
 		cd $REPACK_DIR
 		rm -rf $KERNEL
 		rm -rf $DTBIMAGE
-		echo "Deleting data/UKM Scripts From $REPACK_DIR"
-		rm -rf data/UKM
+		echo "Deleting ramdisk/res/synapse Scripts From $REPACK_DIR"
+		rm -rf ramdisk/res/*
 		rm -rf *.zip
 		cd $KERNEL_DIR
 		echo "Deleting arch/arm/boot/*.dtb's"
@@ -476,7 +476,7 @@ function make_dtb {
 }
 
 function make_zip {
-		cp -vr $UKM_DIR $REPACK_DIR/data
+		cp -vr $UKM_DIR $REPACK_DIR/ramdisk/res
 		cd $REPACK_DIR
 		zip -r9 NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip *
 		mv NebulaKernel_"$REV"_MR_"$VARIANT"_"$KVER".zip $ZIP_MOVE
