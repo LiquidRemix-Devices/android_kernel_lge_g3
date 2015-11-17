@@ -8,7 +8,7 @@ cat << CTAG
 				action:"echo 'DEVICE NOT SUPPORTED'"
 			}},
 			{ SPane:{
-				title:"Universal Kernel Manager"
+				title:"Synapse Kernel Manager for Nebula"
 			}},
 				{ SLiveLabel:{
 					refresh:0,
@@ -16,7 +16,7 @@ cat << CTAG
 					action:"live InfoCurrent"
 			}},
 			{ SPane:{
-				title:"777 Kernel"
+				title:"Nebula Kernel"
 			}},
 				{ SLiveLabel:{
 					refresh:0,

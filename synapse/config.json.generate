@@ -7,6 +7,10 @@ bool() {
   [ `$BB cat $1` == "N" ] && $BB echo "0";
 }
 
+# Mount root as RW to apply tweaks and settings
+$BB mount -t rootfs -o remount,rw rootfs;
+$BB mount -o remount,rw /;
+
 cat << CTAG
 {
     sections: [
