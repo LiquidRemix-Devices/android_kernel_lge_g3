@@ -4,7 +4,7 @@ UKM=/res/synapse;
 BB=/sbin/bb/busybox;
 DEVICE=`sh $UKM/device/.device.sh`;
 
-UCI_CONFIG=$UKM/config.json;
+UCI_CONFIG=$UKM/json;
 UCI_ACTION=$UKM/actions/;
 UCI_DEVICE=$UKM/device/;
 UCI_FILES=$UKM/files/;

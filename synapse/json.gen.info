@@ -9,17 +9,14 @@ cat << CTAG
 				},
 			}},	
 				{ SDescription:{
-					description:"><^>< UKM V5.1.0 Nebua Edition ><^><"
+					description:"><^>< UKM V5.2.0 Nebua Edition ><^><"
 				}},
-				{ SDescription:{
-					description:"Custom Scripts Created For Nebula Kernel"
-				}},
-				{ SDescription:{
-					description:"By: <a href='http://forum.xda-developers.com/member.php?u=5687366'>Eliminater74</a>"
-				}},
-				{ SDescription:{
-					description:"XDA Link: <a href='http://forum.xda-developers.com/lg-g3/development/kernel-nebulakernel-rev6-5-build20150715-t3161768'>Nebula Kernel</a>"
-				}},
+			{ SLiveLabel:{
+				title:"BusyBox Version",
+			refresh:10000000,
+			style:"bold",
+			action:"live BusyBoxVer"
+		}},
 				{ SPane:{
 			title:"Special Features",
 			description:" CPU Voltage control,
@@ -37,10 +34,6 @@ cat << CTAG
 			Intelli-Thermal,
 			KSM,
 			.... "
-				}},
-					{ SPane:{
-			title:"Special NOTES",
-			description:"Hotplugs: Added MSM_Sleeper Support.."
 				}},
 				{ SPane:{
 					title:"Special thanks to"

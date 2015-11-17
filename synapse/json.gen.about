@@ -1,0 +1,56 @@
+#!/system/bin/sh
+
+cat << CTAG
+{
+    name:"Update",
+    elements:[
+		{ SLiveLabel:{
+			refresh:10000000,
+			style:"bold",
+			action:"about title"
+		}},
+		{ SLiveLabel:{
+			refresh:10000000,
+			style:"normal",
+			action:"about current_version"
+		}},
+		{ SLiveLabel:{
+			refresh:10000000,
+			style:"normal",
+			action:"about new_version"
+		}},
+		{ SDescription:{ description:" " }},
+
+		{ SButton:{
+		   label:{en:"change log", ko:"Change History"},
+		   action:"about changelog"
+		}},
+		{ SButton:{
+		   label:"Download the latest version",
+		   action:"about download"
+		}},
+`
+if [ -e /sdcard/Synapse/betatester ]; then
+GET_TESTVER="\`curl http://lightningbolt.duckdns.org/~eliminater74/NebulaProject/nebua_beta_download\`"
+  if [ $GET_TESTVER == "true" ]; then
+	echo '{ SButton:{
+		   label:"Download trial version",
+		   action:"am start -a android.intent.action.VIEW -d http://lightningbolt.duckdns.org/~eliminater74/NebulaProject/nebula_download > /dev/null 2>&1 & echo '     Launch a web browser.     '"
+		}},'
+  fi
+fi
+`
+		{ SDescription:{ description:" " }},
+		{ SDescription:{ description:" " }},
+		{ SButton:{
+		   label:"If you are using this kernel useful ...",
+		   action:"am start -a android.intent.action.VIEW -d http://lightningbolt.duckdns.org/~eliminater74/NebulaProjet/donate > /dev/null 2>&1 & echo '     Launch a web browser.     '"
+		}},
+		{ SButton:{
+		   label:"To feedback via email",
+		   action:"am start -a android.intent.action.VIEW -d mailto:nebulaproject2015@gmail.com > /dev/null 2>&1& echo '     Run the email app.     '"
+		}},
+    ]
+}
+
+CTAG

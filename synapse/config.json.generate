@@ -15,59 +15,61 @@ cat << CTAG
 {
     sections: [
 		`if [ -n "$DEVICE" ]; then
-			. $UKM/config.json.generate.info
+			. $UKM/json.gen.info
 			$BB echo ','
-			. $UKM/config.json.generate.live
+			. $UKM/json.gen.about
 			$BB echo ','
-			. $UKM/config.json.generate.cpuplus
+			. $UKM/json.gen.live
 			$BB echo ','
-			. $UKM/config.json.generate.cpu
+			. $UKM/json.gen.cpuplus
 			$BB echo ','
-			. $UKM/config.json.generate.hotplug
+			. $UKM/json.gen.cpu
 			$BB echo ','
-			. $UKM/config.json.generate.thermal
+			. $UKM/json.gen.hotplug
 			$BB echo ','
-			. $UKM/config.json.generate.cpuvolt
+			. $UKM/json.gen.thermal
 			$BB echo ','
-			. $UKM/config.json.generate.io
+			. $UKM/json.gen.cpuvolt
 			$BB echo ','
-			. $UKM/config.json.generate.gpu
+			. $UKM/json.gen.io
+			$BB echo ','
+			. $UKM/json.gen.gpu
 			$BB echo ','
 			if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal" -o -f "/sys/devices/platform/mipi_lgit.1537/kgamma_b" -o -f "/sys/class/misc/gammacontrol/brightness" -o -f "/sys/devices/i2c-0/0-0038/lm3530_br_mode" -o -f "/sys/module/msm_fb/parameters/backlight_dimmer" -o -f "/sys/devices/platform/mipi_lgit.1537/kgamma_blue" -o -f "/sys/module/dsi_panel/kgamma_bn" -o -d "/sys/devices/virtual/graphics/fb0" -o -f "/sys/module/panel_s6e8aa0/parameters/contrast" -o -f "/sys/devices/platform/omapdss/manager0/gamma" -o -f "/sys/class/backlight/s6e8aa0/acl_set" ]; then
-				. $UKM/config.json.generate.gamma
+				. $UKM/json.gen.gamma
 			$BB echo ','
 			fi
 			if [ -d "/sys/kernel/sound_control_3" -o -d "/sys/class/misc/soundcontrol" ]; then
-				. $UKM/config.json.generate.sound
+				. $UKM/json.gen.sound
 			$BB echo ','
 			fi
 			if [ -d "/sys/bus/i2c/devices/0-0058" ]; then
-				. $UKM/config.json.generate.speaker
+				. $UKM/json.gen.speaker
 			$BB echo ','
 			fi
-			. $UKM/config.json.generate.mem
+			. $UKM/json.gen.mem
 			$BB echo ','
-			. $UKM/config.json.generate.wake
+			. $UKM/json.gen.wake
 			$BB echo ','
-			. $UKM/config.json.generate.misc
+			. $UKM/json.gen.misc
 			$BB echo ','
-			. $UKM/config.json.generate.status
+			. $UKM/json.gen.status
 			$BB echo ','
-			. $UKM/config.json.generate.tools
+			. $UKM/json.gen.tools
 			$BB echo ','
-			. $UKM/config.json.generate.logs
+			. $UKM/json.gen.logs
 			$BB echo ','
-			. $UKM/config.json.generate.backup-restore
+			. $UKM/json.gen.backup-restore
 			$BB echo ','
-			. $UKM/config.json.generate.usb
+			. $UKM/json.gen.vm
 			$BB echo ','
-			. $UKM/config.json.generate.vm
-			$BB echo ','
-			. $UKM/config.json.generate.adv
+			. $UKM/json.gen.adv
     			$BB echo ','
-			. $UKM/config.json.generate.bpropEdit
+			. $UKM/json.gen.bpropEdit
+			$BB echo ','
+			. $UKM/json.gen.usb
 		else
-			. $UKM/config.json.generate.error
+			. $UKM/json.gen.error
 		fi`
     ]
 }

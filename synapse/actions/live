@@ -14,6 +14,9 @@ case $1 in
 		FREQMIN_3="$(expr `cat /sys/kernel/msm_limiter/live_min_freq_3` / 1000)MHz"
 		echo CPU0 - $FREQMAX_0 : $FREQMIN_0@nCPU1 - $FREQMAX_1 : $FREQMIN_1@nCPU2 - $FREQMAX_2 : $FREQMIN_2@nCPU3 - $FREQMAX_3 : $FREQMIN_3
 	;;
+	BusyBoxVer)
+		echo $BB | awk '/BusyBox\ v/ {print tolower($1),($2)}'
+	;;
 	KSMStats)
 		KSM="$(expr `cat /sys/kernel/mm/ksm/run`)"
 		if [ KSM -eq "1" ]; then

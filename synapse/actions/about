@@ -1,0 +1,57 @@
+BB=/sbin/bb/busybox;
+CURL=/sbin/bb/curl
+WGET=/sbin/bb/wget
+PSRC=/sys/devices/battery.30
+UKM=/res/synapse;
+DEVICE=`getprop ro.product.device`;
+
+U=$($BB uname -r|$BB awk '{print tolower($0)}')
+U=${U##*v}
+U=${U::-14}
+
+URL="http://lightningbolt.duckdns.org/~eliminater74/NebulaProject"
+
+[ -e /sdcard/Synapse/betatester ] && URL="http://lightningbolt.duckdns.org/~eliminater74/NebulaProject/nebula-beta"
+
+GET_LATEST=$($CURL -L $URL/latest_release 2> /dev/null|$BB awk '{print tolower($0)}')
+GET_NEWBUILD=$($CURL -L $URL/recent_build 2> /dev/null|$BB awk '{print tolower($0)}')
+
+case $1 in
+title)
+  echo "@nWelcome To Nebula Kernel!"
+  echo "@nDevice: $DEVICE"
+  ;;
+current_version)
+  echo "ver $U"
+  ;;
+new_version)
+  [ -z "$GET_LATEST" ] && echo "Not a problem connecting to the server version check"
+  if [ ! -z "$GET_LATEST" ]; then
+    if [[ "$GET_NEWBUILD" > $GET_LATEST ]]; then 
+    	echo "$GET_NEWBUILD This version is on hold.@n"
+    	echo "The latest version is available for download $GET_LATEST The."
+    elif [[ "$GET_LATEST" > $U ]]; then echo "$GET_LATEST You can download version."
+    else echo "The latest version."; fi
+  fi
+  ;;
+download)
+  DEVICE=`getprop ro.product.device`
+  MODEL=${DEVICE:0:4}
+  echo "     Launch a web browser.     ";
+  am start -a android.intent.action.VIEW -d $URL/?page=download &
+  ;;
+changelog)
+  DEVICE=`getprop ro.product.device`
+  MODEL=${DEVICE:0:4}
+  echo "This Dection is Disabled for now!"
+  echo "     Launch a web browser.     ";
+  am start -a android.intent.action.VIEW -d "$URL/?page=changelog&ver=$GETVER" &
+  ;;
+esac
+
+SEC_PID=$($BB pidof com.lg.android.securitylogagent)
+if [ ! -z $SEC_PID ]; then
+    pm disable com.lg.android.securitylogagent > /dev/null >2&1
+    $BB kill $SEC_PID
+fi
+
