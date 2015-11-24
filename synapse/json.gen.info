@@ -1,21 +1,27 @@
 cat << CTAG
 {
-	name:NFO,
-		elements:[
-			{ SPane:{
-				title:{
-					en:"General",
-					es:"General"
-				},
-			}},	
-				{ SDescription:{
-					description:"><^>< UKM V5.2.0 Nebua Edition ><^><"
-				}},
-			{ SLiveLabel:{
-				title:"BusyBox Version",
+	name:"NFO",
+    elements:[
+		{ SLiveLabel:{
 			refresh:10000000,
 			style:"bold",
-			action:"live BusyBoxVer"
+			action:"about title_version"
+		}},
+			{ SLiveLabel:{
+				title:"BusyBox Latest Version",
+			refresh:10000000,
+			style:"bold",
+			action:"live BusyBox_ker"
+		}},
+		{ SLiveLabel:{
+				title:"BusyBox current version:",
+			refresh:10000000,
+			style:"bold",
+			action:"live BusyBox_sys"
+		}},
+		{ SButton:{
+		label:"Update BusyBox",
+		action:"`$BB echo $BB sh /sbin/nebula/busybox.sh`"
 		}},
 				{ SPane:{
 			title:"Special Features",

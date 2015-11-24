@@ -1,0 +1,44 @@
+if [[ ! -z $2 ]]; then
+	# if value is not 0
+
+	zram_size=$2
+
+	swapoff /dev/block/zram0 > /dev/null 2>&1
+	echo 1 > /sys/devices/virtual/block/zram0/reset
+
+    swapoff /dev/block/zram1 > /dev/null 2>&1
+	echo 1 > /sys/devices/virtual/block/zram1/reset
+
+    swapoff /dev/block/zram2 > /dev/null 2>&1
+	echo 1 > /sys/devices/virtual/block/zram2/reset
+
+    swapoff /dev/block/zram3 > /dev/null 2>&1
+	echo 1 > /sys/devices/virtual/block/zram3/reset
+
+	if [ $zram_size -gt 0 ]; then
+		echo $(expr $zram_size \* 1024 \* 1024 \/ 4) > /sys/devices/virtual/block/zram0/disksize
+        echo $(expr $zram_size \* 1024 \* 1024 \/ 4) > /sys/devices/virtual/block/zram1/disksize
+        echo $(expr $zram_size \* 1024 \* 1024 \/ 4) > /sys/devices/virtual/block/zram2/disksize
+        echo $(expr $zram_size \* 1024 \* 1024 \/ 4) > /sys/devices/virtual/block/zram3/disksize
+
+		mkswap /dev/block/zram0 > /dev/null 2>&1
+        mkswap /dev/block/zram1 > /dev/null 2>&1
+        mkswap /dev/block/zram2 > /dev/null 2>&1
+        mkswap /dev/block/zram3 > /dev/null 2>&1
+
+        echo $(expr $zram_size \* 1024 \* 1024 \/ 4) > /res/synapse/goat
+
+		busybox_v121 swapon /dev/block/zram0 -p 2 > /dev/null 2>&1
+        busybox_v121 swapon /dev/block/zram1 -p 2 > /dev/null 2>&1
+        busybox_v121 swapon /dev/block/zram2 -p 2 > /dev/null 2>&1
+        busybox_v121 swapon /dev/block/zram3 -p 2 > /dev/null 2>&1
+	fi
+
+else
+
+	zram_size=`cat /sys/devices/virtual/block/zram0/disksize`
+	zram_size=`expr $zram_size \/ 1024 \/ 1024 \* 4`
+
+fi
+
+echo $zram_size

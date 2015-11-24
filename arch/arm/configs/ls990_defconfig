@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 LS990 Sprint
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev10.3-T2-Synapse-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev10.3-T3-Synapse-Experimental"
 #########################################################
 #########################################################
 

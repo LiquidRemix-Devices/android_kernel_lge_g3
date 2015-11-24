@@ -21,6 +21,10 @@ title)
   echo "@nWelcome To Nebula Kernel!"
   echo "@nDevice: $DEVICE"
   ;;
+title_version)
+	echo "@nNebula Synapse Rev5.5.0"
+	echo "@nDevice: $DEVICE"
+	;;
 current_version)
   echo "ver $U"
   ;;

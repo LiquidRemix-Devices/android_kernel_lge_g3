@@ -1,0 +1,79 @@
+#!/sbin/busybox sh
+
+cat << CTAG
+{
+    name:"Gestures",
+    elements:[
+    	{ SDescription:{
+        	description:"<br>\tSettings pertaining to the kernel-level multi-touch gesture engine. Including touchkey modifier delay, CPU booster, and individual gesture settings. <a href='http://forum.xda-developers.com/showthread.php?t=1831254'>Click here to learn more</a>.<br><br>",
+        	background:0
+        }},
+    	{ SPane:{
+		title:"Kernel Gesture Engine General Settings",
+		description:""
+        }},
+        { SCheckBox:{
+			description:"Default: Off",
+			label:"Enable Multi-Touch Gesture Engine",
+			default:0,
+        	action:"generic /sys/devices/virtual/misc/touch_gestures/gestures_enabled"
+		}},
+		{ SSpacer:{
+		   height:2
+		}},
+		{ SSeekBar:{
+       		title:"Touchkey Modifier Delay",
+			description:"\tIf enabled, upon touching and holding down on any touchkey this is the delay by which you must start drawing your gesture. 0 will disable this setting.\n",
+			default:0,
+			max:1000,
+			min:0,
+			step:25,
+			unit:" milliseconds",
+			action:"generic /sys/devices/virtual/sec/sec_touchkey/gesture_delay",
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SCheckBox:{
+			description:"\tThis will require a touchkey to be pressed for any gesture to work. The above setting must be higher than 0, or gestures will not trigger.\nDefault: Off",
+			label:"Touchkey Modifier",
+			default:0,
+        	action:"generic /sys/devices/virtual/misc/touch_gestures/gestures_require_touchkey"
+		}},
+		{ SSpacer:{
+		   height:2
+		}},
+		{ SCheckBox:{
+			description:"\tWhen triggered, the CPU will be boosted to expedite processing.\nDefault: Off\n\n\tNote: Several other boosters (namely, the one that boosts when you press the Power key) are piggybacked onto this one, so it is not recommended to disable this.",
+			label:"Enable Gesture & General Purpose Booster",
+			default:1,
+        	action:"generic /sys/devices/virtual/misc/touch_gestures/gesturebooster_enabled"
+		}},
+		{ SSpacer:{
+		   height:2
+		}},
+		{ SSeekBar:{
+       		title:"Gesture Booster Frequency",
+			description:"\tSet the frequency the CPU will be boosted to when a gesture is detected.\n",
+			default:`800000`,
+			action:"generic /sys/devices/virtual/misc/touch_gestures/gesturebooster_freq",
+			values:{
+`
+			while read FREQ TIME; do
+				LABEL=$(expr $FREQ / 1000)
+				echo "$FREQ:\"${LABEL} MHz\", "
+			done < /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
+`
+		}
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SPane:{
+		title:"Gesture Specific Settings",
+		description:"\nTODO\n"
+        }},
+    ]
+}
+
+CTAG

@@ -1,0 +1,150 @@
+#!/sbin/busybox sh
+
+cat << CTAG
+{
+    name:"Utilities",
+    elements:[
+    	{ SDescription:{
+        	description:"\n\tVarious shortcuts for common tasks.\n\n",
+        	background:0
+        }},
+        { SPane:{
+		title:"Synapse Backup",
+		description:"\n\tBacks up current Synapse settings to internal storage (/shift/backup_synapse). This means it will persist between ROMs, assuming you don't wipe your internal storage.\n\n"
+        }},
+        { SLiveLabel:{
+			title:"Last Synapse Backup",
+			refresh:1000,
+			action:"
+			if [ -f /data/media/0/shift/backup_synapse/actionValueStore ]; then
+				echo \$(busybox date -r /data/media/0/shift/backup_synapse/actionValueStore '+%a, %B %e @ %I:%M %p');
+			else
+				echo No backup found;
+			fi;
+			"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Backup Synapse",
+			action:"
+			if [ -d /data/media/0/shift/backup_synapse ]; then
+				cp /data/data/com.af.synapse/databases/* /data/media/0/shift/backup_synapse/;
+				cp /data/.shift/.pu* /data/media/0/shift/backup_synapse/;
+				echo Backed Up!;
+			else
+				echo Backup directory missing...creating...
+				mkdir -p /data/media/0/shift/backup_synapse;
+				if [ -d /data/media/0/shift/backup_synapse ]; then
+					cp /data/data/com.af.synapse/databases/* /data/media/0/shift/backup_synapse;
+					echo backed up!;
+				else
+					echo failed!;
+				fi;
+			fi;
+			"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Restore & Close Synapse",
+			action:"
+			if [ -f /data/media/0/shift/backup_synapse/actionValueStore ]; then
+				rm -f /data/data/com.af.synapse/databases/actionValueStore*;
+				cp /data/media/0/shift/backup_synapse/actionValueStore* /data/data/com.af.synapse/databases/;
+				cp /data/media/0/shift/backup_synapse/.pu_* /data/.shift/
+				chmod 666 /data/data/com.af.synapse/databases/*;
+				pkill -f synapse;
+			else
+				echo No backup found!;
+			fi;
+			"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Reset & Close Synapse",
+			action:"
+			rm -f /data/data/com.af.synapse/databases/actionValueStore*;
+			rm -f /data/.shift/.pu_*;
+			echo Reset, now restarting Synapse!;
+			pkill -f synapse;";
+		}},
+		{ SDescription:{
+		   description:"\n"
+		}},
+		{ SPane:{
+		title:"Filesystem Controls",
+		description:""
+        }},
+		{ SButton:{
+			label:"Remount /system as Writeable",
+			action:"mount -o remount,rw \/system;
+			echo Remounted \/system as Writable!;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Remount /system as Read-Only",
+			action:"mount -o remount,ro \/system;
+			echo Remounted \/system as Read-Only!;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Remount RootFS as Writeable",
+			action:"/sbin/busybox mount -t rootfs -o remount,rw rootfs;
+			echo Remounted RootFS as Writable!;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Remount RootFS as Read-Only",
+			action:"/sbin/busybox mount -t rootfs -o remount,ro rootfs;
+			echo Remounted RootFS as Read-Only!;"
+		}},
+		{ SDescription:{
+		   description:"\n"
+		}},
+		{ SPane:{
+		title:"Miscellaneous Tasks",
+		description:"\n\tSet DPI: Sets the lcd_density value in /system/build.prop.\n"
+        }},
+		{ SButton:{
+			label:"Set DPI to 240",
+			action:"mount -o remount,rw \/system;
+			sed -i 's\/^ro.sf.lcd_density.*\/ro.sf.lcd_density=240\/' \/system\/build.prop;
+			echo Density Changed to 240. Please reboot!;
+			mount -o remount,ro \/system;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Set DPI to 320",
+			action:"mount -o remount,rw \/system;
+			sed -i 's\/^ro.sf.lcd_density.*\/ro.sf.lcd_density=320\/' \/system\/build.prop;
+			echo Density Changed to 320. Please reboot!;
+			mount -o remount,ro \/system;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SButton:{
+			label:"Reset STweaks",
+			action:"rm /data/.shift/config.version /data/.shift/action.cache /data/.shift/customconfig.xml /data/.shift/default.profile /data/.shift/init.profile;
+			echo STweaks has been reset!;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+    ]
+}
+
+CTAG

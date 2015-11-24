@@ -1,0 +1,37 @@
+UKM=/res/synapse;
+BBK=/sbin/bb/busybox
+BBS=/system/xbin/busybox
+DEVICE=`sh $UKM/device/.device.sh`;
+
+
+case $1 in
+	BusyBox_ker)
+				$BBK | awk '/BusyBox\ v/ {print tolower($1),($2)}'
+				;;
+	BusyBox_sys)
+				$BBS | awk '/BusyBox\ v/ {print tolower($1),($2)}'
+				;;
+	BusyBox_checkver)
+				busybox_sys_version() {
+						if [ -e /system/bin/busybox ]; then
+						BBS=/system/bin/busybox
+						elif [ -e /system/xbin/busybox ]; then
+						BBS=/system/xbin/busybox ]
+						elif echo "Busybox Not Found";
+						fi
+						}
+				busybox_kernel() {
+					$BBK | awk '/BusyBox\ v/ {print tolower($1),($2)}'
+					}		
+			
+				busybox_system() {
+					$BBS | awk '/BusyBox\ v/ {print tolower($1),($2)}'
+					}
+
+				busybox_sys_version
+			
+				busybox_kernel > /data/.nebula/busybox_kernel;
+						
+				busybox_system > /data/.nebula/busybox_system;
+			;;
+esac;

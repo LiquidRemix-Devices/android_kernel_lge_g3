@@ -383,9 +383,10 @@ function Build_Stand_Alone_Synapse() {
 	cd $STAND_ALONE_UKM_DIR
 	echo "Cleaning out OLD UKM Files.."
 	rm -rf data/UKM
+	rm -rf ramdisk/res/synapse
 	cd $KERNEL_DIR
 	echo "Copying New UKM Scripts Over.."
-	cp -vr $UKM_DIR $STAND_ALONE_UKM_DIR/data
+	cp -vr $UKM_DIR $STAND_ALONE_UKM_DIR/ramdisk/res
 	cd $STAND_ALONE_UKM_DIR
 	echo "Creating Synapse Stand Alone Zip.."
 	zip -r9 UKM_Synapse_Scripts_Rev"$UKM_REV"_"$KVER".zip *
@@ -394,7 +395,7 @@ function Build_Stand_Alone_Synapse() {
 		cd $KERNEL_DIR
 TITLE="UKM Stand Alone Created"
 BACKTITLE="UKM Stand Alone"
-INFOBOX="UKM_Synapse_Scripts_Rev'$UKM_REV'_'$KVER'.zip \n\n Created Successfully"
+INFOBOX="Nebula_Synapse_Rev'$UKM_REV'_'$KVER'.zip \n\n Created Successfully"
 message	
 }
 

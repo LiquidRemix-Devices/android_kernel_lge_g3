@@ -1,0 +1,56 @@
+#!/sbin/busybox sh
+
+cat << CTAG
+{
+    name:"Information",
+    elements:[
+    	{ SDescription:{
+        	description:"\n\tFor now, this tab just displays the status of the three main partitions.\n\n",
+        	background:0
+        }},
+    	{ SLiveLabel:{
+			refresh:10000000,
+			title:"Filesystem of /cache Partition",
+			style:"normal",
+			action:"
+			if grep -q 'cache f2fs' /proc/mounts ; then
+				echo F2FS;
+			else
+				echo EXT4;
+			fi;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SLiveLabel:{
+			refresh:10000000,
+			title:"Filesystem of /data Partition",
+			style:"normal",
+			action:"
+			if grep -q 'data f2fs' /proc/mounts ; then
+				echo F2FS;
+			else
+				echo EXT4;
+			fi;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+		{ SLiveLabel:{
+			refresh:10000000,
+			title:"Filesystem of /system Partition",
+			style:"normal",
+			action:"
+			if grep -q 'system f2fs' /proc/mounts ; then
+				echo F2FS;
+			else
+				echo EXT4;
+			fi;"
+		}},
+		{ SSpacer:{
+		   height:1
+		}},
+    ]
+}
+
+CTAG

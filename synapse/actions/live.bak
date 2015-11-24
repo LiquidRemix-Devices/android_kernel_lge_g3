@@ -19,7 +19,7 @@ case $1 in
 				;;
 	BusyBox_sys)
 				NBB="0"
-				$BB echo `if [ -f "/system/xbin/busybox" ]; then BBS=/system/xbin/busybox; elif [ -f "/system/bin/busybox" ]; then BBS=/system/bin/busybox; else NBB="1"; $BB echo "No System Wide Busybox Found."; NBB="1"; exit; fi; $BBS | awk '/BusyBox\ v/ {print tolower($1),($2)}'`;
+				$BB echo `if [ -f "/system/xbin/busybox" ]; then BBS=/system/xbin/busybox; elif [ -f "/system/bin/busybox" ]; then BBS=/system/bin/busybox; else NBB="1"; $BB echo "No System Wide Busybox Found."; exit; fi; $BBS | awk '/BusyBox\ v/ {print tolower($1),($2)}'`;
 				;;
 	KSMStats)
 		KSM="$(expr `cat /sys/kernel/mm/ksm/run`)"

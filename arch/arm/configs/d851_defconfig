@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 D851 T-Mobile
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev10.3-T2-Synapse-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev10.3-T3-Synapse-Experimental"
 #########################################################
 #########################################################
 
@@ -912,7 +912,7 @@ CONFIG_BUILD_ARM_APPENDED_DTB_IMAGE_NAMES=""
 CONFIG_ZBOOT_ROM_TEXT=0
 CONFIG_ZBOOT_ROM_BSS=0
 # CONFIG_ARM_APPENDED_DTB is not set
-CONFIG_CMDLINE=""
+CONFIG_CMDLINE="androidboot.selinux=permissive console=ttyHSL0,115200,n8 androidboot.hardware=g3 user_debug=31 msm_rtb.filter=0x0"
 # CONFIG_XIP_KERNEL is not set
 # CONFIG_CRASH_DUMP is not set
 # CONFIG_AUTO_ZRELADDR is not set
