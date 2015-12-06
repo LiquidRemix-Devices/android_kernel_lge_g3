@@ -6,7 +6,7 @@
 # NebulaKernel UpDated 08/09/2015 D856 Dual Sim
 #
 #########KERNEL-INFO####################################
-CONFIG_LOCALVERSION="-Nebula_Rev10.3-T3-Synapse-Experimental"
+CONFIG_LOCALVERSION="-Nebula_Rev11.0-T1_MM-Experimental"
 #########################################################
 #########################################################
 
