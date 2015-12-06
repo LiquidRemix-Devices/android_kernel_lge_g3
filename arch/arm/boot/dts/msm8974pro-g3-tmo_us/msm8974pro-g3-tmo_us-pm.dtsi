@@ -32,7 +32,6 @@
 		bq24296@6b {
 			status = "ok";
 			revision = "...evb1","rev_b...";
-			ti,pre-input-current-ma = <1000>;
 		};
 		idtp9025a@25 {
 			revision = "rev_b...";
@@ -52,13 +51,6 @@
 		ti,wl_en1_gpio = <&pm8941_gpios 23 0x0>;
 		ti,wl_chg_int_gpio = <&pm8941_gpios 34 0x2>;
 		ti,wl_chg_full_gpio = <&pm8941_gpios 36 0x0>;
-	};
-
-	qcom,msm-thermal {
-		qcom,limit-temp = <70>;
-		qcom,temp-hysteresis = <5>;
-		qcom,core-limit-temp = <90>;
-		qcom,core-temp-hysteresis = <5>;
 	};
 
 	pm8941,lge_boost_gpio {

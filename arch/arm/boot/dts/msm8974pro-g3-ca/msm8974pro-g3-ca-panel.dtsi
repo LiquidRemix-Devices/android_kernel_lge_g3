@@ -71,9 +71,5 @@
 					>;
 			};
 		};
-		tps65132@3e {
-			status = "ok";
-			revision = "rev_c...";
-		};
      };
 };

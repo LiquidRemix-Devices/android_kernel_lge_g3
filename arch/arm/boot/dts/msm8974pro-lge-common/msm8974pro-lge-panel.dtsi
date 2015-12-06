@@ -26,6 +26,7 @@
 	vdd-supply = <&pm8941_l10>;
 	qcom,mdss-dsi-panel-broadcast-mode = <1>;
 	qcom,dsi-pref-prim-pan = <&dsi_lgd_sic_1440_vid0>;
+	qcom,dsi-pref-prim-pan-oldrev = <&dsi_lgd_rsp_1440_vid0>;
 
 	/delete-property/ qcom,platform-reset-gpio;
 	/delete-property/ qcom,platform-enable-gpio;
@@ -82,6 +83,7 @@
 
 	qcom,mdss-dsi-panel-broadcast-mode = <1>;
 	qcom,dsi-pref-prim-pan = <&dsi_lgd_sic_1440_vid1>;
+	qcom,dsi-pref-prim-pan-oldrev = <&dsi_lgd_rsp_1440_vid1>;
 
 	qcom,platform-reset-gpio = <&pm8941_gpios 19 1>;
 
@@ -152,7 +154,6 @@
 
 	/delete-property/ qcom,mdss-ad-off;
 	qcom,mdss-pref-prim-intf = "dsi";
-	qcom,mdss-ab-factor-limit = <1 1>;	/*  cam tuning times  */
 
 	dsi_lgd_sic_1440_vid0: qcom,mdss_dsi_lgit_sic_mipi0_video {
 		compatible = "qcom,mdss-dsi-panel";
@@ -210,13 +211,13 @@
 			15 01 00 00 00 00 02 53 2C
 			39 01 00 00 00 00 07 B8 11 11 11 38 00 00
 			15 01 00 00 00 00 02 55 81
-			15 01 00 00 00 00 02 F0 33
-			39 01 00 00 00 00 05 F1 00 00 02 02
+			15 01 00 00 00 00 02 F0 26
+			39 01 00 00 00 00 05 F1 00 00 00 00
 			39 01 00 00 00 00 04 F2 01 00 40
 			39 01 00 00 00 00 06 F3 00 00 00 00 00
-			39 01 00 00 00 00 02 F4 00
-			39 01 00 00 00 00 04 F5 01 00 61
-			39 01 00 00 00 00 04 F6 03 00 61
+			39 01 00 00 00 00 02 F4 05
+			39 01 00 00 00 00 04 F5 02 00 83
+			39 01 00 00 00 00 04 F6 00 00 00
 			39 01 00 00 00 00 04 F7 00 00 00
 			39 01 00 00 00 00 11 F8 40 40 40 40 40 40 40 40 00 00 00 00 00 00 00 00
 			39 01 00 00 00 00 11 F9 40 40 40 40 40 40 40 40 00 00 00 00 00 00 00 00
@@ -254,8 +255,6 @@
 		qcom,mdss-dsi-lp11-init;
 		qcom,cont-splash-enabled;
 		qcom,mdss-dsi-tx-eot-append;
-		qcom,mdss-pan-physical-width-dimension = <68>;
-		qcom,mdss-pan-physical-height-dimension = <120>;
 		qcom,mdss-dsi-sharpening-on = [15 01 00 00 00 00 02 F0 26];
 		qcom,mdss-dsi-sharpening-off = [15 01 00 00 00 00 02 F0 35];
 		qcom,mdss-dsi-sharpening-mode = "dsi_hs_mode";
@@ -351,13 +350,13 @@
 			15 01 00 00 00 00 02 53 2C
 			39 01 00 00 00 00 07 B8 11 11 11 38 00 00
 			15 01 00 00 00 00 02 55 81
-			15 01 00 00 00 00 02 F0 33
-			39 01 00 00 00 00 05 F1 00 00 02 02
+			15 01 00 00 00 00 02 F0 26
+			39 01 00 00 00 00 05 F1 00 00 00 00
 			39 01 00 00 00 00 04 F2 01 00 40
 			39 01 00 00 00 00 06 F3 00 00 00 00 00
-			39 01 00 00 00 00 02 F4 00
-			39 01 00 00 00 00 04 F5 01 00 61
-			39 01 00 00 00 00 04 F6 03 00 61
+			39 01 00 00 00 00 02 F4 05
+			39 01 00 00 00 00 04 F5 02 00 83
+			39 01 00 00 00 00 04 F6 00 00 00
 			39 01 00 00 00 00 04 F7 00 00 00
 			39 01 00 00 00 00 11 F8 40 40 40 40 40 40 40 40 00 00 00 00 00 00 00 00
 			39 01 00 00 00 00 11 F9 40 40 40 40 40 40 40 40 00 00 00 00 00 00 00 00
@@ -395,8 +394,6 @@
 		qcom,mdss-dsi-lp11-init;
 		qcom,cont-splash-enabled;
 		qcom,mdss-dsi-tx-eot-append;
-		qcom,mdss-pan-physical-width-dimension = <68>;
-		qcom,mdss-pan-physical-height-dimension = <120>;
 		qcom,mdss-dsi-sharpening-on = [15 01 00 00 00 00 02 F0 26];
 		qcom,mdss-dsi-sharpening-off = [15 01 00 00 00 00 02 F0 35];
 		qcom,mdss-dsi-sharpening-mode = "dsi_hs_mode";
@@ -434,6 +431,234 @@
 			];
 		qcom,ief-on-dsi-state = "dsi_hs_mode";
 		qcom,ief-off-dsi-state = "dsi_hs_mode";
+	};
+
+	dsi_lgd_rsp_1440_vid0: qcom,mdss_dsi_lgit_rsp_mipi0_video {
+		compatible = "qcom,mdss-dsi-panel";
+		qcom,mdss-dsi-panel-name = "LGD RSP 1440p video mode dsi primary panel ";
+		qcom,mdss-dsi-panel-controller = <&mdss_dsi0>;
+		qcom,mdss-dsi-panel-type = "dsi_video_mode";
+		qcom,mdss-dsi-panel-destination = "display_1";
+		qcom,mdss-dsi-panel-framerate = <60>;
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-panel-width = <720>;
+		qcom,mdss-dsi-panel-height = <2560>;
+		qcom,mdss-dsi-h-front-porch = <112>;
+		qcom,mdss-dsi-h-back-porch = <48>;
+		qcom,mdss-dsi-h-pulse-width = <12>;
+		qcom,mdss-dsi-h-sync-skew = <0>;
+		qcom,mdss-dsi-v-back-porch = <7>;
+		qcom,mdss-dsi-v-front-porch = <8>;
+		qcom,mdss-dsi-v-pulse-width = <1>;
+		qcom,mdss-dsi-h-left-border = <0>;
+		qcom,mdss-dsi-h-right-border = <0>;
+		qcom,mdss-dsi-v-top-border = <0>;
+		qcom,mdss-dsi-v-bottom-border = <0>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-border-color = <0>;
+		qcom,mdss-dsi-on-command = [//For Customer Setting
+			15 01 00 00 00 00 02 36 00 //set address mode
+			15 01 00 00 00 00 02 3A 70 //set pixel format, 24bits/pixel
+			23 01 00 00 00 00 02 B0 04 //unlock manufacture command protect
+			05 01 00 00 00 00 02 00 00 //nop
+			05 01 00 00 00 00 02 00 00 //nop
+			23 01 00 00 00 00 02 D6 01 //NVM load OFF after exit_sleep_mode
+			//Manufacture command setting
+			//Host I/F Setting
+			29 01 00 00 00 00 07 B3 14 00 00 00 00 00 	//Interface setting, DSI-Video Burst
+			29 01 00 00 00 00 03 B4 0C 00 				//Interface ID setting
+			29 01 00 00 00 00 03 B6 3A D3				//DSI Control
+			29 01 00 00 00 00 04 C3 01 0A 0A 			//Touch Panel Sync Control
+			//Panel Driving Setting
+			29 01 00 00 00 00 07 C0 00 00 00 01 00 00	//Sout Slew rate adjustment
+			29 01 00 00 00 00 24
+			C1 88 61 C0 21 9D 32 96 7A 30
+			02 00 00 00 00 00 00 40 84 4F
+			2D 41 0C 02 00 00 00 00 00 62
+			01 88 0A 00 01 11							//Display Setting 1
+			29 01 00 00 00 00 09 C2 31 F0 0A 00 08 08 00 00 //Display Setting 2
+			29 01 00 00 00 00 1B
+			C4 70 00 00 00 00 00 00 00 00
+			00 00 06 03 00 00 00 00 00 00
+			00 00 00 00 00 01 03						//Source Timing Setting
+			29 01 00 00 00 00 29
+			C6 5A 06 50 06 50 00 00 00 00
+			00 00 00 00 00 00 00 00 13 1A
+			07 5A 06 50 06 50 00 00 00 00
+			00 00 00 00 00 00 00 00 13 1A
+			07							//LTPS Timing Setting
+			29 01 00 00 00 00 0B
+			CB FF 03 C0 FF 00 00 00 00 C0 00			//Panel PIN Control
+			29 01 00 00 00 00 02 CC 1E				//Panel Interface Control
+			29 01 00 00 00 00 03 D2 00 00 				//Power setting for common
+			29 01 00 00 00 00 18
+			D7 84 F0 7F A8 CE 38 FC C1 18
+			E7 8F 1F 3C 10 FA C3 0F 04 41
+			00 00 00 00									//Sequencer control
+			29 01 00 00 00 00 04 D9 00 00 00			//Sequencer control
+			//Gamma Setting
+			29 01 00 00 00 00 1F
+			C7 00 07 0F 1C 2A 35 3F 4D 32
+			3C 47 50 57 60 7F 00 07 0F 1C
+			2A 35 3F 4D 32 3C 47 50 57 60
+			7F
+			29 01 00 00 00 00 14
+			C8 01 00 00 00 00 FC 00 00 00
+			00 00 FC 00 00 00 00 00 FC 00
+			//Power Setting
+			29 01 00 00 00 00 0B
+			D0 55 81 BB 10 93 4C 2D 2D 0C 00			//Power setting(charge pump setting)
+			29 01 00 00 00 00 1A
+			D3 1B 33 BB BB B3 33 33 33 00
+			01 00 A0 A8 A0 0F 42 44 33 3B
+			37 72 07 3D BF 33							//Power setting for internal power
+			29 01 00 00 00 00 08 D5 06 00 00 01 6D 01 6D	//VCOM setting
+			05 01 00 00 50 00 01 11 //sleep out delay 20ms
+			05 01 00 00 80 00 01 29 //display on delay 80ms
+			];
+		qcom,mdss-dsi-off-command = [05 01 00 00 14 00 01 28
+			05 01 00 00 64 00 01 10
+			15 01 00 00 00 00 02 B1 01];
+		qcom,mdss-dsi-on-command-state = "dsi_hs_mode";
+		qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
+		qcom,mdss-dsi-h-sync-pulse = <0>;
+		qcom,mdss-dsi-traffic-mode = "non_burst_sync_event";
+		qcom,mdss-dsi-lane-map = "lane_map_0123";
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-bllp-power-mode;
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-dsi-panel-broadcast-mode = <1>;
+		qcom,mdss-dsi-panel-timings = [BE 3F 36 00 5A 50
+			38 41 54 03 04 00];
+		qcom,mdss-dsi-t-clk-post = <0x1D>;
+		qcom,mdss-dsi-t-clk-pre = <0x35>;
+		qcom,mdss-dsi-bl-min-level = <1>;
+		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-bl-pmic-control-type = "bl_others";
+		qcom,mdss-dsi-reset-sequence = <1 20>;
+		qcom,cont-splash-enabled;
+	};
+
+	dsi_lgd_rsp_1440_vid1: qcom,mdss_dsi_lgit_rsp_mipi1_video {
+		compatible = "qcom,mdss-dsi-panel";
+		qcom,mdss-dsi-panel-name = "LGD RSP 1440p video mode dsi secondary panel ";
+		qcom,mdss-dsi-panel-controller = <&mdss_dsi1>;
+		qcom,mdss-dsi-panel-type = "dsi_video_mode";
+		qcom,mdss-dsi-panel-destination = "display_2";
+		qcom,mdss-dsi-panel-framerate = <60>;
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-panel-width = <720>;
+		qcom,mdss-dsi-panel-height = <2560>;
+		qcom,mdss-dsi-h-front-porch = <112>;
+		qcom,mdss-dsi-h-back-porch = <48>;
+		qcom,mdss-dsi-h-pulse-width = <12>;
+		qcom,mdss-dsi-h-sync-skew = <0>;
+		qcom,mdss-dsi-v-back-porch = <7>;
+		qcom,mdss-dsi-v-front-porch = <8>;
+		qcom,mdss-dsi-v-pulse-width = <1>;
+		qcom,mdss-dsi-h-left-border = <0>;
+		qcom,mdss-dsi-h-right-border = <0>;
+		qcom,mdss-dsi-v-top-border = <0>;
+		qcom,mdss-dsi-v-bottom-border = <0>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-border-color = <0>;
+		qcom,mdss-dsi-on-command = [//For Customer Setting
+			15 01 00 00 00 00 02 36 00 //set address mode
+			15 01 00 00 00 00 02 3A 70 //set pixel format, 24bits/pixel
+			23 01 00 00 00 00 02 B0 04 //unlock manufacture command protect
+			05 01 00 00 00 00 02 00 00 //nop
+			05 01 00 00 00 00 02 00 00 //nop
+			23 01 00 00 00 00 02 D6 01 //NVM load OFF after exit_sleep_mode
+			//Manufacture command setting
+			//Host I/F Setting
+			29 01 00 00 00 00 07 B3 14 00 00 00 00 00 	//Interface setting, DSI-Video Burst
+			29 01 00 00 00 00 03 B4 0C 00 				//Interface ID setting
+			29 01 00 00 00 00 03 B6 3A D3				//DSI Control
+			29 01 00 00 00 00 04 C3 01 0A 0A 			//Touch Panel Sync Control
+			//Panel Driving Setting
+			29 01 00 00 00 00 07 C0 00 00 00 01 00 00	//Sout Slew rate adjustment
+			29 01 00 00 00 00 24
+			C1 88 61 C0 21 9D 32 96 7A 30
+			02 00 00 00 00 00 00 40 84 4F
+			2D 41 0C 02 00 00 00 00 00 62
+			01 88 0A 00 01 11							//Display Setting 1
+			29 01 00 00 00 00 09 C2 31 F0 0A 00 08 08 00 00 //Display Setting 2
+			29 01 00 00 00 00 1B
+			C4 70 00 00 00 00 00 00 00 00
+			00 00 06 03 00 00 00 00 00 00
+			00 00 00 00 00 01 03						//Source Timing Setting
+			29 01 00 00 00 00 29
+			C6 5A 06 50 06 50 00 00 00 00
+			00 00 00 00 00 00 00 00 13 1A
+			07 5A 06 50 06 50 00 00 00 00
+			00 00 00 00 00 00 00 00 13 1A
+			07							//LTPS Timing Setting
+			29 01 00 00 00 00 0B
+			CB FF 03 C0 FF 00 00 00 00 C0 00			//Panel PIN Control
+			29 01 00 00 00 00 02 CC 1E				//Panel Interface Control
+			29 01 00 00 00 00 03 D2 00 00 				//Power setting for common
+			29 01 00 00 00 00 18
+			D7 84 F0 7F A8 CE 38 FC C1 18
+			E7 8F 1F 3C 10 FA C3 0F 04 41
+			00 00 00 00									//Sequencer control
+			29 01 00 00 00 00 04 D9 00 00 00			//Sequencer control
+			//Gamma Setting
+			29 01 00 00 00 00 1F
+			C7 00 07 0F 1C 2A 35 3F 4D 32
+			3C 47 50 57 60 7F 00 07 0F 1C
+			2A 35 3F 4D 32 3C 47 50 57 60
+			7F
+			29 01 00 00 00 00 14
+			C8 01 00 00 00 00 FC 00 00 00
+			00 00 FC 00 00 00 00 00 FC 00
+			//Power Setting
+			29 01 00 00 00 00 0B
+			D0 55 81 BB 10 93 4C 2D 2D 0C 00			//Power setting(charge pump setting)
+			29 01 00 00 00 00 1A
+			D3 1B 33 BB BB B3 33 33 33 00
+			01 00 A0 A8 A0 0F 42 44 33 3B
+			37 72 07 3D BF 33							//Power setting for internal power
+			29 01 00 00 00 00 08 D5 06 00 00 01 6D 01 6D	//VCOM setting
+			05 01 00 00 50 00 01 11 //sleep out delay 20ms
+			05 01 00 00 80 00 01 29 //display on delay 80ms
+			];
+		qcom,mdss-dsi-off-command = [05 01 00 00 14 00 01 28
+			05 01 00 00 64 00 01 10
+			15 01 00 00 00 00 02 B1 01];
+		qcom,mdss-dsi-on-command-state = "dsi_hs_mode";
+		qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
+		qcom,mdss-dsi-h-sync-pulse = <0>;
+		qcom,mdss-dsi-traffic-mode = "non_burst_sync_event";
+		qcom,mdss-dsi-lane-map = "lane_map_0123";
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-bllp-power-mode;
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-dsi-panel-broadcast-mode = <1>;
+		qcom,mdss-dsi-panel-timings = [BE 3F 36 00 5A 50
+			38 41 54 03 04 00];
+		qcom,mdss-dsi-t-clk-post = <0x1D>;
+		qcom,mdss-dsi-t-clk-pre = <0x35>;
+		qcom,mdss-dsi-bl-min-level = <1>;
+		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-bl-pmic-control-type = "bl_others";
+		qcom,mdss-dsi-reset-sequence = <1 20>;
+		qcom,cont-splash-enabled;
 	};
 };
 
