@@ -11,9 +11,9 @@ NAME = Saber-toothed Squirrel
 # expect to learn how to build the kernel reading this file.
 
 ############################################################################
-## Makefile Mods By Eliminater74
+## Makefile Mods By Eliminater74 12/11/2015 For MM
 ##
-## * v8.5 *
+## * v9.0 *
 ############################################################################
 # Do not:
 # o  use make's built-in rules and variables
@@ -358,7 +358,7 @@ ifdef CONFIG_LESS_OPTIMIZATION
 KERNELFLAGS = -munaligned-access -fforce-addr -fsingle-precision-constant -mcpu=cortex-a15 -mtune=cortex-a15 -marm -mfpu=neon-vfpv4 -fgcse-las
 endif
 ifdef CONFIG_MORE_OPTIMIZATION
-KERNELFLAGS = -pipe -DNDEBUG -Ofast -ffast-math -mtune=cortex-a15 -mcpu=cortex-a15 -marm -mfpu=neon-vfpv4 -ftree-vectorize -mvectorize-with-neon-quad -munaligned-access -fgcse-lm -fgcse-sm -fsingle-precision-constant -fforce-addr -fsched-spec-load -fopenmp -fgraphite -fgraphite-identity -fsanitize=leak
+KERNELFLAGS = -pipe -DNDEBUG -Ofast -ffast-math -mtune=cortex-a15 -mcpu=cortex-a15 -marm -mfpu=neon-vfpv4 -ftree-vectorize -mvectorize-with-neon-quad -munaligned-access -fgcse-lm -fgcse-sm -fsingle-precision-constant -fforce-addr -fsched-spec-load -funroll-loops -fpredictive-commoning -floop-nest-optimize -fgraphite -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-flatten -fopenmp -fsanitize=leak
 endif
 MODFLAGS = -DMODULE $(KERNELFLAGS)
 CFLAGS_MODULE = $(MODFLAGS)
