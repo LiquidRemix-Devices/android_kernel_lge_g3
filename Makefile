@@ -358,7 +358,7 @@ ifdef CONFIG_LESS_OPTIMIZATION
 KERNELFLAGS = -munaligned-access -fforce-addr -fsingle-precision-constant -mcpu=cortex-a15 -mtune=cortex-a15 -marm -mfpu=neon-vfpv4 -fgcse-las
 endif
 ifdef CONFIG_MORE_OPTIMIZATION
-KERNELFLAGS = -pipe -DNDEBUG -Ofast -ffast-math -mtune=cortex-a15 -mcpu=cortex-a15 -marm -mfpu=neon-vfpv4 -ftree-vectorize -mvectorize-with-neon-quad -munaligned-access -fgcse-lm -fgcse-sm -fsingle-precision-constant -fforce-addr -fsched-spec-load
+KERNELFLAGS = -pipe -DNDEBUG -Ofast -ffast-math -mtune=cortex-a15 -mcpu=cortex-a15 -marm -mfpu=neon-vfpv4 -ftree-vectorize -mvectorize-with-neon-quad -munaligned-access -fgcse-lm -fgcse-sm -fsingle-precision-constant -fforce-addr -fsched-spec-load -fopenmp -fgraphite -fgraphite-identity -fsanitize=leak
 endif
 MODFLAGS = -DMODULE $(KERNELFLAGS)
 CFLAGS_MODULE = $(MODFLAGS)
