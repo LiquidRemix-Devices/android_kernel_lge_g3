@@ -266,7 +266,7 @@ function bump_defconfigs() {
 		do
 		DEFCONFIG="${x}_defconfig"
 		cd $DEFCONFIGS
-		sed -i '9s/.*/CONFIG_LOCALVERSION="-Nebula_Rev'$BUMP_REV'-Experimental"/' $DEFCONFIG
+		sed -i '9s/.*/CONFIG_LOCALVERSION="-Nebula_Rev'$BUMP_REV'"/' $DEFCONFIG
 		
 		cd $KERNEL_DIR
 done
