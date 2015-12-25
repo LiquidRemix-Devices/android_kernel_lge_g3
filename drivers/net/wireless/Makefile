@@ -59,11 +59,7 @@ obj-$(CONFIG_IWM)	+= iwmc3200wifi/
 
 obj-$(CONFIG_MWIFIEX)	+= mwifiex/
 
-ifdef CONFIG_BCMDHD_NEW
-obj-$(CONFIG_BCMDHD_NEW)	+= bcmdhd_new/
-else
 obj-$(CONFIG_BCMDHD)	+= bcmdhd/
-endif
 
 obj-$(CONFIG_BRCMFMAC)	+= brcm80211/
 obj-$(CONFIG_BRCMSMAC)	+= brcm80211/
